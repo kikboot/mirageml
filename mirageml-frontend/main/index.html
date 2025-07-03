@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MirageML</title>
+    <link rel="stylesheet" href="../main/style.css">
+            <link rel="icon" type="image/png" href="/logo/logo.png" sizes="32x32">
+</head>
+<body>
+    <!-- Шапка -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-pencil-ruler"></i> MirageML
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-outline" id="login-btn">Войти</button>
+                    <button class="btn btn-primary" id="register-btn">Регистрация</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Главная секция -->
+    <section class="hero">
+        <div class="container">
+            <h1>Создавайте сайты визуально</h1>
+            <p>MirageML - интуитивно понятный редактор для быстрого прототипирования и создания веб-страниц без написания кода</p>
+            <a href="#" class="cta-btn" id="create-project-btn">Создать макет</a>
+        </div>
+    </section>
+
+    <!-- Особенности -->
+    <section class="features">
+        <div class="container">
+            <h2>Возможности редактора</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-th"></i>
+                    </div>
+                    <h3>Блоки</h3>
+                    <p>Добавляйте и настраивайте блоки с содержимым, изменяйте их размеры и расположение</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-heading"></i>
+                    </div>
+                    <h3>Текст</h3>
+                    <p>Добавляйте заголовки и текстовые блоки с возможностью полного форматирования</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <h3>Изображения</h3>
+                    <p>Загружайте свои изображения и настраивайте их отображение на странице</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h3>Экспорт</h3>
+                    <p>Получайте чистый HTML/CSS код или скачивайте готовый проект в ZIP архиве</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
+                    <h3>Настройки</h3>
+                    <p>Гибкие настройки внешнего вида каждого элемента через удобную панель свойств</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h3>Слои</h3>
+                    <p>Управляйте элементами через панель слоев и переименовывайте</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Модальное окно входа -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Вход в аккаунт</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Пароль</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancel-login">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Войти</button>
+                </div>
+            </form>
+            <div class="switch-form">
+                Нет аккаунта? <a id="switch-to-register">Зарегистрироваться</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно регистрации -->
+    <div class="modal" id="register-modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Регистрация</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="register-name">Имя</label>
+                    <input type="text" id="register-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Пароль</label>
+                    <input type="password" id="register-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm">Подтвердите пароль</label>
+                    <input type="password" id="register-confirm" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancel-register">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                </div>
+            </form>
+            <div class="switch-form">
+                Уже есть аккаунт? <a id="switch-to-login">Войти</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    <i class="fas fa-pencil-ruler"></i> MirageML
+                </div>
+                <p>Визуальный редактор для быстрого создания веб-страниц</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-vk"></i></a>
+                    <a href="#"><i class="fab fa-telegram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                </div>
+                <p>&copy; 2025 MirageML. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+<script src="../main/script.js"></script>
+
+</body>
+</html>

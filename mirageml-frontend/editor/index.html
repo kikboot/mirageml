@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактор</title>
+    <link rel="stylesheet" href="../editor/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            <link rel="icon" type="image/png" href="/logo/logo.png" sizes="32x32">
+</head>
+<body>
+    <div class="app-container">
+<header class="header">
+    <div class="logo">MirageML </div>
+    <div class="header-controls">
+        <button id="preview-btn" class="btn"><i class="fas fa-eye"></i> Предпросмотр</button>
+        <button id="export-btn" class="btn primary"><i class="fas fa-file-export"></i> Экспорт</button>
+        <button id="clear-btn" class="btn danger"><i class="fas fa-trash"></i> Очистить</button>
+        <a href="../profile/index.html" class="btn profile-btn"><i class="fas fa-user"></i> Профиль</a>
+    </div>
+</header>
+
+        <div class="main-content">
+            <aside class="sidebar elements-panel">
+                <h3>Элементы</h3>
+                <div class="elements-list">
+                    <div class="element-item" draggable="true" data-type="div">
+                        <i class="fas fa-square"></i> Блок
+                    </div>
+                    <div class="element-item" draggable="true" data-type="button">
+                        <i class="fas fa-square"></i> Кнопка
+                    </div>
+                    <div class="element-item" draggable="true" data-type="p">
+                        <i class="fas fa-paragraph"></i> Текст
+                    </div>
+                    <button id="upload-image-btn" class="btn">
+    <i class="fas fa-image"></i> Добавить изображение
+</button>
+                </div>
+            </aside>
+
+            <main class="workspace">
+                <div class="canvas-container">
+                    <div class="canvas-grid" id="canvas"></div>
+                </div>
+            </main>
+
+            <aside class="sidebar properties-panel">
+                <h3>Свойства</h3>
+                <div class="properties-form" id="properties-form">
+                    <div class="form-group">
+                        <label>Тип элемента</label>
+                        <input type="text" id="element-type" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>ID</label>
+                        <input type="text" id="element-id">
+                    </div>
+                    <div class="form-group">
+                        <label>Классы</label>
+                        <input type="text" id="element-classes">
+                    </div>
+                    <div class="form-group">
+                        <label>Текст</label>
+                        <input type="text" id="element-text">
+                    </div>
+                    <div class="form-group">
+                        <label>Ширина</label>
+                        <input type="text" id="element-width" placeholder="например: 100px или 50%">
+                    </div>
+                    <div class="form-group">
+                        <label>Высота</label>
+                        <input type="text" id="element-height" placeholder="например: 100px или 50%">
+                    </div>
+                    <div class="form-group">
+                        <label>Цвет фона</label>
+                        <input type="color" id="element-bg-color">
+                    </div>
+                    <div class="form-group">
+                        <label>Цвет текста</label>
+                        <input type="color" id="element-text-color">
+                    </div>
+                    <div class="form-group">
+                        <label>Размер шрифта</label>
+                        <input type="text" id="element-font-size" placeholder="например: 16px">
+                    </div>
+                    <div class="form-group">
+                        <label>Отступы (padding)</label>
+                        <input type="text" id="element-padding" placeholder="например: 10px">
+                    </div>
+                    <div class="form-group">
+                        <label>Граница</label>
+                        <input type="text" id="element-border" placeholder="например: 1px solid #000">
+                    </div>
+                    <div class="form-group">
+                        <button id="apply-properties" class="btn primary">Применить</button>
+                        <button id="delete-element" class="btn danger">Удалить</button>
+                    </div>
+                </div>
+            </aside>
+
+            <aside class="sidebar layers-panel">
+                <h3>Слои</h3>
+                <div class="layers-list" id="layers-list">
+
+                </div>
+            </aside>
+        </div>
+
+        <div class="modal" id="export-modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>Экспорт проекта</h2>
+                <div class="export-options">
+                    <div class="export-option">
+                        <h3>HTML</h3>
+                        <textarea id="export-html" readonly></textarea>
+                        <button class="btn" id="copy-html">Копировать HTML</button>
+                    </div>
+                    <div class="export-option">
+                        <h3>CSS</h3>
+                        <textarea id="export-css" readonly></textarea>
+                        <button class="btn" id="copy-css">Копировать CSS</button>
+                    </div>
+                    <div class="export-option">
+                        <h3>Полный архив</h3>
+                        <p>Скачайте ZIP-архив со всеми файлами</p>
+                        <button class="btn primary" id="download-zip">Скачать ZIP</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="preview-modal">
+            <div class="modal-content preview-content">
+                <span class="close-btn">&times;</span>
+                <h2>Предпросмотр</h2>
+                <iframe id="preview-frame"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="help-modal">
+    <div class="modal-content" style="max-width: 750px;">
+        <span class="close-btn">&times;</span>
+        <h2>Инструкция</h2>
+        <br>
+        <div class="video-container">
+    <video width="690" height="400" controls>
+        <source src="2.mp4">
+    </video>
+</div>
+        <div class="instructions">
+            <h3>Здравствуйте! Это бета-версия сайта MirageML. Проект находится в разработке,
+                 и здесь вы найдете руководство по основным функциям и возможностям сервиса. Основные функции включают в себя:</h3>
+                 <br>
+            <ul>
+                <li><strong>Добавление элементов</strong> - Нажмите на нужный объект из левой панели</li>
+                <li><strong>Перемещение</strong> - зажмите левую кнопку мыши на элементе и перемещайте</li>
+                <li><strong>Изменение размера</strong> - тяните за маркеры по углам и сторонам объекта</li>
+                <li><strong>Редактирование текста</strong> - двойной клик по элементу</li>
+                <li><strong>Слои</strong> - правой панели можно переименовывать и переупорядочивать элементы</li>
+                <li><strong>Загрузка фотографии</strong> - нажмите левой кнопкой мыши на объект "Добавить изображение" и выберите изображение</li>
+                <li><strong>Удалить</strong> - на правой панели можно удалить нужный объект или можно очистить холст на верхней панели</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="image-upload-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h3>Загрузка изображения</h3>
+        
+        <div class="form-group">
+            <label for="image-upload-input">Выберите изображение:</label>
+            <input type="file" id="image-upload-input" accept="image/*">
+        </div>
+        
+        <div id="image-preview" style="width: 100%; height: 200px; border: 1px dashed #ccc; margin: 10px 0; display: flex; align-items: center; justify-content: center;">
+            Изображение не выбрано
+        </div>
+        
+        <div class="form-group">
+            <label for="image-width">Ширина (px):</label>
+            <input type="number" id="image-width" min="20" value="200">
+        </div>
+        
+        <div class="form-group">
+            <label for="image-height">Высота (px):</label>
+            <input type="number" id="image-height" min="20" value="200">
+        </div>
+        
+        <div class="modal-actions">
+            <button id="cancel-image-upload" class="btn btn-secondary">Отмена</button>
+            <button id="confirm-image-upload" class="btn btn-primary">Добавить</button>
+        </div>
+    </div>
+</div>
+
+<div class="help-btn">
+    <button id="show-help"><i class="fas fa-question-circle"></i> Помощь</button>
+</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="../editor/script.js"></script>
+</body>
+</html>

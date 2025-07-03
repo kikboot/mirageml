@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Доступ ограничен</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        .auth-box {
+            background: #1E1E1E;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 1.5rem;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background: #252525;
+            color: #fff;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .error {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: #ff4444;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-box">
+        <h1>Проект на этапе разработки</h1>
+        <p>Пароль для входа администратора: admin123</p>
+        <input type="password" id="password" placeholder="Введите пароль">
+        <button onclick="checkPassword()">Войти</button>
+    </div>
+
+    <div class="error" id="error">
+        НЕВЕРНЫЙ ПАРОЛЬ. ТУТ ТЕБЕ ДЕЛАТЬ НЕЧЕГО, ЖДИ РЕЛИЗА.
+    </div>
+
+    <script>
+        function checkPassword() {
+            const password = document.getElementById("password").value;
+            if (password === "admin123") {
+                window.location.href = "main/index.html";
+            } else {
+                document.getElementById("error").style.display = "flex";
+                setTimeout(() => {
+                    document.getElementById("error").style.display = "none";
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>

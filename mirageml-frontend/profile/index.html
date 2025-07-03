@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../profile/style.css">
+
+        <link rel="icon" type="image/png" href="/logo/logo.png" sizes="32x32">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="header-actions">
+                    <div class="logo">MirageML</div>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-outline" id="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Выйти
+                    </button>
+                    <button class="btn btn-primary" id="create-project-btn">
+                        <i class="fas fa-plus"></i> Создать проект
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <div class="container">
+        <div class="profile-container">
+            <!-- Боковая панель -->
+            <aside class="profile-sidebar">
+                <div class="profile-avatar" id="user-avatar">JD</div>
+                <div class="profile-name" id="user-name">Загрузка...</div>
+                <ul class="profile-menu">
+                    <li><a href="#" class="tab-link active" data-tab="profile-tab"><i class="fas fa-user"></i> Профиль</a></li>
+                    <li><a href="#" class="tab-link" data-tab="security-tab"><i class="fas fa-lock"></i> Безопасность</a></li>
+                    <li><a href="#" class="tab-link" data-tab="projects-tab"><i class="fas fa-project-diagram"></i> Мои проекты</a></li>
+                    <li><a href="#" id="delete-account-link"><i class="fas fa-trash"></i> Удалить аккаунт</a></li>
+                </ul>
+            </aside>
+
+            <!-- Основное содержимое -->
+            <main class="profile-content">
+                <!-- Вкладка профиля -->
+                <div id="profile-tab" class="tabs active">
+                    <h1 class="profile-title"><i class="fas fa-user-cog"></i> Настройки профиля</h1>
+                    
+                    <form id="profile-form">
+                        <div class="form-group">
+                            <label for="name">Имя</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Телефон</label>
+                            <input type="tel" id="phone">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="country">Страна</label>
+                            <select id="country" required>
+                                <option value="ru">Россия</option>
+                                <option value="us">США</option>
+                                <option value="eu">Европа</option>
+                                <option value="other">Другая</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline" id="cancel-changes">Отмена</button>
+                            <button type="submit" class="btn btn-primary" id="save-changes">
+                                <i class="fas fa-save"></i> Сохранить изменения
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Вкладка безопасности -->
+                <div id="security-tab" class="tabs">
+                    <h1 class="profile-title"><i class="fas fa-shield-alt"></i> Безопасность</h1>
+                    
+                    <div class="form-group">
+                        <h3><i class="fas fa-key"></i> Смена пароля</h3>
+                        <button class="btn btn-outline" id="change-password-btn">
+                            <i class="fas fa-edit"></i> Изменить пароль
+                        </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <h3><i class="fas fa-laptop"></i> Активные сессии</h3>
+                        <table class="sessions-table">
+                            <thead>
+                                <tr>
+                                    <th>Устройство</th>
+                                    <th>Местоположение</th>
+                                    <th>Последняя активность</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="current-session">
+                                    <td><i class="fas fa-desktop"></i> Chrome, Windows</td>
+                                    <td>Москва, Россия (текущая)</td>
+                                    <td>Только что</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-mobile-alt"></i> Safari, iPhone</td>
+                                    <td>Санкт-Петербург, Россия</td>
+                                    <td>2 дня назад</td>
+                                    <td class="session-action" onclick="terminateSession(this)">Завершить</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-laptop"></i> Firefox, MacOS</td>
+                                    <td>Нью-Йорк, США</td>
+                                    <td>1 неделю назад</td>
+                                    <td class="session-action" onclick="terminateSession(this)">Завершить</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="form-group">
+                        <h3><i class="fas fa-mobile-alt"></i> Двухфакторная аутентификация</h3>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="flex: 1;">
+                                <p>Добавьте дополнительный уровень безопасности к вашему аккаунту</p>
+                            </div>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-cog"></i> Настроить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+              <!-- Вкладка проектов -->
+<div id="projects-tab" class="tabs">
+    <h1 class="profile-title"><i class="fas fa-folder"></i> Мои проекты</h1>
+    
+    <div class="projects-list">
+        <!-- Проекты будут загружаться динамически -->
+    </div>
+</div>
+
+    <!-- Модальное окно смены пароля -->
+<div class="modal" id="password-modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2><i class="fas fa-key"></i> Изменение пароля</h2>
+        <form id="password-form">
+            <div class="form-group">
+                <label for="current-password">Текущий пароль</label>
+                <input type="password" id="current-password" required>
+            </div>
+            <div class="form-group">
+                <label for="new-password">Новый пароль</label>
+                <input type="password" id="new-password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Подтвердите пароль</label>
+                <input type="password" id="confirm-password" required>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" id="cancel-password">Отмена</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Изменить пароль
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <!-- Модальное окно подтверждения удаления -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2><i class="fas fa-exclamation-triangle"></i> Удаление аккаунта</h2>
+            <p>Вы уверены, что хотите удалить свой аккаунт? Это действие невозможно отменить. Все ваши данные и проекты будут безвозвратно удалены.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" id="cancel-delete">Отмена</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete">
+                    <i class="fas fa-trash"></i> Удалить аккаунт
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно создания проекта -->
+<div class="modal" id="create-project-modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2><i class="fas fa-plus-circle"></i> Создание нового проекта</h2>
+        <form id="create-project-form">
+            <div class="form-group">
+                <label for="project-name">Название проекта</label>
+                <input type="text" id="project-name" required placeholder="Введите название проекта">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" id="cancel-create-project">Отмена</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Создать
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <script src="../profile/script.js"></script>
+</body>
+</html>                                
