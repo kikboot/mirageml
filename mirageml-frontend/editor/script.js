@@ -160,169 +160,239 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function createElement(type, x, y) {
-        const template = getElementTemplate(type);
-        const element = document.createElement(template.tag);
-        const id = `element-${Date.now()}`;
-        
-        element.className = 'canvas-element';
-        element.id = id;
-        element.draggable = false;
-        
-        const canvasRect = DOM.canvas.getBoundingClientRect();
-        x = x || canvasRect.width / 2 - 50;
-        y = y || canvasRect.height / 2 - 25;
-        
-        Object.assign(element.style, {
-            position: 'absolute',
-            left: `${x}px`,
-            top: `${y}px`,
-            zIndex: state.elements.length + 1
-        });
+ function createElement(type, x, y) {
+    const template = getElementTemplate(type);
+    const element = document.createElement(template.tag);
+    const id = `element-${Date.now()}`;
+    
+    element.className = 'canvas-element';
+    element.id = id;
+    element.draggable = false;
+    
+    const canvasRect = DOM.canvas.getBoundingClientRect();
+    x = x || canvasRect.width / 2 - 50;
+    y = y || canvasRect.height / 2 - 25;
+    
+    Object.assign(element.style, {
+        position: 'absolute',
+        left: `${x}px`,
+        top: `${y}px`,
+        zIndex: state.elements.length + 1,
+        // Добавляем явное указание фона для прозрачности
+        backgroundColor: type === 'line' || type === 'arrow' ? 'transparent' : ''
+    });
 
-        applyElementTemplate(element, type);
-        
-        DOM.canvas.appendChild(element);
-        
-        const elementData = {
-            id,
-            element,
-            type,
-            name: type,
-            x,
-            y,
-            width: parseInt(element.style.width) || 100,
-            height: parseInt(element.style.height) || 50
-        };
-        
-        state.elements.push(elementData);
-        addToLayersList(elementData);
-        setupElementEvents(element, elementData);
-        selectElement(elementData);
-        
-        return elementData;
+    // Особый случай для линии и стрелки - убираем любые текстовые узлы
+    if (type === 'line' || type === 'arrow') {
+        element.textContent = '';
     }
+    
+    applyElementTemplate(element, type);
+    
+    DOM.canvas.appendChild(element);
+    
+    const elementData = {
+        id,
+        element,
+        type,
+        name: type,
+        x,
+        y,
+        width: parseInt(element.style.width) || 100,
+        height: parseInt(element.style.height) || (type === 'line' ? 2 : 20)
+    };
+    
+    state.elements.push(elementData);
+    addToLayersList(elementData);
+    setupElementEvents(element, elementData);
+    selectElement(elementData);
+    
+    return elementData;
+}
 
-    function getElementTemplate(type) {
-        const templates = {
-            div: { tag: 'div' },
-            button: { tag: 'button' },
-            triangle: { tag: 'div' },
-            p: { tag: 'p' },
-            img: { tag: 'div' }
-        };
-        return templates[type];
-    }
+function getElementTemplate(type) {
+    const templates = {
+        div: { tag: 'div' },
+        button: { tag: 'button' },
+        p: { tag: 'p' },
+        img: { tag: 'div' },
+        line: { tag: 'div' },
+        arrow: { tag: 'div' },
+        ellipse: { tag: 'div' }
+    };
+    return templates[type];
+}
 
     function applyElementTemplate(element, type) {
-        const templates = {
-            div: {
-                text: 'Блок',
-                styles: {
-                    backgroundColor: '#f0f0f0',
-                    width: '100px',
-                    height: '100px'
-                }
-            },
-            button: {
-                text: 'Кнопка',
-                styles: {
-                    backgroundColor: '#4a6bff',
-                    color: 'white',
-                    padding: '8px 16px',
-                    borderRadius: '4px',
-                    border: 'none',
-                    cursor: 'pointer'
-                }
-            },
-            triangle: {
-                text: '',
-                styles: {
-                    width: '0',
-                    height: '0',
-                    borderLeft: '50px solid transparent',
-                    borderRight: '50px solid transparent',
-                    borderBottom: '100px solid #4a6bff',
-                    backgroundColor: 'transparent'
-                }
-            },
-            p: {
-                text: 'Текст абзаца',
-                styles: {
-                    margin: '0',
-                    padding: '5px'
-                }
-            },
-            img: {
-                text: '[Изображение]',
-                styles: {
-                    backgroundColor: '#e0e0e0',
-                    width: '150px',
-                    height: '150px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }
+    const templates = {
+        div: {
+            text: 'Блок',
+            styles: {
+                backgroundColor: '#f0f0f0',
+                width: '100px',
+                height: '100px',
+                cursor: 'move'
             }
-        };
-
-        const template = templates[type];
-        if (!template) return;
-
-        if (template.text !== undefined) {
-            element.textContent = template.text;
-        }
-
-        if (template.attributes) {
-            for (const [attr, value] of Object.entries(template.attributes)) {
-                element.setAttribute(attr, value);
+        },
+        button: {
+            text: 'Кнопка',
+            styles: {
+                backgroundColor: '#4a6bff',
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '4px',
+                border: 'none',
+                cursor: 'pointer',
+                width: 'auto',
+                height: 'auto'
+            }
+        },
+        p: {
+            text: 'Текст абзаца',
+            styles: {
+                margin: '0',
+                padding: '5px',
+                width: '200px',
+                cursor: 'text'
+            }
+        },
+        img: {
+            text: '[Изображение]',
+            styles: {
+                backgroundColor: '#e0e0e0',
+                width: '150px',
+                height: '150px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'move'
+            }
+        },
+        line: {
+            text: '',
+            styles: {
+                width: '100px',
+                height: '2px',
+                backgroundColor: '#000',
+                transform: 'rotate(0deg)',
+                transformOrigin: 'left center',
+                cursor: 'move',
+                // Убираем маркеры для линии
+                resize: 'none',
+                overflow: 'visible'
+            }
+        },
+        arrow: {
+            text: '',
+            styles: {
+                position: 'relative',
+                width: '100px',
+                height: '20px',
+                backgroundColor: 'transparent',
+                cursor: 'move'
+            },
+            markup: `
+                <div data-arrow-part="line" style="position:absolute; width:80%; height:2px; background:#000; top:50%; left:0; transform:translateY(-50%);"></div>
+                <div data-arrow-part="head" style="position:absolute; width:0; height:0; border-left:10px solid #000; border-top:5px solid transparent; border-bottom:5px solid transparent; right:0; top:50%; transform:translateY(-50%);"></div>
+            `
+        },
+        ellipse: {
+            text: '',
+            styles: {
+                width: '80px',
+                height: '80px',
+                borderRadius: '50%',
+                backgroundColor: '#4a6bff',
+                cursor: 'move'
             }
         }
+    };
 
-        if (template.styles) {
-            Object.assign(element.style, template.styles);
+    const template = templates[type];
+    if (!template) return;
+
+    // Применяем текст, если он указан
+    if (template.text !== undefined) {
+        element.textContent = template.text;
+    }
+
+    // Применяем атрибуты
+    if (template.attributes) {
+        for (const [attr, value] of Object.entries(template.attributes)) {
+            element.setAttribute(attr, value);
         }
     }
 
-    function setupElementEvents(element, elementData) {
-        element.addEventListener('dblclick', function(e) {
-            e.stopPropagation();
-            
-            if (elementData.type === 'triangle' || elementData.type === 'img') return;
-            
-            if (elementData.type === 'input') return;
-            
-            const text = prompt('Введите текст:', element.textContent);
-            if (text !== null) {
-                element.textContent = text;
-                updatePropertiesForm(elementData);
-            }
-        });
+    // Применяем стили
+    if (template.styles) {
+        Object.assign(element.style, template.styles);
+    }
+
+    // Особые случаи для сложных фигур
+    if (template.markup) {
+        element.innerHTML = template.markup;
+    }
+
+    // Для линии добавляем специальный класс
+    if (type === 'line') {
+        element.classList.add('line-element');
+    }
+}
+    
+
+function setupElementEvents(element, elementData) {
+    // Обработчик двойного клика (только для элементов с текстом)
+    element.addEventListener('dblclick', function(e) {
+        e.stopPropagation();
         
-        element.addEventListener('mousedown', function(e) {
-            e.stopPropagation();
-            selectElement(elementData);
-            
-            const handle = e.target.closest('.resize-handle');
-            if (handle) {
-                state.dragState.isResizing = true;
-                state.dragState.direction = handle.dataset.direction;
-            } else if (e.target === element) {
-                state.dragState.isDragging = true;
-            }
-            
-            state.dragState.startX = e.clientX;
-            state.dragState.startY = e.clientY;
-            state.dragState.startWidth = element.offsetWidth;
-            state.dragState.startHeight = element.offsetHeight;
-            state.dragState.startLeft = parseInt(element.style.left) || 0;
-            state.dragState.startTop = parseInt(element.style.top) || 0;
-            
-            bringToFront(element);
-        });
+        // Для этих типов элементов редактирование текста не предусмотрено
+        const nonTextElements = ['img', 'line', 'arrow', 'ellipse', 'input'];
+        if (nonTextElements.includes(elementData.type)) return;
         
+        const currentText = elementData.type === 'button' ? 
+            (element.textContent || 'Кнопка') : 
+            (element.textContent || 'Текст');
+            
+        const text = prompt('Введите текст:', currentText);
+        if (text !== null) {
+            element.textContent = text;
+            updatePropertiesForm(elementData);
+        }
+    });
+    
+    // Обработчик клика для выделения элемента
+    element.addEventListener('mousedown', function(e) {
+        e.stopPropagation();
+        selectElement(elementData);
+        
+        // Проверяем, кликнули ли на маркер изменения размера
+        const handle = e.target.closest('.resize-handle');
+        if (handle) {
+            state.dragState.isResizing = true;
+            state.dragState.direction = handle.dataset.direction;
+        } 
+        // Для линий и стрелок проверяем, что клик был на самом элементе
+        else if (e.target === element || 
+                (elementData.type === 'arrow' && e.target.closest('[data-arrow-part]'))) {
+            state.dragState.isDragging = true;
+        }
+        
+        // Сохраняем начальные параметры
+        state.dragState.startX = e.clientX;
+        state.dragState.startY = e.clientY;
+        state.dragState.startWidth = element.offsetWidth;
+        state.dragState.startHeight = element.offsetHeight;
+        state.dragState.startLeft = parseInt(element.style.left) || 0;
+        state.dragState.startTop = parseInt(element.style.top) || 0;
+        
+        bringToFront(element);
+    });
+    
+    // Создаем маркеры изменения размера (кроме линий)
+    if (elementData.type !== 'line') {
         createResizeHandles(element);
     }
+}
 
     function createResizeHandles(element) {
         element.querySelectorAll('.resize-handle').forEach(handle => handle.remove());
@@ -653,16 +723,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function getIconForType(type) {
-        const icons = {
-            'div': 'square',
-            'button': 'square',
-            'triangle': 'play',
-            'p': 'paragraph',
-            'img': 'image'
-        };
-        return icons[type] || 'square';
-    }
+function getIconForType(type) {
+    const icons = {
+        'div': 'square',
+        'button': 'square',
+        'p': 'paragraph',
+        'img': 'image',
+        'line': 'minus',
+        'arrow': 'arrow-right',
+        'ellipse': 'circle'
+    };
+    return icons[type] || 'square';
+}
 
     function bringToFront(element) {
         let maxZIndex = 0;
@@ -876,7 +948,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const url = URL.createObjectURL(content);
             
             a.href = url;
-            a.download = "sketch2html-project.zip";
+            a.download = "mirageML-project.zip";
             document.body.appendChild(a);
             a.click();
             
