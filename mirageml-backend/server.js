@@ -239,6 +239,71 @@ app.post('/api/logout', (req, res) => {
     res.json({ success: true, message: 'Вы успешно вышли из системы' });
 });
 
+// Добавьте этот путь к вашим файлам данных
+const REVIEWS_FILE = path.join(__dirname, 'data', 'reviews.json');
+
+// Инициализация файла отзывов
+if (!fs.existsSync(REVIEWS_FILE)) {
+    fs.writeFileSync(REVIEWS_FILE, '[]');
+}
+
+// Функции для работы с отзывами
+function getReviews() {
+    return JSON.parse(fs.readFileSync(REVIEWS_FILE));
+}
+
+function saveReviews(reviews) {
+    fs.writeFileSync(REVIEWS_FILE, JSON.stringify(reviews, null, 2));
+}
+
+// API маршруты для отзывов
+app.get('/api/reviews', (req, res) => {
+    try {
+        const reviews = getReviews();
+        res.json(reviews);
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка загрузки отзывов' });
+    }
+});
+
+app.post('/api/reviews', (req, res) => {
+    try {
+        const { name, email, rating, comment } = req.body;
+        
+        if (!name || !comment || !rating) {
+            return res.status(400).json({ error: 'Заполните все обязательные поля' });
+        }
+        
+        const reviews = getReviews();
+        
+        const newReview = {
+            id: Date.now().toString(),
+            name,
+            email: email || 'anonymous@example.com',
+            rating: parseInt(rating),
+            comment,
+            date: new Date().toISOString(),
+            approved: false // Модерация отзывов
+        };
+
+        reviews.unshift(newReview); // Добавляем в начало
+        saveReviews(reviews);
+
+        res.json({ 
+            success: true,
+            message: 'Спасибо за ваш отзыв! Он будет опубликован после модерации.',
+            review: newReview
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка при отправке отзыва' });
+    }
+});
+
+// Маршрут для страницы отзывов
+app.get('/reviews', (req, res) => {
+    res.sendFile(path.join(__dirname, '../mirageml-frontend/reviews/index.html'));
+});
+
 // Обработка 404
 app.use((req, res) => {
     res.status(404).send('Страница не найдена');
