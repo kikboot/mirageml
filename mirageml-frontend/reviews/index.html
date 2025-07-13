@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../reviews/style.css">
+    <link type="image/x-icon" href="../logo/logo3.svg" rel="shortcut icon">
     </head>
 <body>
     <header>
@@ -77,23 +78,62 @@
         </div>
     </main>
 
+    <!-- Подвал -->
     <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="logo">
-                    </i> MirageML
-                </div>
-                <p>Визуальный редактор для быстрого создания веб-страниц</p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-vk"></i></a>
-                    <a href="#"><i class="fab fa-telegram"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
-                    <a href="#"><i class="fab fa-github"></i></a>
-                </div>
-                <p>&copy; 2025 MirageML. Все права защищены.</p>
+    <div class="container">
+        <div class="footer-grid">
+            <!-- Колонка 1: О проекте -->
+            <div class="footer-col">
+                <h3><i class="fas fa-pencil-ruler"></i> MirageML</h3>
+                <p>Визуальный редактор для быстрого создания веб-страниц без написания кода</p>
+            </div>
+
+            <!-- Колонка 2: Навигация -->
+            <div class="footer-col">
+                <h3>Навигация</h3>
+                <ul>
+                    <li><a href="/features">Возможности</a></li>
+                    <li><a href="/templates">Шаблоны</a></li>
+                    <li><a href="/pricing">Тарифы</a></li>
+                    <li><a href="/blog">Блог</a></li>
+                </ul>
+            </div>
+
+            <!-- Колонка 3: Контакты -->
+            <div class="footer-col">
+                <h3>Контакты</h3>
+                <ul class="contact-list">
+                    <li><i class="fas fa-envelope"></i> support@mirage-ml.com</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Россия, Москва</li>
+                </ul>
+            </div>
+
+            <!-- Колонка 4: Подписка -->
+            <div class="footer-col">
+                <h3>Новостная рассылка</h3>
+                <p>Подпишитесь, чтобы получать обновления</p>
+                <form class="subscribe-form">
+                    <input type="email" placeholder="Ваш email" required>
+                    <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                </form>
             </div>
         </div>
-    </footer>
+
+        <div class="footer-bottom">
+            <div class="social-links">
+                <a href="#" aria-label="VKontakte"><i class="fab fa-vk"></i></a>
+                <a href="#" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+                <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            </div>
+            <div class="legal-links">
+                <a href="../confidentiality/index.html">Политика конфиденциальности</a>
+                <a href="../conditions/index.html">Условия использования</a>
+            </div>
+            <p class="copyright">&copy; 2025 MirageML. Все права защищены.<br>Сделано с <i class="fas fa-heart" style="color: #ff4757;"></i> в России</p>
+        </div>
+    </div>
+</footer>
 
     <script src="../reviews/script.js"></script>
     </body>

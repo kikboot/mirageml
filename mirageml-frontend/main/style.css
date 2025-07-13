@@ -44,7 +44,7 @@ header {
 
 .logo i {
     margin-right: 10px;
-    color: #3498db;
+    color: #4a6bff;
 }
 
 .auth-buttons {
@@ -78,14 +78,14 @@ header {
 }
 
 .btn-primary:hover {
-    background-color: #3a5bef;
+    background-color: #4a6bff;
 }
 
 /* Герой секция */
 .hero {
     padding: 100px 0;
     text-align: center;
-    background: linear-gradient(135deg, #3498db, #2c3e50);
+    background: linear-gradient(135deg, #4a6bff, #08196b);
     color: white;
 }
 
@@ -202,7 +202,7 @@ header {
 
 .feature-icon {
     font-size: 40px;
-    color: #3498db;
+    color: #4a6bff;
     margin-bottom: 20px;
 }
 
@@ -369,7 +369,7 @@ header {
 }
 
 .switch-form a {
-    color: #3498db;
+    color: #4a6bff;
     cursor: pointer;
     text-decoration: none;
 }
@@ -470,7 +470,7 @@ footer {
 }
 
 .subscribe-form button:hover {
-    background: #3a5bef;
+    background: #4a6bff;
 }
 
 .footer-bottom {
