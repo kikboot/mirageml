@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отзывы о MirageML</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../reviews/style.css">
+    </head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="header-actions">
+                    <div class="logo">MirageML</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="reviews-header">
+                <h1>Отзывы о MirageML</h1>
+                <p>Читайте, что говорят наши пользователи, и поделитесь своим опытом использования нашего визуального редактора</p>
+            </div>
+            
+            <div class="review-form">
+                <h2>Оставить отзыв</h2>
+                <form id="reviewForm">
+                    <div class="form-group">
+                        <label for="name">Ваше имя*</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Ваш email (необязательно)</label>
+                        <input type="email" id="email" name="email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Ваша оценка*</label>
+                        <div class="rating-stars">
+                            <input type="radio" id="star5" name="rating" value="5" required>
+                            <label for="star5"><i class="fas fa-star"></i></label>
+                            
+                            <input type="radio" id="star4" name="rating" value="4">
+                            <label for="star4"><i class="fas fa-star"></i></label>
+                            
+                            <input type="radio" id="star3" name="rating" value="3">
+                            <label for="star3"><i class="fas fa-star"></i></label>
+                            
+                            <input type="radio" id="star2" name="rating" value="2">
+                            <label for="star2"><i class="fas fa-star"></i></label>
+                            
+                            <input type="radio" id="star1" name="rating" value="1">
+                            <label for="star1"><i class="fas fa-star"></i></label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comment">Ваш отзыв*</label>
+                        <textarea id="comment" name="comment" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Отправить отзыв</button>
+                </form>
+            </div>
+            
+            <div class="reviews-list" id="reviewsList">
+                <!-- Отзывы будут загружены здесь -->
+                <div class="no-reviews">
+                    <p>Пока нет отзывов. Будьте первым!</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    </i> MirageML
+                </div>
+                <p>Визуальный редактор для быстрого создания веб-страниц</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-vk"></i></a>
+                    <a href="#"><i class="fab fa-telegram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                </div>
+                <p>&copy; 2025 MirageML. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../reviews/script.js"></script>
+    </body>
+</html>
