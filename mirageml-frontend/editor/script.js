@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fontSize: document.getElementById('element-font-size'),
             padding: document.getElementById('element-padding'),
             border: document.getElementById('element-border'),
+            href: document.getElementById('element-href'),
             imageUpload: document.getElementById('image-upload-input'),
             imagePreview: document.getElementById('image-preview'),
             imageWidth: document.getElementById('image-width'),
@@ -74,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setupElementTemplates();
         setupHelpSystem();
         setupImageUpload();
-        console.log('Sketch2HTML initialized');
+        console.log('MirageML Editor initialized');
     }
 
     function setupImageUpload() {
@@ -160,239 +161,227 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
- function createElement(type, x, y) {
-    const template = getElementTemplate(type);
-    const element = document.createElement(template.tag);
-    const id = `element-${Date.now()}`;
-    
-    element.className = 'canvas-element';
-    element.id = id;
-    element.draggable = false;
-    
-    const canvasRect = DOM.canvas.getBoundingClientRect();
-    x = x || canvasRect.width / 2 - 50;
-    y = y || canvasRect.height / 2 - 25;
-    
-    Object.assign(element.style, {
-        position: 'absolute',
-        left: `${x}px`,
-        top: `${y}px`,
-        zIndex: state.elements.length + 1,
-        // Добавляем явное указание фона для прозрачности
-        backgroundColor: type === 'line' || type === 'arrow' ? 'transparent' : ''
-    });
-
-    // Особый случай для линии и стрелки - убираем любые текстовые узлы
-    if (type === 'line' || type === 'arrow') {
-        element.textContent = '';
-    }
-    
-    applyElementTemplate(element, type);
-    
-    DOM.canvas.appendChild(element);
-    
-    const elementData = {
-        id,
-        element,
-        type,
-        name: type,
-        x,
-        y,
-        width: parseInt(element.style.width) || 100,
-        height: parseInt(element.style.height) || (type === 'line' ? 2 : 20)
-    };
-    
-    state.elements.push(elementData);
-    addToLayersList(elementData);
-    setupElementEvents(element, elementData);
-    selectElement(elementData);
-    
-    return elementData;
-}
-
-function getElementTemplate(type) {
-    const templates = {
-        div: { tag: 'div' },
-        button: { tag: 'button' },
-        p: { tag: 'p' },
-        img: { tag: 'div' },
-        line: { tag: 'div' },
-        arrow: { tag: 'div' },
-        ellipse: { tag: 'div' }
-    };
-    return templates[type];
-}
-
-    function applyElementTemplate(element, type) {
-    const templates = {
-        div: {
-            text: 'Блок',
-            styles: {
-                backgroundColor: '#f0f0f0',
-                width: '100px',
-                height: '100px',
-                cursor: 'move'
-            }
-        },
-        button: {
-            text: 'Кнопка',
-            styles: {
-                backgroundColor: '#4a6bff',
-                color: 'white',
-                padding: '8px 16px',
-                borderRadius: '4px',
-                border: 'none',
-                cursor: 'pointer',
-                width: 'auto',
-                height: 'auto'
-            }
-        },
-        p: {
-            text: 'Текст абзаца',
-            styles: {
-                margin: '0',
-                padding: '5px',
-                width: '200px',
-                cursor: 'text'
-            }
-        },
-        img: {
-            text: '[Изображение]',
-            styles: {
-                backgroundColor: '#e0e0e0',
-                width: '150px',
-                height: '150px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'move'
-            }
-        },
-        line: {
-            text: '',
-            styles: {
-                width: '100px',
-                height: '2px',
-                backgroundColor: '#000',
-                transform: 'rotate(0deg)',
-                transformOrigin: 'left center',
-                cursor: 'move',
-                // Убираем маркеры для линии
-                resize: 'none',
-                overflow: 'visible'
-            }
-        },
-        arrow: {
-            text: '',
-            styles: {
-                position: 'relative',
-                width: '100px',
-                height: '20px',
-                backgroundColor: 'transparent',
-                cursor: 'move'
-            },
-            markup: `
-                <div data-arrow-part="line" style="position:absolute; width:80%; height:2px; background:#000; top:50%; left:0; transform:translateY(-50%);"></div>
-                <div data-arrow-part="head" style="position:absolute; width:0; height:0; border-left:10px solid #000; border-top:5px solid transparent; border-bottom:5px solid transparent; right:0; top:50%; transform:translateY(-50%);"></div>
-            `
-        },
-        ellipse: {
-            text: '',
-            styles: {
-                width: '80px',
-                height: '80px',
-                borderRadius: '50%',
-                backgroundColor: '#4a6bff',
-                cursor: 'move'
-            }
-        }
-    };
-
-    const template = templates[type];
-    if (!template) return;
-
-    // Применяем текст, если он указан
-    if (template.text !== undefined) {
-        element.textContent = template.text;
-    }
-
-    // Применяем атрибуты
-    if (template.attributes) {
-        for (const [attr, value] of Object.entries(template.attributes)) {
-            element.setAttribute(attr, value);
-        }
-    }
-
-    // Применяем стили
-    if (template.styles) {
-        Object.assign(element.style, template.styles);
-    }
-
-    // Особые случаи для сложных фигур
-    if (template.markup) {
-        element.innerHTML = template.markup;
-    }
-
-    // Для линии добавляем специальный класс
-    if (type === 'line') {
-        element.classList.add('line-element');
-    }
-}
-    
-
-function setupElementEvents(element, elementData) {
-    // Обработчик двойного клика (только для элементов с текстом)
-    element.addEventListener('dblclick', function(e) {
-        e.stopPropagation();
+    function createElement(type, x, y) {
+        const template = getElementTemplate(type);
+        const element = document.createElement(template.tag);
+        const id = `element-${Date.now()}`;
         
-        // Для этих типов элементов редактирование текста не предусмотрено
-        const nonTextElements = ['img', 'line', 'arrow', 'ellipse', 'input'];
-        if (nonTextElements.includes(elementData.type)) return;
+        element.className = 'canvas-element';
+        element.id = id;
+        element.draggable = false;
         
-        const currentText = elementData.type === 'button' ? 
-            (element.textContent || 'Кнопка') : 
-            (element.textContent || 'Текст');
-            
-        const text = prompt('Введите текст:', currentText);
-        if (text !== null) {
-            element.textContent = text;
-            updatePropertiesForm(elementData);
+        const canvasRect = DOM.canvas.getBoundingClientRect();
+        x = x || canvasRect.width / 2 - 50;
+        y = y || canvasRect.height / 2 - 25;
+        
+        Object.assign(element.style, {
+            position: 'absolute',
+            left: `${x}px`,
+            top: `${y}px`,
+            zIndex: state.elements.length + 1,
+            backgroundColor: type === 'line' || type === 'arrow' ? 'transparent' : ''
+        });
+
+        if (type === 'line' || type === 'arrow') {
+            element.textContent = '';
         }
-    });
-    
-    // Обработчик клика для выделения элемента
-    element.addEventListener('mousedown', function(e) {
-        e.stopPropagation();
+        
+        applyElementTemplate(element, type);
+        
+        DOM.canvas.appendChild(element);
+        
+        const elementData = {
+            id,
+            element,
+            type,
+            name: type,
+            x,
+            y,
+            width: parseInt(element.style.width) || 100,
+            height: parseInt(element.style.height) || (type === 'line' ? 2 : 20),
+            href: type === 'button' ? '#' : null
+        };
+        
+        state.elements.push(elementData);
+        addToLayersList(elementData);
+        setupElementEvents(element, elementData);
         selectElement(elementData);
         
-        // Проверяем, кликнули ли на маркер изменения размера
-        const handle = e.target.closest('.resize-handle');
-        if (handle) {
-            state.dragState.isResizing = true;
-            state.dragState.direction = handle.dataset.direction;
-        } 
-        // Для линий и стрелок проверяем, что клик был на самом элементе
-        else if (e.target === element || 
-                (elementData.type === 'arrow' && e.target.closest('[data-arrow-part]'))) {
-            state.dragState.isDragging = true;
-        }
-        
-        // Сохраняем начальные параметры
-        state.dragState.startX = e.clientX;
-        state.dragState.startY = e.clientY;
-        state.dragState.startWidth = element.offsetWidth;
-        state.dragState.startHeight = element.offsetHeight;
-        state.dragState.startLeft = parseInt(element.style.left) || 0;
-        state.dragState.startTop = parseInt(element.style.top) || 0;
-        
-        bringToFront(element);
-    });
-    
-    // Создаем маркеры изменения размера (кроме линий)
-    if (elementData.type !== 'line') {
-        createResizeHandles(element);
+        return elementData;
     }
-}
+
+    function getElementTemplate(type) {
+        const templates = {
+            div: { tag: 'div' },
+            button: { tag: 'button' },
+            p: { tag: 'p' },
+            img: { tag: 'div' },
+            line: { tag: 'div' },
+            arrow: { tag: 'div' },
+            ellipse: { tag: 'div' }
+        };
+        return templates[type];
+    }
+
+    function applyElementTemplate(element, type) {
+        const templates = {
+            div: {
+                text: 'Блок',
+                styles: {
+                    backgroundColor: '#f0f0f0',
+                    width: '100px',
+                    height: '100px',
+                    cursor: 'move'
+                }
+            },
+            button: {
+                text: 'Кнопка',
+                styles: {
+                    backgroundColor: '#4a6bff',
+                    color: 'white',
+                    padding: '8px 16px',
+                    borderRadius: '4px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    width: 'auto',
+                    height: 'auto'
+                },
+                attributes: {
+                    'data-href': '#'
+                }
+            },
+            p: {
+                text: 'Текст абзаца',
+                styles: {
+                    margin: '0',
+                    padding: '5px',
+                    width: '200px',
+                    cursor: 'text'
+                }
+            },
+            img: {
+                text: '[Изображение]',
+                styles: {
+                    backgroundColor: '#e0e0e0',
+                    width: '150px',
+                    height: '150px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'move'
+                }
+            },
+            line: {
+                text: '',
+                styles: {
+                    width: '100px',
+                    height: '2px',
+                    backgroundColor: '#000',
+                    transform: 'rotate(0deg)',
+                    transformOrigin: 'left center',
+                    cursor: 'move',
+                    resize: 'none',
+                    overflow: 'visible'
+                }
+            },
+            arrow: {
+                text: '',
+                styles: {
+                    position: 'relative',
+                    width: '100px',
+                    height: '20px',
+                    backgroundColor: 'transparent',
+                    cursor: 'move'
+                },
+                markup: `
+                    <div data-arrow-part="line" style="position:absolute; width:80%; height:2px; background:#000; top:50%; left:0; transform:translateY(-50%);"></div>
+                    <div data-arrow-part="head" style="position:absolute; width:0; height:0; border-left:10px solid #000; border-top:5px solid transparent; border-bottom:5px solid transparent; right:0; top:50%; transform:translateY(-50%);"></div>
+                `
+            },
+            ellipse: {
+                text: '',
+                styles: {
+                    width: '80px',
+                    height: '80px',
+                    borderRadius: '50%',
+                    backgroundColor: '#4a6bff',
+                    cursor: 'move'
+                }
+            }
+        };
+
+        const template = templates[type];
+        if (!template) return;
+
+        if (template.text !== undefined) {
+            element.textContent = template.text;
+        }
+
+        if (template.attributes) {
+            for (const [attr, value] of Object.entries(template.attributes)) {
+                element.setAttribute(attr, value);
+            }
+        }
+
+        if (template.styles) {
+            Object.assign(element.style, template.styles);
+        }
+
+        if (template.markup) {
+            element.innerHTML = template.markup;
+        }
+
+        if (type === 'line') {
+            element.classList.add('line-element');
+        }
+    }
+
+    function setupElementEvents(element, elementData) {
+        element.addEventListener('dblclick', function(e) {
+            e.stopPropagation();
+            
+            const nonTextElements = ['img', 'line', 'arrow', 'ellipse', 'input'];
+            if (nonTextElements.includes(elementData.type)) return;
+            
+            const currentText = elementData.type === 'button' ? 
+                (element.textContent || 'Кнопка') : 
+                (element.textContent || 'Текст');
+                
+            const text = prompt('Введите текст:', currentText);
+            if (text !== null) {
+                element.textContent = text;
+                updatePropertiesForm(elementData);
+            }
+        });
+        
+        element.addEventListener('mousedown', function(e) {
+            e.stopPropagation();
+            
+            bringToFront(element);
+            selectElement(elementData);
+            
+            const handle = e.target.closest('.resize-handle');
+            if (handle) {
+                state.dragState.isResizing = true;
+                state.dragState.direction = handle.dataset.direction;
+            } 
+            else if (e.target === element || 
+                    (elementData.type === 'arrow' && e.target.closest('[data-arrow-part]'))) {
+                state.dragState.isDragging = true;
+            }
+            
+            state.dragState.startX = e.clientX;
+            state.dragState.startY = e.clientY;
+            state.dragState.startWidth = element.offsetWidth;
+            state.dragState.startHeight = element.offsetHeight;
+            state.dragState.startLeft = parseInt(element.style.left) || 0;
+            state.dragState.startTop = parseInt(element.style.top) || 0;
+        });
+        
+        if (elementData.type !== 'line') {
+            createResizeHandles(element);
+        }
+    }
 
     function createResizeHandles(element) {
         element.querySelectorAll('.resize-handle').forEach(handle => handle.remove());
@@ -573,14 +562,11 @@ function setupElementEvents(element, elementData) {
         });
     }
 
-    // Работа с выделенным элементом
     function selectElement(elementData) {
         document.querySelectorAll('.canvas-element').forEach(el => {
             el.classList.remove('selected');
-            el.style.zIndex = parseInt(el.style.zIndex || '0');
         });
         
-        elementData.element.style.zIndex = 1000;
         elementData.element.classList.add('selected');
         state.selectedElement = elementData;
         
@@ -626,16 +612,25 @@ function setupElementEvents(element, elementData) {
         DOM.inputs.width.value = element.style.width || '';
         DOM.inputs.height.value = element.style.height || '';
         DOM.inputs.bgColor.value = rgbToHex(element.style.backgroundColor) || '#ffffff';
-        
         DOM.inputs.textColor.value = rgbToHex(element.style.color) || '#000000';
         DOM.inputs.fontSize.value = element.style.fontSize || '';
         DOM.inputs.padding.value = element.style.padding || '';
         DOM.inputs.border.value = element.style.border || '';
+        
+        const hrefGroup = document.getElementById('href-group');
+        if (hrefGroup) {
+            if (elementData.type === 'button') {
+                hrefGroup.style.display = 'block';
+                DOM.inputs.href.value = element.getAttribute('data-href') || '#';
+            } else {
+                hrefGroup.style.display = 'none';
+            }
+        }
     }
 
     function clearPropertiesForm() {
         Object.values(DOM.inputs).forEach(input => {
-            if (input) input.value = '';
+            if (input && input.id !== 'element-href') input.value = '';
         });
     }
 
@@ -647,6 +642,12 @@ function setupElementEvents(element, elementData) {
         
         element.id = DOM.inputs.id.value || element.id;
         element.className = 'canvas-element ' + (DOM.inputs.classes.value || '');
+        
+        if (elementData.type === 'button') {
+            const href = DOM.inputs.href.value || '#';
+            element.setAttribute('data-href', href);
+            elementData.href = href;
+        }
     }
 
     function deleteSelectedElement() {
@@ -675,8 +676,9 @@ function setupElementEvents(element, elementData) {
             <input type="text" class="layer-rename" value="${elementData.name || elementData.type}" style="display:none;">
         `;
         
-        layerItem.addEventListener('click', (e) => {
+        layerItem.addEventListener('mousedown', (e) => {
             if (!e.target.classList.contains('layer-rename')) {
+                bringToFront(elementData.element);
                 selectElement(elementData);
             }
         });
@@ -700,6 +702,19 @@ function setupElementEvents(element, elementData) {
             }
         });
         
+        layerItem.draggable = true;
+        
+        layerItem.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', elementData.id);
+            e.dataTransfer.effectAllowed = 'move';
+            layerItem.classList.add('dragging');
+        });
+        
+        layerItem.addEventListener('dragend', () => {
+            layerItem.classList.remove('dragging');
+            updateLayersOrder();
+        });
+        
         DOM.layersList.appendChild(layerItem);
     }
 
@@ -710,31 +725,29 @@ function setupElementEvents(element, elementData) {
         elementData.name = layerRename.value;
     }
 
-    function updateLayersList() {
-        if (!state.selectedElement) return;
-        
-        const layerItem = document.querySelector(`.layer-item[data-id="${state.selectedElement.id}"]`);
-        if (layerItem) {
-            const nameSpan = layerItem.querySelector('.layer-name');
-            const renameInput = layerItem.querySelector('.layer-rename');
-            
-            nameSpan.textContent = state.selectedElement.name || state.selectedElement.type;
-            renameInput.value = state.selectedElement.name || state.selectedElement.type;
-        }
+    function updateLayersOrder() {
+        const layers = Array.from(DOM.layersList.children);
+        layers.forEach((layer, index) => {
+            const elementId = layer.dataset.id;
+            const element = state.elements.find(el => el.id === elementId);
+            if (element) {
+                element.element.style.zIndex = layers.length - index;
+            }
+        });
     }
 
-function getIconForType(type) {
-    const icons = {
-        'div': 'square',
-        'button': 'square',
-        'p': 'paragraph',
-        'img': 'image',
-        'line': 'minus',
-        'arrow': 'arrow-right',
-        'ellipse': 'circle'
-    };
-    return icons[type] || 'square';
-}
+    function getIconForType(type) {
+        const icons = {
+            'div': 'square',
+            'button': 'square',
+            'p': 'paragraph',
+            'img': 'image',
+            'line': 'minus',
+            'arrow': 'arrow-right',
+            'ellipse': 'circle'
+        };
+        return icons[type] || 'square';
+    }
 
     function bringToFront(element) {
         let maxZIndex = 0;
@@ -746,9 +759,10 @@ function getIconForType(type) {
         });
         
         element.style.zIndex = maxZIndex + 1;
+        DOM.canvas.appendChild(element);
+        updateLayersOrder();
     }
 
-    // Экспорт и предпросмотр
     function showExportModal() {
         DOM.modals.export.style.display = 'flex';
         DOM.modals.export.style.zIndex = '10000';
@@ -772,29 +786,30 @@ function getIconForType(type) {
         
         state.elements.forEach(el => {
             const element = el.element;
-            const tag = el.type === 'img' || el.type === 'triangle' ? 'div' : el.type;
+            const tag = el.type === 'img' ? 'div' : el.type;
             
-            htmlCode += `        <${tag} id="${element.id}" class="${element.className.replace('canvas-element', '').trim()}">`;
+            htmlCode += `        <${tag} id="${element.id}" class="${element.className.replace('canvas-element', '').trim()}"`;
             
-            if (el.type !== 'img' && el.type !== 'triangle') {
+            if (el.type === 'button' && el.href) {
+                htmlCode += ` onclick="window.location.href='${el.href}'"`;
+            }
+            
+            htmlCode += `>`;
+            
+            if (el.type !== 'img') {
                 htmlCode += element.textContent;
             }
             
             htmlCode += `</${tag}>\n`;
         });
         
-        htmlCode += `        <footer class="footer">\n`;
-        htmlCode += `            <p>Создано с помощью Sketch2HTML</p>\n`;
-        htmlCode += `            <p>© ${new Date().getFullYear()}</p>\n`;
-        htmlCode += `        </footer>\n`;
         htmlCode += `    </div>\n</body>\n</html>`;
         
         DOM.outputs.html.value = htmlCode;
         
         let cssCode = `/* Основные стили */\n`;
         cssCode += `body {\n    margin: 0;\n    padding: 0;\n    font-family: Arial, sans-serif;\n}\n\n`;
-        cssCode += `.container {\n    position: relative;\n    width: 100%;\n    min-height: 100vh;\n    padding-bottom: 60px;\n}\n\n`;
-        cssCode += `.footer {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    height: 50px;\n    background-color: #f5f5f5;\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 0 20px;\n    box-sizing: border-box;\n}\n\n`;
+        cssCode += `.container {\n    position: relative;\n    width: 100%;\n    min-height: 100vh;\n}\n\n`;
         
         state.elements.forEach(el => {
             const element = el.element;
@@ -824,18 +839,31 @@ function getIconForType(type) {
         let previewHtml = `<!DOCTYPE html><html><head><style>`;
         
         previewHtml += `body { margin: 0; padding: 0; font-family: Arial, sans-serif; }`;
-        previewHtml += `.container { position: relative; width: 100%; min-height: 100vh; padding-bottom: 60px; }`;
-        previewHtml += `.footer { position: absolute; bottom: 0; left: 0; right: 0; height: 50px; background-color: #f5f5f5; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; box-sizing: border-box; }`;
+        previewHtml += `.container { 
+            position: relative; 
+            width: 100%; 
+            min-height: 100vh; 
+            background-color: white;
+        }`;
         
         state.elements.forEach(el => {
             const element = el.element;
-            previewHtml += `#${element.id} { ${getElementStyles(element)} `;
+            previewHtml += `#${element.id} { 
+                ${getElementStyles(element)} 
+                ${element.style.cssText || ''}
+            `;
             
             if (el.type === 'img' && el.imageUrl) {
                 previewHtml += `background-image: url(${el.imageUrl}); `;
                 previewHtml += `background-size: contain; `;
                 previewHtml += `background-repeat: no-repeat; `;
                 previewHtml += `background-position: center; `;
+            }
+            
+            if (el.type === 'p' || el.type === 'button') {
+                previewHtml += `display: block; `;
+                previewHtml += `white-space: pre-wrap; `;
+                previewHtml += `overflow: visible; `;
             }
             
             previewHtml += `}`;
@@ -845,21 +873,35 @@ function getIconForType(type) {
         
         state.elements.forEach(el => {
             const element = el.element;
-            const tag = el.type === 'img' || el.type === 'triangle' ? 'div' : el.type;
+            const tag = el.type === 'img' ? 'div' : el.type;
             
-            previewHtml += `<${tag} id="${element.id}" class="${element.className.replace('canvas-element', '').trim()}">`;
+            previewHtml += `<${tag} id="${element.id}" class="${element.className.replace('canvas-element', '').trim()}"`;
             
-            if (el.type !== 'img' && el.type !== 'triangle') {
-                previewHtml += element.textContent;
+            if (el.type === 'button' && el.href) {
+                previewHtml += ` onclick="window.location.href='${el.href}'"`;
+            }
+            
+            previewHtml += `>`;
+            
+            if (el.type !== 'img') {
+                previewHtml += escapeHtml(element.textContent);
             }
             
             previewHtml += `</${tag}>`;
         });
         
-        previewHtml += `<footer class="footer"><p>Создано с помощью Sketch2HTML</p><p>© ${new Date().getFullYear()}</p></footer>`;
         previewHtml += `</div></body></html>`;
         
         DOM.previewFrame.srcdoc = previewHtml;
+    }
+
+    function escapeHtml(unsafe) {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
     function getElementStyles(element) {
@@ -867,24 +909,31 @@ function getIconForType(type) {
         const ignoreProps = [
             'position', 'left', 'top', 'width', 'height', 'margin', 
             'margin-top', 'margin-left', 'margin-right', 'margin-bottom',
-            'z-index', 'cursor', 'user-select', 'pointer-events'
+            'z-index', 'cursor', 'user-select', 'pointer-events',
+            'transform', 'transform-origin'
         ];
         
         let styleStr = '';
         
-        styleStr += `position: absolute; `;
-        styleStr += `left: ${element.style.left || '0'}; `;
-        styleStr += `top: ${element.style.top || '0'}; `;
-        styleStr += `width: ${element.style.width || 'auto'}; `;
-        styleStr += `height: ${element.style.height || 'auto'}; `;
+        styleStr += `position: absolute !important; `;
+        styleStr += `left: ${element.style.left || '0'} !important; `;
+        styleStr += `top: ${element.style.top || '0'} !important; `;
+        styleStr += `width: ${element.style.width || 'auto'} !important; `;
+        styleStr += `height: ${element.style.height || 'auto'} !important; `;
+        
+        styleStr += `opacity: 1 !important; `;
+        styleStr += `visibility: visible !important; `;
+        styleStr += `display: block !important; `;
         
         for (let i = 0; i < style.length; i++) {
             const prop = style[i];
             
-            if (!ignoreProps.includes(prop) && !prop.startsWith('-webkit')) {
+            if (!ignoreProps.includes(prop) && 
+                !prop.startsWith('-webkit') && 
+                !prop.startsWith('moz')) {
                 const value = style.getPropertyValue(prop);
                 if (value && !value.includes('canvas-element')) {
-                    styleStr += `${prop}: ${value}; `;
+                    styleStr += `${prop}: ${value} !important; `;
                 }
             }
         }
@@ -957,6 +1006,37 @@ function getIconForType(type) {
                 URL.revokeObjectURL(url);
             }, 0);
         });
+    }
+
+    // Добавляем обработчики для перетаскивания слоев
+    DOM.layersList.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        
+        const draggingItem = document.querySelector('.layer-item.dragging');
+        if (!draggingItem) return;
+        
+        const afterElement = getDragAfterElement(DOM.layersList, e.clientY);
+        if (afterElement) {
+            DOM.layersList.insertBefore(draggingItem, afterElement);
+        } else {
+            DOM.layersList.appendChild(draggingItem);
+        }
+    });
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.layer-item:not(.dragging)')];
+        
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
     init();
