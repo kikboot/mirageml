@@ -1,6 +1,8 @@
 :root {
     --primary-color: #4a6bff;
-    --primary-hover: #3a5bef;
+    --primary-hover: #4a6bff;
+    --profile-color: #3340b9;
+    --profile-hover: #1e2991;
     --danger-color: #ff4a4a;
     --danger-hover: #ef3a3a;
     --text-color: #333;
@@ -68,6 +70,15 @@ body {
 
 .btn:hover {
     opacity: 0.9;
+}
+
+.btn.profile-btn {
+    background-color: var(--profile-color);
+    color: white;
+}
+
+.btn.profile-btn:hover {
+    background-color: var(--profile-hover);
 }
 
 .btn.primary {

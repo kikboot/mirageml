@@ -25,9 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
             cancelImageUpload: document.getElementById('cancel-image-upload')
         },
         inputs: {
-            type: document.getElementById('element-type'),
-            id: document.getElementById('element-id'),
-            classes: document.getElementById('element-classes'),
             text: document.getElementById('element-text'),
             width: document.getElementById('element-width'),
             height: document.getElementById('element-height'),
@@ -36,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fontSize: document.getElementById('element-font-size'),
             padding: document.getElementById('element-padding'),
             border: document.getElementById('element-border'),
-            href: document.getElementById('element-href'),
+            rotation: document.getElementById('element-rotation'),
             imageUpload: document.getElementById('image-upload-input'),
             imagePreview: document.getElementById('image-preview'),
             imageWidth: document.getElementById('image-width'),
@@ -55,13 +52,15 @@ document.addEventListener('DOMContentLoaded', function() {
         dragState: {
             isDragging: false,
             isResizing: false,
+            isRotating: false,
             direction: null,
             startX: 0,
             startY: 0,
             startWidth: 0,
             startHeight: 0,
             startLeft: 0,
-            startTop: 0
+            startTop: 0,
+            startAngle: 0
         },
         imageUpload: {
             file: null,
@@ -199,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function() {
             y,
             width: parseInt(element.style.width) || 100,
             height: parseInt(element.style.height) || (type === 'line' ? 2 : 20),
-            href: type === 'button' ? '#' : null
+            rotation: 0
         };
         
         state.elements.push(elementData);
@@ -226,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function applyElementTemplate(element, type) {
         const templates = {
             div: {
-                text: 'Блок',
+                text: '',
                 styles: {
                     backgroundColor: '#f0f0f0',
                     width: '100px',
@@ -245,9 +244,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     cursor: 'pointer',
                     width: 'auto',
                     height: 'auto'
-                },
-                attributes: {
-                    'data-href': '#'
                 }
             },
             p: {
@@ -260,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             img: {
-                text: '[Изображение]',
+                text: '',
                 styles: {
                     backgroundColor: '#e0e0e0',
                     width: '150px',
@@ -277,11 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     width: '100px',
                     height: '2px',
                     backgroundColor: '#000',
-                    transform: 'rotate(0deg)',
-                    transformOrigin: 'left center',
-                    cursor: 'move',
-                    resize: 'none',
-                    overflow: 'visible'
+                    cursor: 'move'
                 }
             },
             arrow: {
@@ -294,8 +286,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     cursor: 'move'
                 },
                 markup: `
-                    <div data-arrow-part="line" style="position:absolute; width:80%; height:2px; background:#000; top:50%; left:0; transform:translateY(-50%);"></div>
-                    <div data-arrow-part="head" style="position:absolute; width:0; height:0; border-left:10px solid #000; border-top:5px solid transparent; border-bottom:5px solid transparent; right:0; top:50%; transform:translateY(-50%);"></div>
+                    <div class="arrow-line" style="position:absolute; width:80%; height:2px; background:#000; top:50%; left:0; transform:translateY(-50%);"></div>
+                    <div class="arrow-head" style="position:absolute; width:0; height:0; border-left:10px solid #000; border-top:5px solid transparent; border-bottom:5px solid transparent; right:0; top:50%; transform:translateY(-50%);"></div>
                 `
             },
             ellipse: {
@@ -317,12 +309,6 @@ document.addEventListener('DOMContentLoaded', function() {
             element.textContent = template.text;
         }
 
-        if (template.attributes) {
-            for (const [attr, value] of Object.entries(template.attributes)) {
-                element.setAttribute(attr, value);
-            }
-        }
-
         if (template.styles) {
             Object.assign(element.style, template.styles);
         }
@@ -340,13 +326,10 @@ document.addEventListener('DOMContentLoaded', function() {
         element.addEventListener('dblclick', function(e) {
             e.stopPropagation();
             
-            const nonTextElements = ['img', 'line', 'arrow', 'ellipse', 'input'];
+            const nonTextElements = ['img', 'line', 'arrow', 'ellipse'];
             if (nonTextElements.includes(elementData.type)) return;
             
-            const currentText = elementData.type === 'button' ? 
-                (element.textContent || 'Кнопка') : 
-                (element.textContent || 'Текст');
-                
+            const currentText = element.textContent || '';
             const text = prompt('Введите текст:', currentText);
             if (text !== null) {
                 element.textContent = text;
@@ -361,26 +344,38 @@ document.addEventListener('DOMContentLoaded', function() {
             selectElement(elementData);
             
             const handle = e.target.closest('.resize-handle');
+            const rotateHandle = e.target.closest('.rotate-handle');
+            
             if (handle) {
                 state.dragState.isResizing = true;
                 state.dragState.direction = handle.dataset.direction;
+                state.dragState.startWidth = element.offsetWidth;
+                state.dragState.startHeight = element.offsetHeight;
             } 
+            else if (rotateHandle) {
+                state.dragState.isRotating = true;
+                state.dragState.startAngle = elementData.rotation || 0;
+                
+                // Получаем центр элемента
+                const rect = element.getBoundingClientRect();
+                state.dragState.centerX = rect.left + rect.width / 2;
+                state.dragState.centerY = rect.top + rect.height / 2;
+            }
             else if (e.target === element || 
-                    (elementData.type === 'arrow' && e.target.closest('[data-arrow-part]'))) {
+                    (elementData.type === 'arrow' && 
+                     (e.target.classList.contains('arrow-line') || 
+                      e.target.classList.contains('arrow-head')))) {
                 state.dragState.isDragging = true;
             }
             
             state.dragState.startX = e.clientX;
             state.dragState.startY = e.clientY;
-            state.dragState.startWidth = element.offsetWidth;
-            state.dragState.startHeight = element.offsetHeight;
             state.dragState.startLeft = parseInt(element.style.left) || 0;
             state.dragState.startTop = parseInt(element.style.top) || 0;
         });
         
-        if (elementData.type !== 'line') {
-            createResizeHandles(element);
-        }
+        createResizeHandles(element);
+        createRotateHandle(element);
     }
 
     function createResizeHandles(element) {
@@ -402,6 +397,30 @@ document.addEventListener('DOMContentLoaded', function() {
             
             element.appendChild(handle);
         });
+    }
+
+    function createRotateHandle(element) {
+        element.querySelectorAll('.rotate-handle').forEach(handle => handle.remove());
+        
+        const handle = document.createElement('div');
+        handle.className = 'rotate-handle';
+        handle.title = 'Rotate';
+        handle.style.cursor = 'grab';
+        handle.style.position = 'absolute';
+        handle.style.right = '-25px';
+        handle.style.top = '50%';
+        handle.style.transform = 'translateY(-50%)';
+        handle.style.width = '20px';
+        handle.style.height = '20px';
+        handle.style.backgroundColor = '#4a6bff';
+        handle.style.borderRadius = '50%';
+        handle.style.display = 'flex';
+        handle.style.alignItems = 'center';
+        handle.style.justifyContent = 'center';
+        handle.style.color = 'white';
+        handle.innerHTML = '<i class="fas fa-sync-alt" style="font-size: 10px;"></i>';
+        
+        element.appendChild(handle);
     }
 
     function setupEventListeners() {
@@ -426,6 +445,14 @@ document.addEventListener('DOMContentLoaded', function() {
         DOM.inputs.textColor.addEventListener('input', function() {
             if (state.selectedElement) {
                 state.selectedElement.element.style.color = this.value;
+            }
+        });
+        
+        DOM.inputs.rotation.addEventListener('input', function() {
+            if (state.selectedElement) {
+                const angle = parseInt(this.value) || 0;
+                state.selectedElement.element.style.transform = `rotate(${angle}deg)`;
+                state.selectedElement.rotation = angle;
             }
         });
         
@@ -533,11 +560,24 @@ document.addEventListener('DOMContentLoaded', function() {
             
             updatePropertiesForm(state.selectedElement);
         }
+        else if (state.dragState.isRotating) {
+            const rect = element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * 180 / Math.PI + 90;
+            const roundedAngle = Math.round(angle);
+            
+            element.style.transform = `rotate(${roundedAngle}deg)`;
+            state.selectedElement.rotation = roundedAngle;
+            DOM.inputs.rotation.value = roundedAngle;
+        }
     }
 
     function handleMouseUp() {
         state.dragState.isDragging = false;
         state.dragState.isResizing = false;
+        state.dragState.isRotating = false;
         state.dragState.direction = null;
     }
 
@@ -599,16 +639,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updatePropertiesForm(elementData) {
         const element = elementData.element;
         
-        DOM.inputs.type.value = elementData.type;
-        DOM.inputs.id.value = element.id;
-        DOM.inputs.classes.value = element.className.replace('canvas-element', '').trim();
-        
-        if (elementData.type !== 'img') {
-            DOM.inputs.text.value = element.textContent;
-        } else {
-            DOM.inputs.text.value = '';
-        }
-        
+        DOM.inputs.text.value = element.textContent || '';
         DOM.inputs.width.value = element.style.width || '';
         DOM.inputs.height.value = element.style.height || '';
         DOM.inputs.bgColor.value = rgbToHex(element.style.backgroundColor) || '#ffffff';
@@ -616,22 +647,19 @@ document.addEventListener('DOMContentLoaded', function() {
         DOM.inputs.fontSize.value = element.style.fontSize || '';
         DOM.inputs.padding.value = element.style.padding || '';
         DOM.inputs.border.value = element.style.border || '';
-        
-        const hrefGroup = document.getElementById('href-group');
-        if (hrefGroup) {
-            if (elementData.type === 'button') {
-                hrefGroup.style.display = 'block';
-                DOM.inputs.href.value = element.getAttribute('data-href') || '#';
-            } else {
-                hrefGroup.style.display = 'none';
-            }
-        }
+        DOM.inputs.rotation.value = elementData.rotation || 0;
     }
 
     function clearPropertiesForm() {
-        Object.values(DOM.inputs).forEach(input => {
-            if (input && input.id !== 'element-href') input.value = '';
-        });
+        DOM.inputs.text.value = '';
+        DOM.inputs.width.value = '';
+        DOM.inputs.height.value = '';
+        DOM.inputs.bgColor.value = '#ffffff';
+        DOM.inputs.textColor.value = '#000000';
+        DOM.inputs.fontSize.value = '';
+        DOM.inputs.padding.value = '';
+        DOM.inputs.border.value = '';
+        DOM.inputs.rotation.value = '0';
     }
 
     function applyProperties() {
@@ -640,13 +668,44 @@ document.addEventListener('DOMContentLoaded', function() {
         const element = state.selectedElement.element;
         const elementData = state.selectedElement;
         
-        element.id = DOM.inputs.id.value || element.id;
-        element.className = 'canvas-element ' + (DOM.inputs.classes.value || '');
+        if (DOM.inputs.text.value !== undefined) {
+            element.textContent = DOM.inputs.text.value;
+        }
         
-        if (elementData.type === 'button') {
-            const href = DOM.inputs.href.value || '#';
-            element.setAttribute('data-href', href);
-            elementData.href = href;
+        if (DOM.inputs.width.value) {
+            element.style.width = DOM.inputs.width.value;
+            elementData.width = parseInt(DOM.inputs.width.value) || 100;
+        }
+        
+        if (DOM.inputs.height.value) {
+            element.style.height = DOM.inputs.height.value;
+            elementData.height = parseInt(DOM.inputs.height.value) || 100;
+        }
+        
+        if (DOM.inputs.bgColor.value) {
+            element.style.backgroundColor = DOM.inputs.bgColor.value;
+        }
+        
+        if (DOM.inputs.textColor.value) {
+            element.style.color = DOM.inputs.textColor.value;
+        }
+        
+        if (DOM.inputs.fontSize.value) {
+            element.style.fontSize = DOM.inputs.fontSize.value;
+        }
+        
+        if (DOM.inputs.padding.value) {
+            element.style.padding = DOM.inputs.padding.value;
+        }
+        
+        if (DOM.inputs.border.value) {
+            element.style.border = DOM.inputs.border.value;
+        }
+        
+        if (DOM.inputs.rotation.value) {
+            const angle = parseInt(DOM.inputs.rotation.value) || 0;
+            element.style.transform = `rotate(${angle}deg)`;
+            elementData.rotation = angle;
         }
     }
 
@@ -790,14 +849,14 @@ document.addEventListener('DOMContentLoaded', function() {
             
             htmlCode += `        <${tag} id="${element.id}" class="${element.className.replace('canvas-element', '').trim()}"`;
             
-            if (el.type === 'button' && el.href) {
-                htmlCode += ` onclick="window.location.href='${el.href}'"`;
+            if (el.rotation) {
+                htmlCode += ` style="transform: rotate(${el.rotation}deg)"`;
             }
             
             htmlCode += `>`;
             
             if (el.type !== 'img') {
-                htmlCode += element.textContent;
+                htmlCode += escapeHtml(element.textContent);
             }
             
             htmlCode += `</${tag}>\n`;
@@ -829,7 +888,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 cssCode += `    background-position: center;\n`;
             }
             
-            cssCode += `}\n\n`;
+            if (el.type === 'arrow') {
+                cssCode += `    position: relative;\n`;
+                cssCode += `}\n\n`;
+                cssCode += `#${element.id} .arrow-line {\n`;
+                cssCode += `    position: absolute;\n`;
+                cssCode += `    width: 80%;\n`;
+                cssCode += `    height: 2px;\n`;
+                cssCode += `    background: #000;\n`;
+                cssCode += `    top: 50%;\n`;
+                cssCode += `    left: 0;\n`;
+                cssCode += `    transform: translateY(-50%);\n`;
+                cssCode += `}\n\n`;
+                cssCode += `#${element.id} .arrow-head {\n`;
+                cssCode += `    position: absolute;\n`;
+                cssCode += `    width: 0;\n`;
+                cssCode += `    height: 0;\n`;
+                cssCode += `    border-left: 10px solid #000;\n`;
+                cssCode += `    border-top: 5px solid transparent;\n`;
+                cssCode += `    border-bottom: 5px solid transparent;\n`;
+                cssCode += `    right: 0;\n`;
+                cssCode += `    top: 50%;\n`;
+                cssCode += `    transform: translateY(-50%);\n`;
+                cssCode += `}\n\n`;
+            } else {
+                cssCode += `}\n\n`;
+            }
         });
         
         DOM.outputs.css.value = cssCode;
@@ -866,7 +950,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 previewHtml += `overflow: visible; `;
             }
             
+            if (el.rotation) {
+                previewHtml += `transform: rotate(${el.rotation}deg); `;
+            }
+            
             previewHtml += `}`;
+            
+            if (el.type === 'arrow') {
+                previewHtml += `#${element.id} .arrow-line { 
+                    position: absolute;
+                    width: 80%;
+                    height: 2px;
+                    background: #000;
+                    top: 50%;
+                    left: 0;
+                    transform: translateY(-50%);
+                }`;
+                previewHtml += `#${element.id} .arrow-head { 
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    border-left: 10px solid #000;
+                    border-top: 5px solid transparent;
+                    border-bottom: 5px solid transparent;
+                    right: 0;
+                    top: 50%;
+                    transform: translateY(-50%);
+                }`;
+            }
         });
         
         previewHtml += `</style></head><body><div class="container">`;
@@ -875,13 +986,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const element = el.element;
             const tag = el.type === 'img' ? 'div' : el.type;
             
-            previewHtml += `<${tag} id="${element.id}" class="${element.className.replace('canvas-element', '').trim()}"`;
-            
-            if (el.type === 'button' && el.href) {
-                previewHtml += ` onclick="window.location.href='${el.href}'"`;
-            }
-            
-            previewHtml += `>`;
+            previewHtml += `<${tag} id="${element.id}" class="${element.className.replace('canvas-element', '').trim()}">`;
             
             if (el.type !== 'img') {
                 previewHtml += escapeHtml(element.textContent);

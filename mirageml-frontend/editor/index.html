@@ -10,45 +10,39 @@
 </head>
 <body>
     <div class="app-container">
-<header class="header">
-    <div class="logo">MirageML </div>
-    <div class="header-controls">
-        <button id="preview-btn" class="btn"><i class="fas fa-eye"></i> Предпросмотр</button>
-        <button id="export-btn" class="btn primary"><i class="fas fa-file-export"></i> Экспорт</button>
-        <button id="clear-btn" class="btn danger"><i class="fas fa-trash"></i> Очистить</button>
-        <a href="../profile/index.html" class="btn profile-btn"><i class="fas fa-user"></i> Профиль</a>
-    </div>
-</header>
+        <header class="header">
+            <div class="logo">MirageML </div>
+            <div class="header-controls">
+                <button id="preview-btn" class="btn"><i class="fas fa-eye"></i> Предпросмотр</button>
+                <button id="export-btn" class="btn primary"><i class="fas fa-file-export"></i> Экспорт</button>
+                <button id="clear-btn" class="btn danger"><i class="fas fa-trash"></i> Очистить</button>
+                <a href="../profile/index.html" class="btn profile-btn"><i class="fas fa-user"></i> Профиль</a>
+            </div>
+        </header>
 
         <div class="main-content">
             <aside class="sidebar elements-panel">
                 <h3>Элементы</h3>
                 <div class="elements-list">
-    <!-- Существующие элементы -->
-    <div class="element-item" draggable="true" data-type="div">
-        <i class="fas fa-square"></i> Блок
-    </div>
-    <div class="element-item" draggable="true" data-type="button">
-        <i class="fas fa-square"></i> Кнопка
-    </div>
-    <div class="element-item" draggable="true" data-type="p">
-        <i class="fas fa-paragraph"></i> Текст
-    </div>
-    
-    <!-- Новые элементы -->
-    <div class="element-item" draggable="true" data-type="line">
-        <i class="fas fa-minus"></i> Линия
-    </div>
-    <div class="element-item" draggable="true" data-type="arrow">
-        <i class="fas fa-arrow-right"></i> Стрелка
-    </div>
-    <div class="element-item" draggable="true" data-type="ellipse">
-        <i class="fas fa-circle"></i> Круг
-    </div>
-    <button id="upload-image-btn" class="btn">
-        <i class="fas fa-image"></i> Добавить изображение
-    </button>
-</div>
+                    <div class="element-item" draggable="true" data-type="div">
+                        <i class="fas fa-square"></i> Блок
+                    </div>
+                    <div class="element-item" draggable="true" data-type="button">
+                        <i class="fas fa-square"></i> Кнопка
+                    </div>
+                    <div class="element-item" draggable="true" data-type="p">
+                        <i class="fas fa-paragraph"></i> Текст
+                    </div>
+                    <div class="element-item" draggable="true" data-type="line">
+                        <i class="fas fa-minus"></i> Линия
+                    </div>
+                    <div class="element-item" draggable="true" data-type="ellipse">
+                        <i class="fas fa-circle"></i> Круг
+                    </div>
+                    <button id="upload-image-btn" class="btn">
+                        <i class="fas fa-image"></i> Добавить изображение
+                    </button>
+                </div>
             </aside>
 
             <main class="workspace">
@@ -60,18 +54,6 @@
             <aside class="sidebar properties-panel">
                 <h3>Свойства</h3>
                 <div class="properties-form" id="properties-form">
-                    <div class="form-group">
-                        <label>Тип элемента</label>
-                        <input type="text" id="element-type" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label>ID</label>
-                        <input type="text" id="element-id">
-                    </div>
-                    <div class="form-group">
-                        <label>Классы</label>
-                        <input type="text" id="element-classes">
-                    </div>
                     <div class="form-group">
                         <label>Текст</label>
                         <input type="text" id="element-text">
@@ -105,6 +87,10 @@
                         <input type="text" id="element-border" placeholder="например: 1px solid #000">
                     </div>
                     <div class="form-group">
+                        <label>Угол поворота</label>
+                        <input type="number" id="element-rotation" placeholder="градусы" min="0" max="360">
+                    </div>
+                    <div class="form-group">
                         <button id="apply-properties" class="btn primary">Применить</button>
                         <button id="delete-element" class="btn danger">Удалить</button>
                     </div>
@@ -113,9 +99,7 @@
 
             <aside class="sidebar layers-panel">
                 <h3>Слои</h3>
-                <div class="layers-list" id="layers-list">
-
-                </div>
+                <div class="layers-list" id="layers-list"></div>
             </aside>
         </div>
 
@@ -150,69 +134,64 @@
                 <iframe id="preview-frame"></iframe>
             </div>
         </div>
-    </div>
 
-    <div class="modal" id="help-modal">
-    <div class="modal-content" style="max-width: 750px;">
-        <span class="close-btn">&times;</span>
-        <h2>Инструкция</h2>
-        <br>
-        <div class="video-container">
-    <video width="690" height="400" controls>
-        <source src="2.mp4">
-    </video>
-</div>
-        <div class="instructions">
-            <h3>Здравствуйте! Это бета-версия сайта MirageML. Проект находится в разработке,
-                 и здесь вы найдете руководство по основным функциям и возможностям сервиса. Основные функции включают в себя:</h3>
-                 <br>
-            <ul>
-                <li><strong>Добавление элементов</strong> - Нажмите на нужный объект из левой панели</li>
-                <li><strong>Перемещение</strong> - зажмите левую кнопку мыши на элементе и перемещайте</li>
-                <li><strong>Изменение размера</strong> - тяните за маркеры по углам и сторонам объекта</li>
-                <li><strong>Редактирование текста</strong> - двойной клик по элементу</li>
-                <li><strong>Слои</strong> - правой панели можно переименовывать и переупорядочивать элементы</li>
-                <li><strong>Загрузка фотографии</strong> - нажмите левой кнопкой мыши на объект "Добавить изображение" и выберите изображение</li>
-                <li><strong>Удалить</strong> - на правой панели можно удалить нужный объект или можно очистить холст на верхней панели</li>
-            </ul>
+        <div class="modal" id="help-modal">
+            <div class="modal-content" style="max-width: 750px;">
+                <span class="close-btn">&times;</span>
+                <h2>Инструкция</h2>
+                <br>
+                <div class="video-container">
+                    <video width="690" height="400" controls>
+                        <source src="2.mp4">
+                    </video>
+                </div>
+                <div class="instructions">
+                    <h3>Здравствуйте! Это бета-версия сайта MirageML. Проект находится в разработке,
+                         и здесь вы найдете руководство по основным функциям и возможностям сервиса. Основные функции включают в себя:</h3>
+                         <br>
+                    <ul>
+                        <li><strong>Добавление элементов</strong> - Нажмите на нужный объект из левой панели</li>
+                        <li><strong>Перемещение</strong> - зажмите левую кнопку мыши на элементе и перемещайте</li>
+                        <li><strong>Изменение размера</strong> - тяните за маркеры по углам и сторонам объекта</li>
+                        <li><strong>Редактирование текста</strong> - двойной клик по элементу</li>
+                        <li><strong>Слои</strong> - правой панели можно переименовывать и переупорядочивать элементы</li>
+                        <li><strong>Загрузка фотографии</strong> - нажмите левой кнопкой мыши на объект "Добавить изображение" и выберите изображение</li>
+                        <li><strong>Удалить</strong> - на правой панели можно удалить нужный объект или можно очистить холст на верхней панели</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="image-upload-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h3>Загрузка изображения</h3>
+                <div class="form-group">
+                    <label for="image-upload-input">Выберите изображение:</label>
+                    <input type="file" id="image-upload-input" accept="image/*">
+                </div>
+                <div id="image-preview" style="width: 100%; height: 200px; border: 1px dashed #ccc; margin: 10px 0; display: flex; align-items: center; justify-content: center;">
+                    Изображение не выбрано
+                </div>
+                <div class="form-group">
+                    <label for="image-width">Ширина (px):</label>
+                    <input type="number" id="image-width" min="20" value="200">
+                </div>
+                <div class="form-group">
+                    <label for="image-height">Высота (px):</label>
+                    <input type="number" id="image-height" min="20" value="200">
+                </div>
+                <div class="modal-actions">
+                    <button id="cancel-image-upload" class="btn btn-secondary">Отмена</button>
+                    <button id="confirm-image-upload" class="btn btn-primary">Добавить</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-btn">
+            <button id="show-help"><i class="fas fa-question-circle"></i> Помощь</button>
         </div>
     </div>
-</div>
-
-<div id="image-upload-modal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <h3>Загрузка изображения</h3>
-        
-        <div class="form-group">
-            <label for="image-upload-input">Выберите изображение:</label>
-            <input type="file" id="image-upload-input" accept="image/*">
-        </div>
-        
-        <div id="image-preview" style="width: 100%; height: 200px; border: 1px dashed #ccc; margin: 10px 0; display: flex; align-items: center; justify-content: center;">
-            Изображение не выбрано
-        </div>
-        
-        <div class="form-group">
-            <label for="image-width">Ширина (px):</label>
-            <input type="number" id="image-width" min="20" value="200">
-        </div>
-        
-        <div class="form-group">
-            <label for="image-height">Высота (px):</label>
-            <input type="number" id="image-height" min="20" value="200">
-        </div>
-        
-        <div class="modal-actions">
-            <button id="cancel-image-upload" class="btn btn-secondary">Отмена</button>
-            <button id="confirm-image-upload" class="btn btn-primary">Добавить</button>
-        </div>
-    </div>
-</div>
-
-<div class="help-btn">
-    <button id="show-help"><i class="fas fa-question-circle"></i> Помощь</button>
-</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="../editor/script.js"></script>
