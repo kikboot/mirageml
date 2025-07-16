@@ -1,11 +1,15 @@
 [
   {
-    "id": 1,
-    "name": "Максим Нарколог",
-    "email": "max228@mail.ru",
-    "password": "06032006__Kiril",
+    "id": "1752666406345",
+    "name": "Кирилл Николаевич",
+    "email": "12353165esgdfb@mail.ru",
+    "password": "$2b$10$/uklqFiQCH4l/.ZM0lBrMupOaOqIMh1jbLS8lhaoTcV9KbRCqAmSu",
+    "createdAt": "2025-07-16T11:46:46.345Z",
+    "sessions": [
+      "1752666408119",
+      "1752666713313"
+    ],
     "phone": "+7 921 857 0923",
-    "country": "ru",
-    "avatarUrl": ""
+    "country": "eu"
   }
 ]

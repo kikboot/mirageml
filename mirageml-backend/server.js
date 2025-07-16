@@ -3,27 +3,41 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = 3001;
+const JWT_SECRET = 'your-secret-key-here';
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-
-// Настройка статических файлов
 app.use(express.static(path.join(__dirname, '../mirageml-frontend')));
 
-// Пути к файлам
-const USERS_FILE = path.join(__dirname, 'data', 'users.json');
-const PROJECTS_FILE = path.join(__dirname, 'data', 'projects.json');
+// Пути к файлам данных
+const DATA_DIR = path.join(__dirname, 'data');
+const USERS_FILE = path.join(DATA_DIR, 'users.json');
+const PROJECTS_FILE = path.join(DATA_DIR, 'projects.json');
+const SESSIONS_FILE = path.join(DATA_DIR, 'sessions.json');
+const REVIEWS_FILE = path.join(DATA_DIR, 'reviews.json');
 
-// Инициализация файлов
-if (!fs.existsSync(USERS_FILE)) {
-    fs.writeFileSync(USERS_FILE, '[]');
-}
-if (!fs.existsSync(PROJECTS_FILE)) {
-    fs.writeFileSync(PROJECTS_FILE, '[]');
+// Инициализация файлов данных
+function initDataFiles() {
+    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
+    
+    const files = [
+        { path: USERS_FILE, default: '[]' },
+        { path: PROJECTS_FILE, default: '[]' },
+        { path: SESSIONS_FILE, default: '[]' },
+        { path: REVIEWS_FILE, default: '[]' }
+    ];
+    
+    files.forEach(file => {
+        if (!fs.existsSync(file.path)) {
+            fs.writeFileSync(file.path, file.default);
+        }
+    });
 }
 
 // Функции работы с данными
@@ -43,157 +57,261 @@ function saveProjects(projects) {
     fs.writeFileSync(PROJECTS_FILE, JSON.stringify(projects, null, 2));
 }
 
-// Маршруты для страниц
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../mirageml-frontend/main/index.html'));
-});
+function getSessions() {
+    return JSON.parse(fs.readFileSync(SESSIONS_FILE));
+}
 
-app.get('/profile', (req, res) => {
-    res.sendFile(path.join(__dirname, '../mirageml-frontend/profile/index.html'));
-});
+function saveSessions(sessions) {
+    fs.writeFileSync(SESSIONS_FILE, JSON.stringify(sessions, null, 2));
+}
 
-app.get('/editor', (req, res) => {
-    res.sendFile(path.join(__dirname, '../mirageml-frontend/editor/index.html'));
-});
+// Middleware для проверки JWT
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    
+    if (!token) return res.sendStatus(401);
+    
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    });
+}
 
-// API маршруты
-app.post('/api/register', (req, res) => {
+// Инициализация файлов данных
+initDataFiles();
+
+// API: Регистрация
+app.post('/api/register', async (req, res) => {
     const { name, email, password } = req.body;
+    
+    if (!name || !email || !password) {
+        return res.status(400).json({ error: 'Все поля обязательны' });
+    }
+    
     const users = getUsers();
-
+    
     if (users.some(user => user.email === email)) {
         return res.status(400).json({ error: 'Email уже используется' });
     }
-
-    const newUser = {
-        id: Date.now().toString(),
-        name,
-        email,
-        password,
-        phone: '',
-        country: 'ru',
-        avatar: name.substring(0, 2).toUpperCase()
-    };
-
-    users.push(newUser);
-    saveUsers(users);
-
-    res.json({ 
-        success: true, 
-        redirect: '/editor',
-        user: { 
-            id: newUser.id, 
-            name: newUser.name,
-            email: newUser.email,
-            avatar: newUser.avatar
-        }
-    });
+    
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = {
+            id: Date.now().toString(),
+            name,
+            email,
+            password: hashedPassword,
+            createdAt: new Date().toISOString(),
+            sessions: []
+        };
+        
+        users.push(newUser);
+        saveUsers(users);
+        
+        res.status(201).json({ 
+            success: true,
+            message: 'Аккаунт успешно создан'
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка при регистрации' });
+    }
 });
 
-app.post('/api/login', (req, res) => {
+// API: Вход
+app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
     const users = getUsers();
-
-    const user = users.find(u => u.email === email && u.password === password);
-
+    const user = users.find(u => u.email === email);
+    
     if (!user) {
         return res.status(401).json({ error: 'Неверный email или пароль' });
     }
-
-    res.json({ 
-        success: true,
-        redirect: '/editor',
-        user: { 
-            id: user.id, 
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            country: user.country,
-            avatar: user.avatar || user.name.substring(0, 2).toUpperCase()
+    
+    try {
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+            return res.status(401).json({ error: 'Неверный email или пароль' });
         }
-    });
+        
+        // Создаем JWT токен
+        const token = jwt.sign(
+            { userId: user.id, email: user.email },
+            JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+        
+        // Сохраняем сессию
+        const sessions = getSessions();
+        const newSession = {
+            id: Date.now().toString(),
+            userId: user.id,
+            token,
+            device: req.headers['user-agent'],
+            ip: req.ip,
+            createdAt: new Date().toISOString(),
+            lastActive: new Date().toISOString()
+        };
+        
+        sessions.push(newSession);
+        saveSessions(sessions);
+        
+        // Обновляем сессии пользователя
+        user.sessions.push(newSession.id);
+        saveUsers(users);
+        
+        res.json({
+            success: true,
+            token,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                avatar: user.avatar || user.name.substring(0, 2).toUpperCase()
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка при входе' });
+    }
 });
 
-app.get('/api/profile', (req, res) => {
+// API: Получение профиля
+app.get('/api/profile', authenticateToken, (req, res) => {
     const users = getUsers();
-    if (users.length === 0) {
+    const user = users.find(u => u.id === req.user.userId);
+    
+    if (!user) {
         return res.status(404).json({ error: 'Пользователь не найден' });
     }
     
-    const user = users[0];
     res.json({
         id: user.id,
         name: user.name,
         email: user.email,
         phone: user.phone || '',
         country: user.country || 'ru',
-        avatar: user.avatar || user.name.substring(0, 2).toUpperCase()
+        avatar: user.avatar || user.name.substring(0, 2).toUpperCase(),
+        createdAt: user.createdAt
     });
 });
 
-app.post('/api/profile', (req, res) => {
-    const { name, email, phone, country } = req.body;
-    const users = getUsers();
-    
-    if (users.length === 0) {
-        return res.status(404).json({ error: 'Пользователь не найден' });
-    }
-    
-    const user = users[0];
-    user.name = name;
-    user.email = email;
-    user.phone = phone;
-    user.country = country;
-    
-    saveUsers(users);
-    
-    res.json({ 
-        success: true,
-        message: 'Профиль успешно обновлен',
-        user: {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            country: user.country,
-            avatar: user.avatar || user.name.substring(0, 2).toUpperCase()
+// API: Обновление профиля
+app.put('/api/profile', authenticateToken, async (req, res) => {
+    try {
+        const { name, email, phone, country } = req.body;
+        const users = getUsers();
+        const userIndex = users.findIndex(u => u.id === req.user.userId);
+        
+        if (userIndex === -1) {
+            return res.status(404).json({ error: 'Пользователь не найден' });
         }
-    });
+        
+        // Проверка email на уникальность
+        if (email && email !== users[userIndex].email) {
+            if (users.some(u => u.email === email && u.id !== req.user.userId)) {
+                return res.status(400).json({ error: 'Email уже используется' });
+            }
+        }
+        
+        users[userIndex] = {
+            ...users[userIndex],
+            name: name || users[userIndex].name,
+            email: email || users[userIndex].email,
+            phone: phone || users[userIndex].phone,
+            country: country || users[userIndex].country
+        };
+        
+        saveUsers(users);
+        
+        res.json({
+            success: true,
+            message: 'Профиль успешно обновлен',
+            user: users[userIndex]
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка при обновлении профиля' });
+    }
 });
 
-app.post('/api/change-password', (req, res) => {
-    const { currentPassword, newPassword } = req.body;
-    const users = getUsers();
-    
-    if (users.length === 0) {
-        return res.status(404).json({ error: 'Пользователь не найден' });
+// API: Смена пароля
+app.post('/api/change-password', authenticateToken, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const users = getUsers();
+        const user = users.find(u => u.id === req.user.userId);
+        
+        if (!user) {
+            return res.status(404).json({ error: 'Пользователь не найден' });
+        }
+        
+        const match = await bcrypt.compare(currentPassword, user.password);
+        if (!match) {
+            return res.status(401).json({ error: 'Текущий пароль неверный' });
+        }
+        
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        saveUsers(users);
+        
+        res.json({ success: true, message: 'Пароль успешно изменен' });
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка при изменении пароля' });
     }
-    
-    const user = users[0];
-    
-    if (user.password !== currentPassword) {
-        return res.status(400).json({ error: 'Текущий пароль неверный' });
-    }
-    
-    user.password = newPassword;
-    saveUsers(users);
-    
-    res.json({ 
-        success: true,
-        message: 'Пароль успешно изменен'
-    });
 });
 
-app.get('/api/projects', (req, res) => {
+// API: Удаление аккаунта
+app.delete('/api/account', authenticateToken, async (req, res) => {
+    try {
+        const { password } = req.body;
+        const userId = req.user.userId;
+        
+        // Проверка пароля
+        const users = getUsers();
+        const user = users.find(u => u.id === userId);
+        
+        if (!user) {
+            return res.status(404).json({ error: 'Пользователь не найден' });
+        }
+        
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+            return res.status(401).json({ error: 'Неверный пароль' });
+        }
+        
+        // Удаление пользователя
+        const updatedUsers = users.filter(u => u.id !== userId);
+        saveUsers(updatedUsers);
+        
+        // Удаление проектов пользователя
+        const projects = getProjects();
+        const updatedProjects = projects.filter(p => p.userId !== userId);
+        saveProjects(updatedProjects);
+        
+        // Удаление сессий пользователя
+        const sessions = getSessions();
+        const updatedSessions = sessions.filter(s => s.userId !== userId);
+        saveSessions(updatedSessions);
+        
+        res.json({ success: true, message: 'Аккаунт успешно удален' });
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка при удалении аккаунта' });
+    }
+});
+
+// API: Получение проектов пользователя
+app.get('/api/projects', authenticateToken, (req, res) => {
     try {
         const projects = getProjects();
-        res.json(projects);
+        const userProjects = projects.filter(p => p.userId === req.user.userId);
+        res.json(userProjects);
     } catch (error) {
         res.status(500).json({ error: 'Ошибка загрузки проектов' });
     }
 });
 
-app.post('/api/projects', (req, res) => {
+// API: Создание проекта
+app.post('/api/projects', authenticateToken, (req, res) => {
     try {
         const { name } = req.body;
         const projects = getProjects();
@@ -201,7 +319,8 @@ app.post('/api/projects', (req, res) => {
         const newProject = {
             id: Date.now().toString(),
             name: name || 'Новый проект',
-            userId: 'demo-user',
+            userId: req.user.userId,
+            elements: {},
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
@@ -209,7 +328,7 @@ app.post('/api/projects', (req, res) => {
         projects.push(newProject);
         saveProjects(projects);
 
-        res.json({ 
+        res.status(201).json({ 
             success: true,
             project: newProject
         });
@@ -218,49 +337,70 @@ app.post('/api/projects', (req, res) => {
     }
 });
 
-app.delete('/api/projects/:id', (req, res) => {
+// API: Сохранение проекта
+app.put('/api/projects/:id', authenticateToken, (req, res) => {
     try {
         const { id } = req.params;
-        let projects = getProjects();
+        const { elements } = req.body;
+        const projects = getProjects();
         
-        projects = projects.filter(project => project.id !== id);
+        const projectIndex = projects.findIndex(p => p.id === id && p.userId === req.user.userId);
+        if (projectIndex === -1) {
+            return res.status(404).json({ error: 'Проект не найден' });
+        }
+        
+        projects[projectIndex].elements = elements;
+        projects[projectIndex].updatedAt = new Date().toISOString();
         saveProjects(projects);
 
         res.json({ 
             success: true,
-            message: 'Проект успешно удален'
+            message: 'Проект сохранен'
         });
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка сохранения проекта' });
+    }
+});
+
+// API: Удаление проекта
+app.delete('/api/projects/:id', authenticateToken, (req, res) => {
+    try {
+        const { id } = req.params;
+        let projects = getProjects();
+        
+        const initialLength = projects.length;
+        projects = projects.filter(p => !(p.id === id && p.userId === req.user.userId));
+        
+        if (projects.length === initialLength) {
+            return res.status(404).json({ error: 'Проект не найден' });
+        }
+        
+        saveProjects(projects);
+        res.json({ success: true, message: 'Проект удален' });
     } catch (error) {
         res.status(500).json({ error: 'Ошибка удаления проекта' });
     }
 });
 
-app.post('/api/logout', (req, res) => {
-    res.json({ success: true, message: 'Вы успешно вышли из системы' });
+// API: Выход
+app.post('/api/logout', authenticateToken, (req, res) => {
+    try {
+        const token = req.headers['authorization'].split(' ')[1];
+        const sessions = getSessions();
+        const updatedSessions = sessions.filter(s => s.token !== token);
+        saveSessions(updatedSessions);
+        
+        res.json({ success: true, message: 'Вы успешно вышли' });
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка при выходе' });
+    }
 });
 
-// Добавьте этот путь к вашим файлам данных
-const REVIEWS_FILE = path.join(__dirname, 'data', 'reviews.json');
-
-// Инициализация файла отзывов
-if (!fs.existsSync(REVIEWS_FILE)) {
-    fs.writeFileSync(REVIEWS_FILE, '[]');
-}
-
-// Функции для работы с отзывами
-function getReviews() {
-    return JSON.parse(fs.readFileSync(REVIEWS_FILE));
-}
-
-function saveReviews(reviews) {
-    fs.writeFileSync(REVIEWS_FILE, JSON.stringify(reviews, null, 2));
-}
-
-// API маршруты для отзывов
+// Остальные маршруты
 app.get('/api/reviews', (req, res) => {
     try {
-        const reviews = getReviews();
-        res.json(reviews);
+        const reviews = JSON.parse(fs.readFileSync(REVIEWS_FILE));
+        res.json(reviews.filter(r => r.approved));
     } catch (error) {
         res.status(500).json({ error: 'Ошибка загрузки отзывов' });
     }
@@ -269,44 +409,45 @@ app.get('/api/reviews', (req, res) => {
 app.post('/api/reviews', (req, res) => {
     try {
         const { name, email, rating, comment } = req.body;
-        
-        if (!name || !comment || !rating) {
-            return res.status(400).json({ error: 'Заполните все обязательные поля' });
-        }
-        
-        const reviews = getReviews();
+        const reviews = JSON.parse(fs.readFileSync(REVIEWS_FILE));
         
         const newReview = {
             id: Date.now().toString(),
             name,
-            email: email || 'anonymous@example.com',
+            email: email || null,
             rating: parseInt(rating),
             comment,
-            date: new Date().toISOString(),
-            approved: false // Модерация отзывов
+            approved: false,
+            createdAt: new Date().toISOString()
         };
-
-        reviews.unshift(newReview); // Добавляем в начало
-        saveReviews(reviews);
-
+        
+        reviews.push(newReview);
+        fs.writeFileSync(REVIEWS_FILE, JSON.stringify(reviews, null, 2));
+        
         res.json({ 
             success: true,
-            message: 'Спасибо за ваш отзыв! Он будет опубликован после модерации.',
-            review: newReview
+            message: 'Отзыв отправлен на модерацию'
         });
     } catch (error) {
         res.status(500).json({ error: 'Ошибка при отправке отзыва' });
     }
 });
 
-// Маршрут для страницы отзывов
-app.get('/reviews', (req, res) => {
-    res.sendFile(path.join(__dirname, '../mirageml-frontend/reviews/index.html'));
+// Статические маршруты
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../mirageml-frontend/main/index.html'));
 });
 
-// Обработка 404
-app.use((req, res) => {
-    res.status(404).send('Страница не найдена');
+app.get('/editor', (req, res) => {
+    res.sendFile(path.join(__dirname, '../mirageml-frontend/editor/index.html'));
+});
+
+app.get('/profile', (req, res) => {
+    res.sendFile(path.join(__dirname, '../mirageml-frontend/profile/index.html'));
+});
+
+app.get('/reviews', (req, res) => {
+    res.sendFile(path.join(__dirname, '../mirageml-frontend/reviews/index.html'));
 });
 
 // Запуск сервера

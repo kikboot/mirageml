@@ -179,19 +179,25 @@
 </div>
 
     <!-- Модальное окно подтверждения удаления -->
-    <div class="modal" id="delete-modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2><i class="fas fa-exclamation-triangle"></i> Удаление аккаунта</h2>
-            <p>Вы уверены, что хотите удалить свой аккаунт? Это действие невозможно отменить. Все ваши данные и проекты будут безвозвратно удалены.</p>
+<div class="modal" id="delete-modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2><i class="fas fa-exclamation-triangle"></i> Удаление аккаунта</h2>
+        <form id="delete-account-form">
+            <p>Для подтверждения удаления аккаунта введите ваш пароль:</p>
+            <div class="form-group">
+                <label for="delete-password">Пароль</label>
+                <input type="password" id="delete-password" required>
+            </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-outline" id="cancel-delete">Отмена</button>
-                <button type="button" class="btn btn-danger" id="confirm-delete">
+                <button type="submit" class="btn btn-danger" id="confirm-delete">
                     <i class="fas fa-trash"></i> Удалить аккаунт
                 </button>
             </div>
-        </div>
+        </form>
     </div>
+</div>
 
     <!-- Модальное окно создания проекта -->
 <div class="modal" id="create-project-modal">
@@ -215,4 +221,4 @@
 
     <script src="../profile/script.js"></script>
 </body>
-</html>                                
+</html>

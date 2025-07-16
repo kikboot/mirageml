@@ -2,16 +2,34 @@ document.addEventListener('DOMContentLoaded', function() {
     // Загрузка данных профиля с сервера
     async function loadProfile() {
         try {
-            const response = await fetch('http://localhost:3001/api/profile');
-            if (!response.ok) throw new Error('Ошибка загрузки данных');
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '../main/index.html';
+                return;
+            }
+
+            const response = await fetch('http://localhost:3001/api/profile', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    window.location.href = '../main/index.html';
+                }
+                throw new Error('Ошибка загрузки данных');
+            }
+            
             const user = await response.json();
             
             document.getElementById('name').value = user.name;
             document.getElementById('email').value = user.email;
-            document.getElementById('phone').value = user.phone;
-            document.getElementById('country').value = user.country;
+            document.getElementById('phone').value = user.phone || '';
+            document.getElementById('country').value = user.country || 'ru';
             document.getElementById('user-name').textContent = user.name;
-            document.getElementById('user-avatar').textContent = user.avatar || user.name.substring(0, 2).toUpperCase();
+            document.getElementById('user-avatar').textContent = user.avatar;
             
             return user;
         } catch (error) {
@@ -23,7 +41,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Загрузка проектов
     async function loadProjects() {
         try {
-            const response = await fetch('http://localhost:3001/api/projects');
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3001/api/projects', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
             if (!response.ok) throw new Error('Ошибка загрузки проектов');
             return await response.json();
         } catch (error) {
@@ -49,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="project-title">${project.name}</div>
                     <div class="project-date">Создан ${new Date(project.createdAt).toLocaleDateString()}</div>
                     <div class="project-actions">
-                        <button class="btn btn-outline edit-project-btn">
+                        <button class="btn btn-outline edit-project-btn" onclick="location.href='../editor/index.html?project=${project.id}'">
                             <i class="fas fa-edit"></i> Редактировать
                         </button>
                         <div class="project-dropdown">
@@ -71,8 +95,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const projectId = this.closest('.project-card').dataset.id;
                 if (confirm('Вы уверены, что хотите удалить этот проект?')) {
                     try {
+                        const token = localStorage.getItem('token');
                         const response = await fetch(`http://localhost:3001/api/projects/${projectId}`, {
-                            method: 'DELETE'
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
                         });
                         
                         if (!response.ok) throw new Error('Ошибка удаления проекта');
@@ -88,13 +116,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Открытие модального окна создания проекта
-    document.getElementById('create-project-btn').addEventListener('click', function() {
+    document.getElementById('create-project-btn')?.addEventListener('click', function() {
         document.getElementById('create-project-modal').style.display = 'flex';
         document.getElementById('project-name').focus();
     });
 
     // Обработчик формы создания проекта
-    document.getElementById('create-project-form').addEventListener('submit', async function(e) {
+    document.getElementById('create-project-form')?.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const projectName = document.getElementById('project-name').value.trim();
@@ -108,9 +136,13 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Создание...';
 
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:3001/api/projects', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({ name: projectName })
             });
             
@@ -135,20 +167,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Отмена создания проекта
-    document.getElementById('cancel-create-project').addEventListener('click', function() {
+    document.getElementById('cancel-create-project')?.addEventListener('click', function() {
         document.getElementById('create-project-modal').style.display = 'none';
         document.getElementById('create-project-form').reset();
     });
 
     // Инициализация страницы
     loadProfile().then(() => {
-        if (document.querySelector('#projects-tab').classList.contains('active')) {
+        if (document.querySelector('#projects-tab')?.classList.contains('active')) {
             renderProjects();
         }
     });
     
     // При переключении на вкладку проектов загружаем их
-    document.querySelector('[data-tab="projects-tab"]').addEventListener('click', renderProjects);
+    document.querySelector('[data-tab="projects-tab"]')?.addEventListener('click', renderProjects);
 
     // Переключение вкладок
     document.querySelectorAll('.tab-link').forEach(link => {
@@ -164,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Сохранение профиля
-    document.getElementById('profile-form').addEventListener('submit', async function(e) {
+    document.getElementById('profile-form')?.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const submitBtn = this.querySelector('button[type="submit"]');
@@ -172,9 +204,13 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...';
         
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:3001/api/profile', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'PUT',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({
                     name: document.getElementById('name').value,
                     email: document.getElementById('email').value,
@@ -183,7 +219,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             });
             
-            if (!response.ok) throw new Error('Ошибка сохранения');
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Ошибка сохранения');
+            }
             
             const result = await response.json();
             document.getElementById('user-name').textContent = document.getElementById('name').value;
@@ -197,20 +236,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Отмена изменений
-    document.getElementById('cancel-changes').addEventListener('click', async function() {
+    // Отмена изменений профиля
+    document.getElementById('cancel-changes')?.addEventListener('click', async function() {
         await loadProfile();
         showToast('Изменения отменены', 'info');
     });
     
     // Смена пароля - обработка клика по кнопке
-    document.getElementById('change-password-btn').addEventListener('click', function() {
+    document.getElementById('change-password-btn')?.addEventListener('click', function() {
         document.getElementById('password-modal').style.display = 'flex';
         document.getElementById('current-password').focus();
     });
     
     // Обработчик формы смены пароля
-    document.getElementById('password-form').addEventListener('submit', async function(e) {
+    document.getElementById('password-form')?.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const currentPassword = document.getElementById('current-password').value;
@@ -233,10 +272,12 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...';
         
         try {
+            const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:3001/api/change-password', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     currentPassword,
@@ -265,21 +306,26 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Закрытие модального окна смены пароля
-    document.getElementById('cancel-password').addEventListener('click', function() {
+    document.getElementById('cancel-password')?.addEventListener('click', function() {
         document.getElementById('password-modal').style.display = 'none';
         document.getElementById('password-form').reset();
     });
     
     // Выход из аккаунта
-    document.getElementById('logout-btn').addEventListener('click', function(e) {
+    document.getElementById('logout-btn')?.addEventListener('click', function(e) {
         e.preventDefault();
         if(confirm('Вы уверены, что хотите выйти?')) {
             showToast('Выход из системы...', 'info');
             
+            const token = localStorage.getItem('token');
             fetch('http://localhost:3001/api/logout', {
-                method: 'POST'
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             })
             .then(() => {
+                localStorage.removeItem('token');
                 showToast('Вы успешно вышли из системы', 'success');
                 setTimeout(() => {
                     window.location.href = '../main/index.html';
@@ -293,27 +339,61 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Удаление аккаунта
-    document.getElementById('delete-account-link').addEventListener('click', function(e) {
+    document.getElementById('delete-account-link')?.addEventListener('click', function(e) {
         e.preventDefault();
         document.getElementById('delete-modal').style.display = 'flex';
+        document.getElementById('delete-password').focus();
     });
     
-    document.getElementById('confirm-delete').addEventListener('click', async function() {
+    // Обработчик формы удаления аккаунта
+    document.getElementById('delete-account-form')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const password = document.getElementById('delete-password').value;
+        if (!password) {
+            showToast('Введите пароль для подтверждения', 'error');
+            return;
+        }
+
+        const submitBtn = document.getElementById('confirm-delete');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Удаление...';
+
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3001/api/account', {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ password })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Ошибка при удалении аккаунта');
+            }
+
             showToast('Аккаунт успешно удален', 'success');
+            localStorage.clear();
+            
             setTimeout(() => {
-                const basePath = window.location.pathname.split('/profile')[0];
-                window.location.href = `${basePath}/main/index.html`;
+                window.location.href = '../main/index.html';
             }, 1500);
         } catch (error) {
             showToast(error.message, 'error');
+            console.error('Ошибка:', error);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-trash"></i> Удалить аккаунт';
         }
     });
     
-    // Отмена удаления
-    document.getElementById('cancel-delete').addEventListener('click', function() {
+    // Отмена удаления аккаунта
+    document.getElementById('cancel-delete')?.addEventListener('click', function() {
         document.getElementById('delete-modal').style.display = 'none';
+        document.getElementById('delete-password').value = '';
     });
     
     // Закрытие модальных окон
@@ -348,10 +428,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Завершение сессии
+// Завершение сессии (глобальная функция)
 function terminateSession(element) {
     if(confirm('Завершить эту сессию?')) {
         element.closest('tr').remove();
-        showToast('Сессия завершена', 'success');
+        
+        // Создаем временное уведомление, так как showToast не доступна глобально
+        const toast = document.createElement('div');
+        toast.className = 'toast success';
+        toast.innerHTML = '<i class="fas fa-check-circle"></i> Сессия завершена';
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
     }
-}
+} 

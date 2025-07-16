@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Элементы DOM для модальных окон
+    // Элементы DOM
     const loginBtn = document.getElementById('login-btn');
     const registerBtn = document.getElementById('register-btn');
     const createProjectBtn = document.getElementById('create-project-btn');
@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
 
+    // Проверка авторизации при загрузке
+    checkAuthStatus();
+
     // Открытие модальных окон
     if (loginBtn) loginBtn.addEventListener('click', () => loginModal.style.display = 'flex');
     if (registerBtn) registerBtn.addEventListener('click', () => registerModal.style.display = 'flex');
@@ -15,7 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (createProjectBtn) {
         createProjectBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            loginModal.style.display = 'flex';
+            const token = localStorage.getItem('token');
+            if (token) {
+                window.location.href = '/editor';
+            } else {
+                loginModal.style.display = 'flex';
+            }
         });
     }
 
@@ -63,13 +71,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
                 
                 if (data.success) {
-                    window.location.href = data.redirect;
+                    localStorage.setItem('token', data.token);
+                    updateAuthUI(data.user);
+                    document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+                    window.location.reload();
                 } else {
-                    alert(data.error || 'Ошибка авторизации');
+                    showAlert(data.error || 'Ошибка авторизации', 'error');
                 }
             } catch (error) {
-                console.error('Ошибка:', error);
-                alert('Ошибка соединения с сервером');
+                showAlert('Ошибка соединения с сервером', 'error');
             }
         });
     }
@@ -84,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const confirm = document.getElementById('register-confirm').value;
 
             if (password !== confirm) {
-                alert('Пароли не совпадают');
+                showAlert('Пароли не совпадают', 'error');
                 return;
             }
 
@@ -98,64 +108,107 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
                 
                 if (data.success) {
-                    window.location.href = data.redirect;
+                    showAlert('Регистрация успешна! Теперь войдите в систему.', 'success');
+                    registerModal.style.display = 'none';
+                    loginModal.style.display = 'flex';
                 } else {
-                    alert(data.error || 'Ошибка регистрации');
+                    showAlert(data.error || 'Ошибка регистрации', 'error');
                 }
             } catch (error) {
-                console.error('Ошибка:', error);
-                alert('Ошибка соединения с сервером');
+                showAlert('Ошибка соединения с сервером', 'error');
             }
         });
     }
 
-    // Закрытие по клику вне модалки
-    window.addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal')) {
-            e.target.style.display = 'none';
-        }
-    });
-
-    // Загрузка отзывов для главной страницы
+    // Загрузка отзывов
     if (document.getElementById('reviews-container')) {
-        loadHomepageReviews();
+        loadReviews();
     }
 });
 
-// Функция загрузки отзывов на главную страницу
-async function loadHomepageReviews() {
+// Проверка статуса авторизации
+async function checkAuthStatus() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+        const response = await fetch('/api/profile', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+            const user = await response.json();
+            updateAuthUI(user);
+        } else {
+            localStorage.removeItem('token');
+        }
+    } catch (error) {
+        console.error('Ошибка проверки авторизации:', error);
+    }
+}
+
+function updateAuthUI(user) {
+    const authButtons = document.querySelector('.auth-buttons');
+    if (!authButtons) return;
+
+    authButtons.innerHTML = `
+        <div class="user-menu">
+            <button class="user-avatar" aria-label="Меню пользователя">
+                ${user.avatar}
+            </button>
+            <div class="dropdown-content">
+                <a href="/profile" class="dropdown-item">
+                    <i class="fas fa-user"></i> Профиль
+                </a>
+                <a href="#" id="logout-btn" class="dropdown-item">
+                    <i class="fas fa-sign-out-alt"></i> Выйти
+                </a>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('logout-btn')?.addEventListener('click', logout);
+}
+
+// Выход из системы
+async function logout() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+        await fetch('/api/logout', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+    } catch (error) {
+        console.error('Ошибка при выходе:', error);
+    }
+
+    localStorage.removeItem('token');
+    window.location.reload();
+}
+
+// Загрузка отзывов
+async function loadReviews() {
     const container = document.getElementById('reviews-container');
     if (!container) return;
 
     try {
-        // Показываем индикатор загрузки
-        container.innerHTML = '<div class="loading-reviews">Загрузка отзывов...</div>';
-
         const response = await fetch('/api/reviews');
-        if (!response.ok) throw new Error('Ошибка загрузки');
-        
         const reviews = await response.json();
         
-        // Показываем только 3 последних одобренных отзыва
-        const approvedReviews = reviews.filter(review => review.approved);
-        const recentReviews = approvedReviews.slice(0, 3);
-        
-        if (recentReviews.length === 0) {
-            container.innerHTML = `
-                <div class="no-reviews" style="grid-column: 1 / -1; text-align: center;">
-                    Пока нет отзывов. Будьте первым!
-                </div>
-            `;
+        if (reviews.length === 0) {
+            container.innerHTML = '<div class="no-reviews">Пока нет отзывов. Будьте первым!</div>';
             return;
         }
         
-        container.innerHTML = recentReviews.map(review => `
+        container.innerHTML = reviews.slice(0, 3).map(review => `
             <div class="review-card">
                 <div class="review-header">
                     <div class="user-avatar">${getInitials(review.name)}</div>
                     <div>
                         <div class="user-name">${review.name}</div>
-                        <div class="review-date">${formatDate(review.date)}</div>
+                        <div class="review-date">${formatDate(review.createdAt)}</div>
                     </div>
                 </div>
                 <div class="review-text">${review.comment}</div>
@@ -163,12 +216,7 @@ async function loadHomepageReviews() {
             </div>
         `).join('');
     } catch (error) {
-        console.error('Ошибка загрузки отзывов:', error);
-        container.innerHTML = `
-            <div class="error-loading" style="grid-column: 1 / -1; text-align: center;">
-                Не удалось загрузить отзывы. Попробуйте позже.
-            </div>
-        `;
+        container.innerHTML = '<div class="error-loading">Не удалось загрузить отзывы</div>';
     }
 }
 
@@ -184,4 +232,13 @@ function formatDate(dateString) {
 
 function renderStars(rating) {
     return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+}
+
+function showAlert(message, type) {
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type}`;
+    alert.textContent = message;
+    document.body.appendChild(alert);
+    
+    setTimeout(() => alert.remove(), 3000);
 }

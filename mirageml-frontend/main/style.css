@@ -695,3 +695,69 @@ footer {
         padding: 15px;
     }
 }
+
+/* Стили для меню пользователя */
+.user-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4a6bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.user-avatar:hover {
+    background-color: #3a5bef;
+    transform: scale(1.05);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.3s;
+    font-size: 14px;
+}
+
+.dropdown-content a:hover {
+    background-color: #f5f7ff;
+    color: #4a6bff;
+}
+
+.user-menu:hover .dropdown-content {
+    display: block;
+}
+
+/* Стиль для кнопки выхода */
+.dropdown-content #logout-btn {
+    color: #ff4a4a;
+}
+
+.dropdown-content #logout-btn:hover {
+    background-color: #fff0f0;
+}
