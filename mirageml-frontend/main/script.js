@@ -7,13 +7,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const registerModal = document.getElementById('register-modal');
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
+    const switchToRegister = document.getElementById('switch-to-register');
+    const switchToLogin = document.getElementById('switch-to-login');
 
     // Проверка авторизации при загрузке
     checkAuthStatus();
 
-    // Открытие модальных окон
-    if (loginBtn) loginBtn.addEventListener('click', () => loginModal.style.display = 'flex');
-    if (registerBtn) registerBtn.addEventListener('click', () => registerModal.style.display = 'flex');
+    // Открытие модальных окон с очисткой уведомлений
+    if (loginBtn) loginBtn.addEventListener('click', () => {
+        loginModal.style.display = 'flex';
+        document.getElementById('login-notification').style.display = 'none';
+    });
+    
+    if (registerBtn) registerBtn.addEventListener('click', () => {
+        registerModal.style.display = 'flex';
+        document.getElementById('register-notification').style.display = 'none';
+    });
     
     if (createProjectBtn) {
         createProjectBtn.addEventListener('click', (e) => {
@@ -28,9 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Переключение между формами
-    const switchToRegister = document.getElementById('switch-to-register');
-    const switchToLogin = document.getElementById('switch-to-login');
-    
     if (switchToRegister) {
         switchToRegister.addEventListener('click', () => {
             loginModal.style.display = 'none';
@@ -60,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
+            const notification = document.getElementById('login-notification');
 
             try {
                 const response = await fetch('/api/login', {
@@ -76,10 +83,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
                     window.location.reload();
                 } else {
-                    showAlert(data.error || 'Ошибка авторизации', 'error');
+                    // Показываем конкретное сообщение об ошибке
+                    if (response.status === 401) {
+                        notification.textContent = data.error || 'Неверный email или пароль';
+                    } else if (response.status === 404) {
+                        notification.textContent = 'Такого аккаунта не существует';
+                    } else {
+                        notification.textContent = data.error || 'Ошибка авторизации';
+                    }
+                    notification.style.display = 'block';
                 }
             } catch (error) {
-                showAlert('Ошибка соединения с сервером', 'error');
+                notification.textContent = 'Ошибка соединения с сервером';
+                notification.style.display = 'block';
             }
         });
     }
@@ -92,9 +108,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const email = document.getElementById('register-email').value;
             const password = document.getElementById('register-password').value;
             const confirm = document.getElementById('register-confirm').value;
+            const notification = document.getElementById('register-notification');
+
+            // Скрываем уведомление при новом вводе
+            notification.style.display = 'none';
 
             if (password !== confirm) {
-                showAlert('Пароли не совпадают', 'error');
+                notification.textContent = 'Пароли не совпадают';
+                notification.style.display = 'block';
                 return;
             }
 
@@ -108,14 +129,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
                 
                 if (data.success) {
-                    showAlert('Регистрация успешна! Теперь войдите в систему.', 'success');
-                    registerModal.style.display = 'none';
-                    loginModal.style.display = 'flex';
+                    notification.textContent = 'Регистрация успешна! Теперь войдите в систему.';
+                    notification.className = 'notification success';
+                    notification.style.display = 'block';
+                    
+                    // Очищаем форму
+                    registerForm.reset();
+                    
+                    // Переключаем на форму входа через 2 секунды
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                        registerModal.style.display = 'none';
+                        loginModal.style.display = 'flex';
+                        notification.className = 'notification error';
+                    }, 2000);
                 } else {
-                    showAlert(data.error || 'Ошибка регистрации', 'error');
+                    if (response.status === 400 && data.error.includes('уже используется')) {
+                        notification.textContent = 'Такая почта уже зарегистрирована';
+                    } else {
+                        notification.textContent = data.error || 'Ошибка регистрации';
+                    }
+                    notification.style.display = 'block';
                 }
             } catch (error) {
-                showAlert('Ошибка соединения с сервером', 'error');
+                notification.textContent = 'Ошибка соединения с сервером';
+                notification.style.display = 'block';
             }
         });
     }
@@ -232,13 +270,4 @@ function formatDate(dateString) {
 
 function renderStars(rating) {
     return '★'.repeat(rating) + '☆'.repeat(5 - rating);
-}
-
-function showAlert(message, type) {
-    const alert = document.createElement('div');
-    alert.className = `alert alert-${type}`;
-    alert.textContent = message;
-    document.body.appendChild(alert);
-    
-    setTimeout(() => alert.remove(), 3000);
 }

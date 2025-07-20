@@ -506,3 +506,26 @@ body {
                       linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
     background-size: 20px 20px;
 }
+
+/* Стили для модального окна сохранения */
+#save-modal .modal-content {
+    max-width: 400px;
+}
+
+#save-modal .form-group {
+    margin-bottom: 15px;
+}
+
+#save-modal input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}

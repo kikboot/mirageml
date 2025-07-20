@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = 3001;
-const JWT_SECRET = 'your-secret-key-here';
+const JWT_SECRET = '8ddfda05949bcc8057da59d2b7e62b4f3e12f00d6af892704d87530ae6731cab';
 
 // Middleware
 app.use(cors());
@@ -64,6 +64,34 @@ function getSessions() {
 function saveSessions(sessions) {
     fs.writeFileSync(SESSIONS_FILE, JSON.stringify(sessions, null, 2));
 }
+
+// Функции для определения устройства и местоположения
+const getDeviceInfo = (userAgent) => {
+    const isMobile = /Mobile|Android|iPhone/i.test(userAgent);
+    const isWindows = /Windows/i.test(userAgent);
+    const isMac = /Macintosh|Mac OS X/i.test(userAgent);
+    const isLinux = /Linux/i.test(userAgent);
+    
+    const browser = 
+        /Chrome/i.test(userAgent) ? 'Chrome' :
+        /Firefox/i.test(userAgent) ? 'Firefox' :
+        /Safari/i.test(userAgent) ? 'Safari' :
+        'Unknown';
+    
+    const os = 
+        isWindows ? 'Windows' :
+        isMac ? 'MacOS' :
+        isLinux ? 'Linux' :
+        isMobile ? 'Mobile' :
+        'Unknown';
+    
+    return `${browser}, ${os}`;
+};
+
+const getLocationByIP = (ip) => {
+    if (ip === '127.0.0.1') return 'Локальный хост';
+    return 'Москва, Россия';
+};
 
 // Middleware для проверки JWT
 function authenticateToken(req, res, next) {
@@ -125,55 +153,54 @@ app.post('/api/login', async (req, res) => {
     const users = getUsers();
     const user = users.find(u => u.email === email);
     
-    if (!user) {
-        return res.status(401).json({ error: 'Неверный email или пароль' });
-    }
-    
-    try {
-        const match = await bcrypt.compare(password, user.password);
-        if (!match) {
-            return res.status(401).json({ error: 'Неверный email или пароль' });
+    if (!user) return res.status(401).json({ error: 'Неверный email или пароль' });
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(401).json({ error: 'Неверный email или пароль' });
+
+    const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
+
+    // Определяем устройство и местоположение
+    const device = getDeviceInfo(req.headers['user-agent']);
+    const ip = req.ip || req.connection.remoteAddress;
+    const location = getLocationByIP(ip);
+
+    const newSession = {
+        id: Date.now().toString(),
+        userId: user.id,
+        token,
+        device,
+        ip,
+        location,
+        createdAt: new Date().toISOString(),
+        lastActive: new Date().toISOString()
+    };
+
+    const sessions = getSessions();
+    sessions.push(newSession);
+    saveSessions(sessions);
+
+    res.json({
+        success: true,
+        token,
+        user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            avatar: user.avatar || user.name.substring(0, 2).toUpperCase()
         }
-        
-        // Создаем JWT токен
-        const token = jwt.sign(
-            { userId: user.id, email: user.email },
-            JWT_SECRET,
-            { expiresIn: '1h' }
-        );
-        
-        // Сохраняем сессию
-        const sessions = getSessions();
-        const newSession = {
-            id: Date.now().toString(),
-            userId: user.id,
-            token,
-            device: req.headers['user-agent'],
-            ip: req.ip,
-            createdAt: new Date().toISOString(),
-            lastActive: new Date().toISOString()
-        };
-        
-        sessions.push(newSession);
-        saveSessions(sessions);
-        
-        // Обновляем сессии пользователя
-        user.sessions.push(newSession.id);
-        saveUsers(users);
-        
-        res.json({
-            success: true,
-            token,
-            user: {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                avatar: user.avatar || user.name.substring(0, 2).toUpperCase()
-            }
-        });
-    } catch (error) {
-        res.status(500).json({ error: 'Ошибка при входе' });
-    }
+    });
+});
+
+// API: Получение активных сессий
+app.get('/api/sessions', authenticateToken, (req, res) => {
+    const sessions = getSessions();
+    const userSessions = sessions.filter(s => s.userId === req.user.userId)
+        .map(s => ({
+            ...s,
+            isCurrent: s.token === req.headers['authorization'].split(' ')[1]
+        }));
+    res.json(userSessions);
 });
 
 // API: Получение профиля

@@ -1,15 +1,12 @@
 [
   {
-    "id": "1752666406345",
-    "name": "Кирилл Николаевич",
-    "email": "12353165esgdfb@mail.ru",
-    "password": "$2b$10$/uklqFiQCH4l/.ZM0lBrMupOaOqIMh1jbLS8lhaoTcV9KbRCqAmSu",
-    "createdAt": "2025-07-16T11:46:46.345Z",
+    "id": "1753031911724",
+    "name": "Вербило Кирилл",
+    "email": "kirill082@mail.ru",
+    "password": "$2b$10$RvTK.DBclpAvr3ROUhdHdeZXFFgonJ3m4sNfeUd6mVTiC6O8KmvWC",
+    "createdAt": "2025-07-20T17:18:31.724Z",
     "sessions": [
-      "1752666408119",
-      "1752666713313"
-    ],
-    "phone": "+7 921 857 0923",
-    "country": "eu"
+      "1753031915127"
+    ]
   }
 ]

@@ -1,20 +1,22 @@
 [
   {
-    "id": "1752657152738",
-    "userId": "1752656774256",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzUyNjU2Nzc0MjU2IiwiZW1haWwiOiJraXJpbDEzMjcwOTY1N0BtYWlsLnJ1IiwiaWF0IjoxNzUyNjU3MTUyLCJleHAiOjE3NTI2NjA3NTJ9.FbAq9BaIqk5k9hF6BBD3FAox0e0mw0gaRIoD6qeOjhM",
-    "device": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "id": "1753033249763",
+    "userId": "1753031911724",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzUzMDMxOTExNzI0IiwiZW1haWwiOiJraXJpbGwwODJAbWFpbC5ydSIsImlhdCI6MTc1MzAzMzI0OSwiZXhwIjoxNzUzMDM2ODQ5fQ.Zas7dEN487BzStLMiFyusfVnGPPVpOCCUDBNAxrxyY0",
+    "device": "Chrome, Windows",
     "ip": "::1",
-    "createdAt": "2025-07-16T09:12:32.738Z",
-    "lastActive": "2025-07-16T09:12:32.738Z"
+    "location": "Москва, Россия",
+    "createdAt": "2025-07-20T17:40:49.763Z",
+    "lastActive": "2025-07-20T17:40:49.763Z"
   },
   {
-    "id": "1752666713313",
-    "userId": "1752666406345",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzUyNjY2NDA2MzQ1IiwiZW1haWwiOiIxMjM1MzE2NWVzZ2RmYkBtYWlsLnJ1IiwiaWF0IjoxNzUyNjY2NzEzLCJleHAiOjE3NTI2NzAzMTN9.UHL8ZmBLgsN4kJFIAA9NKXa5XRbgIRp9hegZk2cHRxw",
-    "device": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "id": "1753035151962",
+    "userId": "1753031911724",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzUzMDMxOTExNzI0IiwiZW1haWwiOiJraXJpbGwwODJAbWFpbC5ydSIsImlhdCI6MTc1MzAzNTE1MSwiZXhwIjoxNzUzMDM4NzUxfQ.Q0Hs-FAD0pIAKvEe0CFiBjjwYvel7DMFv8G8sO7lq24",
+    "device": "Chrome, Windows",
     "ip": "::1",
-    "createdAt": "2025-07-16T11:51:53.313Z",
-    "lastActive": "2025-07-16T11:51:53.313Z"
+    "location": "Москва, Россия",
+    "createdAt": "2025-07-20T18:12:31.962Z",
+    "lastActive": "2025-07-20T18:12:31.962Z"
   }
 ]
