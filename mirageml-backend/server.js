@@ -25,14 +25,14 @@ const REVIEWS_FILE = path.join(DATA_DIR, 'reviews.json');
 // Инициализация файлов данных
 function initDataFiles() {
     if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
-    
+
     const files = [
         { path: USERS_FILE, default: '[]' },
         { path: PROJECTS_FILE, default: '[]' },
         { path: SESSIONS_FILE, default: '[]' },
         { path: REVIEWS_FILE, default: '[]' }
     ];
-    
+
     files.forEach(file => {
         if (!fs.existsSync(file.path)) {
             fs.writeFileSync(file.path, file.default);
@@ -54,6 +54,7 @@ function getProjects() {
 }
 
 function saveProjects(projects) {
+    console.log('Сохранение проекта:', projects);
     fs.writeFileSync(PROJECTS_FILE, JSON.stringify(projects, null, 2));
 }
 
@@ -71,20 +72,20 @@ const getDeviceInfo = (userAgent) => {
     const isWindows = /Windows/i.test(userAgent);
     const isMac = /Macintosh|Mac OS X/i.test(userAgent);
     const isLinux = /Linux/i.test(userAgent);
-    
-    const browser = 
+
+    const browser =
         /Chrome/i.test(userAgent) ? 'Chrome' :
-        /Firefox/i.test(userAgent) ? 'Firefox' :
-        /Safari/i.test(userAgent) ? 'Safari' :
-        'Unknown';
-    
-    const os = 
+            /Firefox/i.test(userAgent) ? 'Firefox' :
+                /Safari/i.test(userAgent) ? 'Safari' :
+                    'Unknown';
+
+    const os =
         isWindows ? 'Windows' :
-        isMac ? 'MacOS' :
-        isLinux ? 'Linux' :
-        isMobile ? 'Mobile' :
-        'Unknown';
-    
+            isMac ? 'MacOS' :
+                isLinux ? 'Linux' :
+                    isMobile ? 'Mobile' :
+                        'Unknown';
+
     return `${browser}, ${os}`;
 };
 
@@ -97,9 +98,9 @@ const getLocationByIP = (ip) => {
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    
+
     if (!token) return res.sendStatus(401);
-    
+
     jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) return res.sendStatus(403);
         req.user = user;
@@ -113,17 +114,17 @@ initDataFiles();
 // API: Регистрация
 app.post('/api/register', async (req, res) => {
     const { name, email, password } = req.body;
-    
+
     if (!name || !email || !password) {
         return res.status(400).json({ error: 'Все поля обязательны' });
     }
-    
+
     const users = getUsers();
-    
+
     if (users.some(user => user.email === email)) {
         return res.status(400).json({ error: 'Email уже используется' });
     }
-    
+
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = {
@@ -134,11 +135,11 @@ app.post('/api/register', async (req, res) => {
             createdAt: new Date().toISOString(),
             sessions: []
         };
-        
+
         users.push(newUser);
         saveUsers(users);
-        
-        res.status(201).json({ 
+
+        res.status(201).json({
             success: true,
             message: 'Аккаунт успешно создан'
         });
@@ -152,7 +153,7 @@ app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
     const users = getUsers();
     const user = users.find(u => u.email === email);
-    
+
     if (!user) return res.status(401).json({ error: 'Неверный email или пароль' });
 
     const match = await bcrypt.compare(password, user.password);
@@ -207,11 +208,11 @@ app.get('/api/sessions', authenticateToken, (req, res) => {
 app.get('/api/profile', authenticateToken, (req, res) => {
     const users = getUsers();
     const user = users.find(u => u.id === req.user.userId);
-    
+
     if (!user) {
         return res.status(404).json({ error: 'Пользователь не найден' });
     }
-    
+
     res.json({
         id: user.id,
         name: user.name,
@@ -229,18 +230,18 @@ app.put('/api/profile', authenticateToken, async (req, res) => {
         const { name, email, phone, country } = req.body;
         const users = getUsers();
         const userIndex = users.findIndex(u => u.id === req.user.userId);
-        
+
         if (userIndex === -1) {
             return res.status(404).json({ error: 'Пользователь не найден' });
         }
-        
+
         // Проверка email на уникальность
         if (email && email !== users[userIndex].email) {
             if (users.some(u => u.email === email && u.id !== req.user.userId)) {
                 return res.status(400).json({ error: 'Email уже используется' });
             }
         }
-        
+
         users[userIndex] = {
             ...users[userIndex],
             name: name || users[userIndex].name,
@@ -248,9 +249,9 @@ app.put('/api/profile', authenticateToken, async (req, res) => {
             phone: phone || users[userIndex].phone,
             country: country || users[userIndex].country
         };
-        
+
         saveUsers(users);
-        
+
         res.json({
             success: true,
             message: 'Профиль успешно обновлен',
@@ -267,20 +268,20 @@ app.post('/api/change-password', authenticateToken, async (req, res) => {
         const { currentPassword, newPassword } = req.body;
         const users = getUsers();
         const user = users.find(u => u.id === req.user.userId);
-        
+
         if (!user) {
             return res.status(404).json({ error: 'Пользователь не найден' });
         }
-        
+
         const match = await bcrypt.compare(currentPassword, user.password);
         if (!match) {
             return res.status(401).json({ error: 'Текущий пароль неверный' });
         }
-        
+
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedPassword;
         saveUsers(users);
-        
+
         res.json({ success: true, message: 'Пароль успешно изменен' });
     } catch (error) {
         res.status(500).json({ error: 'Ошибка при изменении пароля' });
@@ -292,34 +293,34 @@ app.delete('/api/account', authenticateToken, async (req, res) => {
     try {
         const { password } = req.body;
         const userId = req.user.userId;
-        
+
         // Проверка пароля
         const users = getUsers();
         const user = users.find(u => u.id === userId);
-        
+
         if (!user) {
             return res.status(404).json({ error: 'Пользователь не найден' });
         }
-        
+
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
             return res.status(401).json({ error: 'Неверный пароль' });
         }
-        
+
         // Удаление пользователя
         const updatedUsers = users.filter(u => u.id !== userId);
         saveUsers(updatedUsers);
-        
+
         // Удаление проектов пользователя
         const projects = getProjects();
         const updatedProjects = projects.filter(p => p.userId !== userId);
         saveProjects(updatedProjects);
-        
+
         // Удаление сессий пользователя
         const sessions = getSessions();
         const updatedSessions = sessions.filter(s => s.userId !== userId);
         saveSessions(updatedSessions);
-        
+
         res.json({ success: true, message: 'Аккаунт успешно удален' });
     } catch (error) {
         res.status(500).json({ error: 'Ошибка при удалении аккаунта' });
@@ -337,12 +338,29 @@ app.get('/api/projects', authenticateToken, (req, res) => {
     }
 });
 
+// API: Получение конкретного проекта
+app.get('/api/projects/:id', authenticateToken, (req, res) => {
+    try {
+        const { id } = req.params;
+        const projects = getProjects();
+        const project = projects.find(p => p.id === id && p.userId === req.user.userId);
+
+        if (!project) {
+            return res.status(404).json({ error: 'Проект не найден' });
+        }
+
+        res.json(project);
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка загрузки проекта' });
+    }
+});
+
 // API: Создание проекта
 app.post('/api/projects', authenticateToken, (req, res) => {
     try {
         const { name } = req.body;
         const projects = getProjects();
-        
+
         const newProject = {
             id: Date.now().toString(),
             name: name || 'Новый проект',
@@ -355,7 +373,7 @@ app.post('/api/projects', authenticateToken, (req, res) => {
         projects.push(newProject);
         saveProjects(projects);
 
-        res.status(201).json({ 
+        res.status(201).json({
             success: true,
             project: newProject
         });
@@ -370,20 +388,32 @@ app.put('/api/projects/:id', authenticateToken, (req, res) => {
         const { id } = req.params;
         const { elements } = req.body;
         const projects = getProjects();
-        
+
+        console.log('Сохранение проекта:', id);
+        console.log('Элементы для сохранения:', elements);
+
         const projectIndex = projects.findIndex(p => p.id === id && p.userId === req.user.userId);
         if (projectIndex === -1) {
             return res.status(404).json({ error: 'Проект не найден' });
         }
-        
-        projects[projectIndex].elements = elements;
-        projects[projectIndex].updatedAt = new Date().toISOString();
+
+        projects[projectIndex] = {
+            ...projects[projectIndex],
+            elements: elements || {},
+            updatedAt: new Date().toISOString()
+        };
+
         saveProjects(projects);
 
-        res.json({ 
+        const responseData = {
             success: true,
-            message: 'Проект сохранен'
-        });
+            message: 'Проект сохранен',
+            project: projects[projectIndex]
+        };
+
+        console.log('Ответ сервера:', responseData);
+
+        res.json(responseData);
     } catch (error) {
         res.status(500).json({ error: 'Ошибка сохранения проекта' });
     }
@@ -394,14 +424,14 @@ app.delete('/api/projects/:id', authenticateToken, (req, res) => {
     try {
         const { id } = req.params;
         let projects = getProjects();
-        
+
         const initialLength = projects.length;
         projects = projects.filter(p => !(p.id === id && p.userId === req.user.userId));
-        
+
         if (projects.length === initialLength) {
             return res.status(404).json({ error: 'Проект не найден' });
         }
-        
+
         saveProjects(projects);
         res.json({ success: true, message: 'Проект удален' });
     } catch (error) {
@@ -416,7 +446,7 @@ app.post('/api/logout', authenticateToken, (req, res) => {
         const sessions = getSessions();
         const updatedSessions = sessions.filter(s => s.token !== token);
         saveSessions(updatedSessions);
-        
+
         res.json({ success: true, message: 'Вы успешно вышли' });
     } catch (error) {
         res.status(500).json({ error: 'Ошибка при выходе' });
@@ -437,7 +467,7 @@ app.post('/api/reviews', (req, res) => {
     try {
         const { name, email, rating, comment } = req.body;
         const reviews = JSON.parse(fs.readFileSync(REVIEWS_FILE));
-        
+
         const newReview = {
             id: Date.now().toString(),
             name,
@@ -447,11 +477,11 @@ app.post('/api/reviews', (req, res) => {
             approved: false,
             createdAt: new Date().toISOString()
         };
-        
+
         reviews.push(newReview);
         fs.writeFileSync(REVIEWS_FILE, JSON.stringify(reviews, null, 2));
-        
-        res.json({ 
+
+        res.json({
             success: true,
             message: 'Отзыв отправлен на модерацию'
         });

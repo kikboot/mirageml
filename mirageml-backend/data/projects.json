@@ -1,34 +1,45 @@
 [
   {
-    "id": "1752786415146",
-    "name": "d",
-    "userId": "1752771277065",
-    "elements": {},
-    "createdAt": "2025-07-17T21:06:55.146Z",
-    "updatedAt": "2025-07-17T21:06:55.146Z"
-  },
-  {
-    "id": "1752787005477",
-    "name": "j",
-    "userId": "1752771277065",
-    "elements": {},
-    "createdAt": "2025-07-17T21:16:45.477Z",
-    "updatedAt": "2025-07-17T21:16:45.477Z"
-  },
-  {
-    "id": "1752951709849",
-    "name": "d",
-    "userId": "1752951676558",
-    "elements": {},
-    "createdAt": "2025-07-19T19:01:49.849Z",
-    "updatedAt": "2025-07-19T19:01:49.849Z"
-  },
-  {
-    "id": "1753030515596",
-    "name": "укео",
-    "userId": "1752951676558",
-    "elements": {},
-    "createdAt": "2025-07-20T16:55:15.596Z",
-    "updatedAt": "2025-07-20T16:55:15.596Z"
+    "id": "1754766631327",
+    "name": "Первый проект, в котором работает режим сохранения",
+    "userId": "1753031911724",
+    "elements": {
+      "element-1754766831931": {
+        "id": "element-1754766831931",
+        "type": "div",
+        "name": "Синий",
+        "x": -44,
+        "y": -10,
+        "width": 929,
+        "height": 640,
+        "rotation": 0,
+        "backgroundColor": "rgb(0, 37, 184)",
+        "textColor": "",
+        "fontSize": "",
+        "padding": "",
+        "border": "",
+        "text": "",
+        "imageUrl": null
+      },
+      "element-1754766831932": {
+        "id": "element-1754766831932",
+        "type": "div",
+        "name": "Белый",
+        "x": -30,
+        "y": -3,
+        "width": 904,
+        "height": 163,
+        "rotation": 0,
+        "backgroundColor": "rgb(255, 255, 255)",
+        "textColor": "",
+        "fontSize": "",
+        "padding": "",
+        "border": "",
+        "text": "",
+        "imageUrl": null
+      }
+    },
+    "createdAt": "2025-08-09T19:10:31.327Z",
+    "updatedAt": "2025-08-09T19:14:17.519Z"
   }
 ]

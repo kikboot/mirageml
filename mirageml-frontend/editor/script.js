@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const DOM = {
         canvas: document.getElementById('canvas'),
         elementsPanel: document.querySelector('.elements-panel'),
@@ -68,13 +68,160 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    let currentProjectId = null;
+
     function init() {
+        // Проверяем авторизацию
+        const token = localStorage.getItem('token');
+        if (!token) {
+            showToast('Требуется авторизация', 'error');
+            setTimeout(() => window.location.href = '../main/index.html', 1500);
+            return;
+        }
+
+        // Получаем ID проекта из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        currentProjectId = urlParams.get('project');
+
+        // Инициализация интерфейса
         setupDragAndDrop();
         setupEventListeners();
         setupElementTemplates();
         setupHelpSystem();
         setupImageUpload();
+
+        // Загружаем проект если есть ID
+        if (currentProjectId) {
+            loadProject(currentProjectId)
+                .catch(error => {
+                    console.error('Ошибка загрузки проекта:', error);
+                    showToast('Не удалось загрузить проект', 'error');
+                });
+        }
+
         console.log('MirageML Editor initialized');
+    }
+
+    async function loadProject(projectId) {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:3001/api/projects/${projectId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) throw new Error('Ошибка загрузки проекта');
+
+            const project = await response.json();
+
+            // Очищаем текущий холст
+            clearCanvas();
+
+            // Восстанавливаем элементы
+            if (project.elements && Object.keys(project.elements).length > 0) {
+                Object.values(project.elements).forEach(elData => {
+                    const element = createElement(elData.type, elData.x, elData.y);
+
+                    // Восстанавливаем свойства
+                    element.element.style.width = `${elData.width}px`;
+                    element.element.style.height = `${elData.height}px`;
+                    element.element.style.backgroundColor = elData.backgroundColor;
+                    element.element.style.color = elData.textColor;
+                    element.element.style.fontSize = elData.fontSize;
+                    element.element.style.padding = elData.padding;
+                    element.element.style.border = elData.border;
+                    element.element.style.transform = `rotate(${elData.rotation}deg)`;
+
+                    if (elData.text) {
+                        element.element.textContent = elData.text;
+                    }
+
+                    if (elData.type === 'img' && elData.imageUrl) {
+                        element.element.style.backgroundImage = `url(${elData.imageUrl})`;
+                        element.imageUrl = elData.imageUrl;
+                    }
+
+                    element.name = elData.name || elData.type;
+                });
+            }
+
+            return project;
+        } catch (error) {
+            console.error('Ошибка загрузки проекта:', error);
+            showToast(error.message, 'error');
+        }
+    }
+
+    async function saveProject() {
+        if (!currentProjectId) {
+            showToast('Сначала создайте проект', 'error');
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showToast('Требуется авторизация', 'error');
+                window.location.href = '../main/index.html';
+                return;
+            }
+
+            const elementsData = {};
+
+            state.elements.forEach(el => {
+                elementsData[el.id] = {
+                    id: el.id,
+                    type: el.type,
+                    name: el.name || el.type,
+                    x: parseInt(el.element.style.left) || 0,
+                    y: parseInt(el.element.style.top) || 0,
+                    width: parseInt(el.element.style.width) || 100,
+                    height: parseInt(el.element.style.height) || 100,
+                    rotation: el.rotation || 0,
+                    backgroundColor: el.element.style.backgroundColor || '',
+                    textColor: el.element.style.color || '',
+                    fontSize: el.element.style.fontSize || '',
+                    padding: el.element.style.padding || '',
+                    border: el.element.style.border || '',
+                    text: el.element.textContent || '',
+                    imageUrl: el.imageUrl || null
+                };
+            });
+
+            const response = await fetch(`http://localhost:3001/api/projects/${currentProjectId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ elements: elementsData })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || 'Ошибка сервера');
+            }
+
+            showToast('Проект успешно сохранён', 'success');
+            return await response.json();
+        } catch (error) {
+            console.error('Ошибка сохранения:', error);
+            showToast(error.message, 'error');
+            throw error;
+        }
+    }
+
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
     }
 
     function setupImageUpload() {
@@ -94,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function() {
             DOM.modals.imageUpload.style.display = 'none';
         });
 
-        DOM.inputs.imageUpload.addEventListener('change', function(e) {
+        DOM.inputs.imageUpload.addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (!file) return;
 
@@ -104,18 +251,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 state.imageUpload.file = file;
                 state.imageUpload.url = e.target.result;
-                
+
                 DOM.inputs.imagePreview.innerHTML = '';
                 DOM.inputs.imagePreview.style.backgroundImage = `url(${e.target.result})`;
                 DOM.inputs.imagePreview.style.backgroundSize = 'contain';
                 DOM.inputs.imagePreview.style.backgroundRepeat = 'no-repeat';
                 DOM.inputs.imagePreview.style.backgroundPosition = 'center';
-                
+
                 const img = new Image();
-                img.onload = function() {
+                img.onload = function () {
                     DOM.inputs.imageWidth.value = this.width;
                     DOM.inputs.imageHeight.value = this.height;
                 };
@@ -124,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.readAsDataURL(file);
         });
 
-        DOM.buttons.confirmImageUpload.addEventListener('click', function() {
+        DOM.buttons.confirmImageUpload.addEventListener('click', function () {
             if (!state.imageUpload.url) {
                 alert('Пожалуйста, выберите изображение');
                 return;
@@ -132,22 +279,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const width = parseInt(DOM.inputs.imageWidth.value) || 200;
             const height = parseInt(DOM.inputs.imageHeight.value) || 200;
-            
+
             const elementData = createElement('img');
             const element = elementData.element;
-            
+
             element.style.backgroundImage = `url(${state.imageUpload.url})`;
             element.style.backgroundSize = 'contain';
             element.style.backgroundRepeat = 'no-repeat';
             element.style.backgroundPosition = 'center';
             element.style.width = `${width}px`;
             element.style.height = `${height}px`;
-            
+
             elementData.width = width;
             elementData.height = height;
             elementData.imageUrl = state.imageUpload.url;
             elementData.imageFile = state.imageUpload.file;
-            
+
             DOM.modals.imageUpload.style.display = 'none';
             selectElement(elementData);
         });
@@ -164,15 +311,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const template = getElementTemplate(type);
         const element = document.createElement(template.tag);
         const id = `element-${Date.now()}`;
-        
+
         element.className = 'canvas-element';
         element.id = id;
         element.draggable = false;
-        
+
         const canvasRect = DOM.canvas.getBoundingClientRect();
         x = x || canvasRect.width / 2 - 50;
         y = y || canvasRect.height / 2 - 25;
-        
+
         Object.assign(element.style, {
             position: 'absolute',
             left: `${x}px`,
@@ -184,11 +331,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (type === 'line' || type === 'arrow') {
             element.textContent = '';
         }
-        
+
         applyElementTemplate(element, type);
-        
+
         DOM.canvas.appendChild(element);
-        
+
         const elementData = {
             id,
             element,
@@ -200,12 +347,12 @@ document.addEventListener('DOMContentLoaded', function() {
             height: parseInt(element.style.height) || (type === 'line' ? 2 : 20),
             rotation: 0
         };
-        
+
         state.elements.push(elementData);
         addToLayersList(elementData);
         setupElementEvents(element, elementData);
         selectElement(elementData);
-        
+
         return elementData;
     }
 
@@ -323,12 +470,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function setupElementEvents(element, elementData) {
-        element.addEventListener('dblclick', function(e) {
+        element.addEventListener('dblclick', function (e) {
             e.stopPropagation();
-            
+
             const nonTextElements = ['img', 'line', 'arrow', 'ellipse'];
             if (nonTextElements.includes(elementData.type)) return;
-            
+
             const currentText = element.textContent || '';
             const text = prompt('Введите текст:', currentText);
             if (text !== null) {
@@ -336,72 +483,72 @@ document.addEventListener('DOMContentLoaded', function() {
                 updatePropertiesForm(elementData);
             }
         });
-        
-        element.addEventListener('mousedown', function(e) {
+
+        element.addEventListener('mousedown', function (e) {
             e.stopPropagation();
-            
+
             bringToFront(element);
             selectElement(elementData);
-            
+
             const handle = e.target.closest('.resize-handle');
             const rotateHandle = e.target.closest('.rotate-handle');
-            
+
             if (handle) {
                 state.dragState.isResizing = true;
                 state.dragState.direction = handle.dataset.direction;
                 state.dragState.startWidth = element.offsetWidth;
                 state.dragState.startHeight = element.offsetHeight;
-            } 
+            }
             else if (rotateHandle) {
                 state.dragState.isRotating = true;
                 state.dragState.startAngle = elementData.rotation || 0;
-                
+
                 // Получаем центр элемента
                 const rect = element.getBoundingClientRect();
                 state.dragState.centerX = rect.left + rect.width / 2;
                 state.dragState.centerY = rect.top + rect.height / 2;
             }
-            else if (e.target === element || 
-                    (elementData.type === 'arrow' && 
-                     (e.target.classList.contains('arrow-line') || 
-                      e.target.classList.contains('arrow-head')))) {
+            else if (e.target === element ||
+                (elementData.type === 'arrow' &&
+                    (e.target.classList.contains('arrow-line') ||
+                        e.target.classList.contains('arrow-head')))) {
                 state.dragState.isDragging = true;
             }
-            
+
             state.dragState.startX = e.clientX;
             state.dragState.startY = e.clientY;
             state.dragState.startLeft = parseInt(element.style.left) || 0;
             state.dragState.startTop = parseInt(element.style.top) || 0;
         });
-        
+
         createResizeHandles(element);
         createRotateHandle(element);
     }
 
     function createResizeHandles(element) {
         element.querySelectorAll('.resize-handle').forEach(handle => handle.remove());
-        
+
         const directions = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'];
-        
+
         directions.forEach(dir => {
             const handle = document.createElement('div');
             handle.className = `resize-handle ${dir}`;
             handle.dataset.direction = dir;
             handle.title = `Resize (${dir.toUpperCase()})`;
-            
+
             if (dir.length === 1) {
                 handle.style.cursor = `${dir}-resize`;
             } else {
                 handle.style.cursor = `${dir}-resize`;
             }
-            
+
             element.appendChild(handle);
         });
     }
 
     function createRotateHandle(element) {
         element.querySelectorAll('.rotate-handle').forEach(handle => handle.remove());
-        
+
         const handle = document.createElement('div');
         handle.className = 'rotate-handle';
         handle.title = 'Rotate';
@@ -419,14 +566,14 @@ document.addEventListener('DOMContentLoaded', function() {
         handle.style.justifyContent = 'center';
         handle.style.color = 'white';
         handle.innerHTML = '<i class="fas fa-sync-alt" style="font-size: 10px;"></i>';
-        
+
         element.appendChild(handle);
     }
 
     function setupEventListeners() {
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
-        
+
         DOM.buttons.export.addEventListener('click', showExportModal);
         DOM.buttons.preview.addEventListener('click', showPreviewModal);
         DOM.buttons.clear.addEventListener('click', clearCanvas);
@@ -435,27 +582,54 @@ document.addEventListener('DOMContentLoaded', function() {
         DOM.buttons.copyHtml.addEventListener('click', copyHtml);
         DOM.buttons.copyCss.addEventListener('click', copyCss);
         DOM.buttons.downloadZip.addEventListener('click', downloadZip);
-        
-        DOM.inputs.bgColor.addEventListener('input', function() {
+        DOM.buttons.showHelp.addEventListener('click', () => {
+            DOM.modals.help.style.display = 'flex';
+            DOM.modals.help.style.zIndex = '10000';
+        });
+
+        // Создаем кнопку сохранения (если её нет)
+        if (!document.getElementById('save-btn')) {
+            const saveBtn = document.createElement('button');
+            saveBtn.id = 'save-btn';
+            saveBtn.className = 'btn primary';
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> Сохранить';
+            document.querySelector('.header-controls').prepend(saveBtn);
+        }
+
+        // Обработчик клика по кнопке сохранения
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            const saveBtn = document.getElementById('save-btn');
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...';
+
+            try {
+                await saveProject();
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Сохранить';
+            }
+        });
+
+        DOM.inputs.bgColor.addEventListener('input', function () {
             if (state.selectedElement) {
                 state.selectedElement.element.style.backgroundColor = this.value;
             }
         });
-        
-        DOM.inputs.textColor.addEventListener('input', function() {
+
+        DOM.inputs.textColor.addEventListener('input', function () {
             if (state.selectedElement) {
                 state.selectedElement.element.style.color = this.value;
             }
         });
-        
-        DOM.inputs.rotation.addEventListener('input', function() {
+
+        DOM.inputs.rotation.addEventListener('input', function () {
             if (state.selectedElement) {
                 const angle = parseInt(this.value) || 0;
                 state.selectedElement.element.style.transform = `rotate(${angle}deg)`;
                 state.selectedElement.rotation = angle;
             }
         });
-        
+
         document.querySelectorAll('.close-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 Object.values(DOM.modals).forEach(modal => {
@@ -463,7 +637,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
         });
-        
+
         window.addEventListener('click', (e) => {
             Object.values(DOM.modals).forEach(modal => {
                 if (e.target === modal) {
@@ -471,7 +645,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
-        
+
         DOM.canvas.addEventListener('mousedown', (e) => {
             if (e.target === DOM.canvas) {
                 deselectElement();
@@ -488,30 +662,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function handleMouseMove(e) {
         if (!state.selectedElement) return;
-        
+
         const element = state.selectedElement.element;
         const dx = e.clientX - state.dragState.startX;
         const dy = e.clientY - state.dragState.startY;
-        
+
         if (state.dragState.isDragging) {
             const newLeft = state.dragState.startLeft + dx;
             const newTop = state.dragState.startTop + dy;
-            
+
             element.style.left = `${newLeft}px`;
             element.style.top = `${newTop}px`;
-            
+
             state.selectedElement.x = newLeft;
             state.selectedElement.y = newTop;
-            
+
             updatePropertiesForm(state.selectedElement);
-        } 
+        }
         else if (state.dragState.isResizing) {
             let newWidth = state.dragState.startWidth;
             let newHeight = state.dragState.startHeight;
             let newLeft = state.dragState.startLeft;
             let newTop = state.dragState.startTop;
-            
-            switch(state.dragState.direction) {
+
+            switch (state.dragState.direction) {
                 case 'nw':
                     newWidth = Math.max(20, state.dragState.startWidth - dx);
                     newHeight = Math.max(20, state.dragState.startHeight - dy);
@@ -547,27 +721,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     newHeight = Math.max(20, state.dragState.startHeight + dy);
                     break;
             }
-            
+
             element.style.width = `${newWidth}px`;
             element.style.height = `${newHeight}px`;
             element.style.left = `${newLeft}px`;
             element.style.top = `${newTop}px`;
-            
+
             state.selectedElement.width = newWidth;
             state.selectedElement.height = newHeight;
             state.selectedElement.x = newLeft;
             state.selectedElement.y = newTop;
-            
+
             updatePropertiesForm(state.selectedElement);
         }
         else if (state.dragState.isRotating) {
             const rect = element.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
-            
+
             const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * 180 / Math.PI + 90;
             const roundedAngle = Math.round(angle);
-            
+
             element.style.transform = `rotate(${roundedAngle}deg)`;
             state.selectedElement.rotation = roundedAngle;
             DOM.inputs.rotation.value = roundedAngle;
@@ -583,18 +757,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function setupDragAndDrop() {
         const elementItems = document.querySelectorAll('.element-item');
-        
+
         elementItems.forEach(item => {
-            item.addEventListener('dragstart', function(e) {
+            item.addEventListener('dragstart', function (e) {
                 e.dataTransfer.setData('text/plain', this.dataset.type);
             });
         });
-        
-        DOM.canvas.addEventListener('dragover', function(e) {
+
+        DOM.canvas.addEventListener('dragover', function (e) {
             e.preventDefault();
         });
-        
-        DOM.canvas.addEventListener('drop', function(e) {
+
+        DOM.canvas.addEventListener('drop', function (e) {
             e.preventDefault();
             const type = e.dataTransfer.getData('text/plain');
             const rect = DOM.canvas.getBoundingClientRect();
@@ -606,20 +780,20 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.canvas-element').forEach(el => {
             el.classList.remove('selected');
         });
-        
+
         elementData.element.classList.add('selected');
         state.selectedElement = elementData;
-        
+
         document.querySelectorAll('.layer-item').forEach(el => {
             el.classList.remove('active');
         });
-        
+
         const layerItem = document.querySelector(`.layer-item[data-id="${elementData.id}"]`);
         if (layerItem) {
             layerItem.classList.add('active');
             layerItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-        
+
         updatePropertiesForm(elementData);
     }
 
@@ -628,17 +802,17 @@ document.addEventListener('DOMContentLoaded', function() {
             state.selectedElement.element.classList.remove('selected');
             state.selectedElement = null;
         }
-        
+
         document.querySelectorAll('.layer-item').forEach(el => {
             el.classList.remove('active');
         });
-        
+
         clearPropertiesForm();
     }
 
     function updatePropertiesForm(elementData) {
         const element = elementData.element;
-        
+
         DOM.inputs.text.value = element.textContent || '';
         DOM.inputs.width.value = element.style.width || '';
         DOM.inputs.height.value = element.style.height || '';
@@ -664,44 +838,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function applyProperties() {
         if (!state.selectedElement) return;
-        
+
         const element = state.selectedElement.element;
         const elementData = state.selectedElement;
-        
+
         if (DOM.inputs.text.value !== undefined) {
             element.textContent = DOM.inputs.text.value;
         }
-        
+
         if (DOM.inputs.width.value) {
             element.style.width = DOM.inputs.width.value;
             elementData.width = parseInt(DOM.inputs.width.value) || 100;
         }
-        
+
         if (DOM.inputs.height.value) {
             element.style.height = DOM.inputs.height.value;
             elementData.height = parseInt(DOM.inputs.height.value) || 100;
         }
-        
+
         if (DOM.inputs.bgColor.value) {
             element.style.backgroundColor = DOM.inputs.bgColor.value;
         }
-        
+
         if (DOM.inputs.textColor.value) {
             element.style.color = DOM.inputs.textColor.value;
         }
-        
+
         if (DOM.inputs.fontSize.value) {
             element.style.fontSize = DOM.inputs.fontSize.value;
         }
-        
+
         if (DOM.inputs.padding.value) {
             element.style.padding = DOM.inputs.padding.value;
         }
-        
+
         if (DOM.inputs.border.value) {
             element.style.border = DOM.inputs.border.value;
         }
-        
+
         if (DOM.inputs.rotation.value) {
             const angle = parseInt(DOM.inputs.rotation.value) || 0;
             element.style.transform = `rotate(${angle}deg)`;
@@ -711,16 +885,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function deleteSelectedElement() {
         if (!state.selectedElement) return;
-        
+
         if (confirm('Удалить выбранный элемент?')) {
             state.selectedElement.element.remove();
             state.elements = state.elements.filter(el => el.id !== state.selectedElement.id);
-            
+
             const layerItem = document.querySelector(`.layer-item[data-id="${state.selectedElement.id}"]`);
             if (layerItem) {
                 layerItem.remove();
             }
-            
+
             deselectElement();
         }
     }
@@ -734,46 +908,46 @@ document.addEventListener('DOMContentLoaded', function() {
             <span class="layer-name">${elementData.name || elementData.type}</span>
             <input type="text" class="layer-rename" value="${elementData.name || elementData.type}" style="display:none;">
         `;
-        
+
         layerItem.addEventListener('mousedown', (e) => {
             if (!e.target.classList.contains('layer-rename')) {
                 bringToFront(elementData.element);
                 selectElement(elementData);
             }
         });
-        
+
         const layerName = layerItem.querySelector('.layer-name');
         const layerRename = layerItem.querySelector('.layer-rename');
-        
+
         layerName.addEventListener('dblclick', () => {
             layerName.style.display = 'none';
             layerRename.style.display = 'inline-block';
             layerRename.focus();
         });
-        
+
         layerRename.addEventListener('blur', () => {
             finishRenaming(layerName, layerRename, elementData);
         });
-        
+
         layerRename.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 finishRenaming(layerName, layerRename, elementData);
             }
         });
-        
+
         layerItem.draggable = true;
-        
+
         layerItem.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('text/plain', elementData.id);
             e.dataTransfer.effectAllowed = 'move';
             layerItem.classList.add('dragging');
         });
-        
+
         layerItem.addEventListener('dragend', () => {
             layerItem.classList.remove('dragging');
             updateLayersOrder();
         });
-        
+
         DOM.layersList.appendChild(layerItem);
     }
 
@@ -816,7 +990,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 maxZIndex = zIndex;
             }
         });
-        
+
         element.style.zIndex = maxZIndex + 1;
         DOM.canvas.appendChild(element);
         updateLayersOrder();
@@ -842,52 +1016,52 @@ document.addEventListener('DOMContentLoaded', function() {
         htmlCode += `    <link rel="stylesheet" href="styles.css">\n`;
         htmlCode += `</head>\n<body>\n`;
         htmlCode += `    <div class="container">\n`;
-        
+
         state.elements.forEach(el => {
             const element = el.element;
             const tag = el.type === 'img' ? 'div' : el.type;
-            
+
             htmlCode += `        <${tag} id="${element.id}" class="${element.className.replace('canvas-element', '').trim()}"`;
-            
+
             if (el.rotation) {
                 htmlCode += ` style="transform: rotate(${el.rotation}deg)"`;
             }
-            
+
             htmlCode += `>`;
-            
+
             if (el.type !== 'img') {
                 htmlCode += escapeHtml(element.textContent);
             }
-            
+
             htmlCode += `</${tag}>\n`;
         });
-        
+
         htmlCode += `    </div>\n</body>\n</html>`;
-        
+
         DOM.outputs.html.value = htmlCode;
-        
+
         let cssCode = `/* Основные стили */\n`;
         cssCode += `body {\n    margin: 0;\n    padding: 0;\n    font-family: Arial, sans-serif;\n}\n\n`;
         cssCode += `.container {\n    position: relative;\n    width: 100%;\n    min-height: 100vh;\n}\n\n`;
-        
+
         state.elements.forEach(el => {
             const element = el.element;
             const styles = getElementStyles(element);
-            
+
             cssCode += `#${element.id} {\n`;
             styles.split(';').forEach(prop => {
                 if (prop.trim()) {
                     cssCode += `    ${prop.trim()};\n`;
                 }
             });
-            
+
             if (el.type === 'img' && el.imageUrl) {
                 cssCode += `    background-image: url(${el.imageUrl.includes('data:') ? el.imageUrl : 'images/' + el.imageFile.name});\n`;
                 cssCode += `    background-size: contain;\n`;
                 cssCode += `    background-repeat: no-repeat;\n`;
                 cssCode += `    background-position: center;\n`;
             }
-            
+
             if (el.type === 'arrow') {
                 cssCode += `    position: relative;\n`;
                 cssCode += `}\n\n`;
@@ -915,13 +1089,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 cssCode += `}\n\n`;
             }
         });
-        
+
         DOM.outputs.css.value = cssCode;
     }
 
     function generatePreview() {
         let previewHtml = `<!DOCTYPE html><html><head><style>`;
-        
+
         previewHtml += `body { margin: 0; padding: 0; font-family: Arial, sans-serif; }`;
         previewHtml += `.container { 
             position: relative; 
@@ -929,33 +1103,33 @@ document.addEventListener('DOMContentLoaded', function() {
             min-height: 100vh; 
             background-color: white;
         }`;
-        
+
         state.elements.forEach(el => {
             const element = el.element;
             previewHtml += `#${element.id} { 
                 ${getElementStyles(element)} 
                 ${element.style.cssText || ''}
             `;
-            
+
             if (el.type === 'img' && el.imageUrl) {
                 previewHtml += `background-image: url(${el.imageUrl}); `;
                 previewHtml += `background-size: contain; `;
                 previewHtml += `background-repeat: no-repeat; `;
                 previewHtml += `background-position: center; `;
             }
-            
+
             if (el.type === 'p' || el.type === 'button') {
                 previewHtml += `display: block; `;
                 previewHtml += `white-space: pre-wrap; `;
                 previewHtml += `overflow: visible; `;
             }
-            
+
             if (el.rotation) {
                 previewHtml += `transform: rotate(${el.rotation}deg); `;
             }
-            
+
             previewHtml += `}`;
-            
+
             if (el.type === 'arrow') {
                 previewHtml += `#${element.id} .arrow-line { 
                     position: absolute;
@@ -979,24 +1153,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 }`;
             }
         });
-        
+
         previewHtml += `</style></head><body><div class="container">`;
-        
+
         state.elements.forEach(el => {
             const element = el.element;
             const tag = el.type === 'img' ? 'div' : el.type;
-            
+
             previewHtml += `<${tag} id="${element.id}" class="${element.className.replace('canvas-element', '').trim()}">`;
-            
+
             if (el.type !== 'img') {
                 previewHtml += escapeHtml(element.textContent);
             }
-            
+
             previewHtml += `</${tag}>`;
         });
-        
+
         previewHtml += `</div></body></html>`;
-        
+
         DOM.previewFrame.srcdoc = previewHtml;
     }
 
@@ -1012,29 +1186,29 @@ document.addEventListener('DOMContentLoaded', function() {
     function getElementStyles(element) {
         const style = window.getComputedStyle(element);
         const ignoreProps = [
-            'position', 'left', 'top', 'width', 'height', 'margin', 
+            'position', 'left', 'top', 'width', 'height', 'margin',
             'margin-top', 'margin-left', 'margin-right', 'margin-bottom',
             'z-index', 'cursor', 'user-select', 'pointer-events',
             'transform', 'transform-origin'
         ];
-        
+
         let styleStr = '';
-        
+
         styleStr += `position: absolute !important; `;
         styleStr += `left: ${element.style.left || '0'} !important; `;
         styleStr += `top: ${element.style.top || '0'} !important; `;
         styleStr += `width: ${element.style.width || 'auto'} !important; `;
         styleStr += `height: ${element.style.height || 'auto'} !important; `;
-        
+
         styleStr += `opacity: 1 !important; `;
         styleStr += `visibility: visible !important; `;
         styleStr += `display: block !important; `;
-        
+
         for (let i = 0; i < style.length; i++) {
             const prop = style[i];
-            
-            if (!ignoreProps.includes(prop) && 
-                !prop.startsWith('-webkit') && 
+
+            if (!ignoreProps.includes(prop) &&
+                !prop.startsWith('-webkit') &&
                 !prop.startsWith('moz')) {
                 const value = style.getPropertyValue(prop);
                 if (value && !value.includes('canvas-element')) {
@@ -1042,7 +1216,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }
-        
+
         return styleStr;
     }
 
@@ -1051,7 +1225,7 @@ document.addEventListener('DOMContentLoaded', function() {
             while (DOM.canvas.firstChild) {
                 DOM.canvas.removeChild(DOM.canvas.firstChild);
             }
-            
+
             state.elements = [];
             state.selectedElement = null;
             DOM.layersList.innerHTML = '';
@@ -1062,10 +1236,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function rgbToHex(rgb) {
         if (!rgb) return '';
         if (rgb.startsWith('#')) return rgb;
-        
+
         const match = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
         if (!match) return '';
-        
+
         const hex = (x) => ("0" + parseInt(x).toString(16)).slice(-2);
         return "#" + hex(match[1]) + hex(match[2]) + hex(match[3]);
     }
@@ -1086,27 +1260,27 @@ document.addEventListener('DOMContentLoaded', function() {
         const zip = new JSZip();
         const htmlContent = DOM.outputs.html.value;
         const cssContent = DOM.outputs.css.value;
-        
+
         zip.file("index.html", htmlContent);
         zip.file("styles.css", cssContent);
-        
+
         const imgFolder = zip.folder("images");
         state.elements.forEach(el => {
             if (el.type === 'img' && el.imageFile) {
                 imgFolder.file(el.imageFile.name, el.imageFile);
             }
         });
-        
-        zip.generateAsync({type:"blob"}).then(function(content) {
+
+        zip.generateAsync({ type: "blob" }).then(function (content) {
             const a = document.createElement("a");
             const url = URL.createObjectURL(content);
-            
+
             a.href = url;
             a.download = "mirageML-project.zip";
             document.body.appendChild(a);
             a.click();
-            
-            setTimeout(function() {
+
+            setTimeout(function () {
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
             }, 0);
@@ -1117,10 +1291,10 @@ document.addEventListener('DOMContentLoaded', function() {
     DOM.layersList.addEventListener('dragover', (e) => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
-        
+
         const draggingItem = document.querySelector('.layer-item.dragging');
         if (!draggingItem) return;
-        
+
         const afterElement = getDragAfterElement(DOM.layersList, e.clientY);
         if (afterElement) {
             DOM.layersList.insertBefore(draggingItem, afterElement);
@@ -1131,11 +1305,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function getDragAfterElement(container, y) {
         const draggableElements = [...container.querySelectorAll('.layer-item:not(.dragging)')];
-        
+
         return draggableElements.reduce((closest, child) => {
             const box = child.getBoundingClientRect();
             const offset = y - box.top - box.height / 2;
-            
+
             if (offset < 0 && offset > closest.offset) {
                 return { offset: offset, element: child };
             } else {
@@ -1143,6 +1317,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
+
+    // Добавим обработчик перед закрытием страницы
+    window.addEventListener('beforeunload', (e) => {
+        if (currentProjectId && state.elements.length > 0) {
+            saveProject();
+            // Стандартное сообщение для браузера
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
 
     init();
 });
