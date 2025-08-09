@@ -4,33 +4,16 @@
     "name": "Первый проект, в котором работает режим сохранения",
     "userId": "1753031911724",
     "elements": {
-      "element-1754766831931": {
-        "id": "element-1754766831931",
+      "element-1754768560844": {
+        "id": "element-1754768560844",
         "type": "div",
-        "name": "Синий",
-        "x": -44,
-        "y": -10,
-        "width": 929,
-        "height": 640,
+        "name": "Красный кубик",
+        "x": 324,
+        "y": 286,
+        "width": 100,
+        "height": 100,
         "rotation": 0,
-        "backgroundColor": "rgb(0, 37, 184)",
-        "textColor": "",
-        "fontSize": "",
-        "padding": "",
-        "border": "",
-        "text": "",
-        "imageUrl": null
-      },
-      "element-1754766831932": {
-        "id": "element-1754766831932",
-        "type": "div",
-        "name": "Белый",
-        "x": -30,
-        "y": -3,
-        "width": 904,
-        "height": 163,
-        "rotation": 0,
-        "backgroundColor": "rgb(255, 255, 255)",
+        "backgroundColor": "rgb(205, 19, 19)",
         "textColor": "",
         "fontSize": "",
         "padding": "",
@@ -40,6 +23,32 @@
       }
     },
     "createdAt": "2025-08-09T19:10:31.327Z",
-    "updatedAt": "2025-08-09T19:14:17.519Z"
+    "updatedAt": "2025-08-09T19:42:41.654Z"
+  },
+  {
+    "id": "1754768538286",
+    "name": "вапор",
+    "userId": "1753031911724",
+    "elements": {
+      "element-1754768542538": {
+        "id": "element-1754768542538",
+        "type": "button",
+        "name": "Очень длинная кнопка",
+        "x": 69,
+        "y": 84,
+        "width": 904,
+        "height": 33,
+        "rotation": 0,
+        "backgroundColor": "rgb(74, 107, 255)",
+        "textColor": "white",
+        "fontSize": "",
+        "padding": "8px 16px",
+        "border": "none",
+        "text": "Кнопка",
+        "imageUrl": null
+      }
+    },
+    "createdAt": "2025-08-09T19:42:18.286Z",
+    "updatedAt": "2025-08-09T19:42:37.332Z"
   }
 ]

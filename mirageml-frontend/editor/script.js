@@ -142,7 +142,17 @@ document.addEventListener('DOMContentLoaded', function () {
                         element.imageUrl = elData.imageUrl;
                     }
 
+                    // Обновляем имя в данных элемента
                     element.name = elData.name || elData.type;
+
+                    // Обновляем имя в интерфейсе слоёв
+                    const layerItem = document.querySelector(`.layer-item[data-id="${element.id}"]`);
+                    if (layerItem) {
+                        const layerName = layerItem.querySelector('.layer-name');
+                        const layerRename = layerItem.querySelector('.layer-rename');
+                        if (layerName) layerName.textContent = element.name;
+                        if (layerRename) layerRename.value = element.name;
+                    }
                 });
             }
 
@@ -169,11 +179,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const elementsData = {};
 
+            // Собираем данные всех элементов
             state.elements.forEach(el => {
+                // Находим соответствующий элемент в DOM слоёв
+                const layerItem = document.querySelector(`.layer-item[data-id="${el.id}"]`);
+                const layerName = layerItem ?
+                    (layerItem.querySelector('.layer-rename')?.value ||
+                        layerItem.querySelector('.layer-name')?.textContent) :
+                    el.name;
+
                 elementsData[el.id] = {
                     id: el.id,
                     type: el.type,
-                    name: el.name || el.type,
+                    name: layerName || el.type, // Используем имя из слоёв
                     x: parseInt(el.element.style.left) || 0,
                     y: parseInt(el.element.style.top) || 0,
                     width: parseInt(el.element.style.width) || 100,
@@ -189,6 +207,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 };
             });
 
+            // Отправляем на сервер
             const response = await fetch(`http://localhost:3001/api/projects/${currentProjectId}`, {
                 method: 'PUT',
                 headers: {
@@ -926,11 +945,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         layerRename.addEventListener('blur', () => {
+            elementData.name = layerRename.value; // Обновляем имя в данных элемента
             finishRenaming(layerName, layerRename, elementData);
         });
 
         layerRename.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
+                elementData.name = layerRename.value; // Обновляем имя в данных элемента
                 finishRenaming(layerName, layerRename, elementData);
             }
         });
