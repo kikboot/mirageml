@@ -4,8 +4,8 @@
     "name": "Первый проект, в котором работает режим сохранения",
     "userId": "1753031911724",
     "elements": {
-      "element-1754768560844": {
-        "id": "element-1754768560844",
+      "element-1754832608473": {
+        "id": "element-1754832608473",
         "type": "div",
         "name": "Красный кубик",
         "x": 324,
@@ -23,15 +23,15 @@
       }
     },
     "createdAt": "2025-08-09T19:10:31.327Z",
-    "updatedAt": "2025-08-09T19:42:41.654Z"
+    "updatedAt": "2025-08-10T13:30:11.440Z"
   },
   {
     "id": "1754768538286",
     "name": "вапор",
     "userId": "1753031911724",
     "elements": {
-      "element-1754768542538": {
-        "id": "element-1754768542538",
+      "element-1754831977489": {
+        "id": "element-1754831977489",
         "type": "button",
         "name": "Очень длинная кнопка",
         "x": 69,
@@ -46,9 +46,69 @@
         "border": "none",
         "text": "Кнопка",
         "imageUrl": null
+      },
+      "element-1754831977490": {
+        "id": "element-1754831977490",
+        "type": "ellipse",
+        "name": "ellipse",
+        "x": 361,
+        "y": 290,
+        "width": 3045,
+        "height": 80,
+        "rotation": 0,
+        "backgroundColor": "rgb(74, 107, 255)",
+        "textColor": "",
+        "fontSize": "",
+        "padding": "",
+        "border": "",
+        "text": "",
+        "imageUrl": null
       }
     },
     "createdAt": "2025-08-09T19:42:18.286Z",
-    "updatedAt": "2025-08-09T19:42:37.332Z"
+    "updatedAt": "2025-08-10T13:55:32.284Z"
+  },
+  {
+    "id": "1754828907093",
+    "name": "gerds",
+    "userId": "1754828891732",
+    "elements": {
+      "element-1754828922281": {
+        "id": "element-1754828922281",
+        "type": "p",
+        "name": "p",
+        "x": 469,
+        "y": 319,
+        "width": 200,
+        "height": 100,
+        "rotation": 0,
+        "backgroundColor": "",
+        "textColor": "",
+        "fontSize": "",
+        "padding": "5px",
+        "border": "",
+        "text": "Текст абзаца",
+        "imageUrl": null
+      },
+      "element-1754828922282": {
+        "id": "element-1754828922282",
+        "type": "ellipse",
+        "name": "ellipse",
+        "x": 14,
+        "y": 42,
+        "width": 80,
+        "height": 80,
+        "rotation": 0,
+        "backgroundColor": "rgb(74, 107, 255)",
+        "textColor": "",
+        "fontSize": "",
+        "padding": "",
+        "border": "",
+        "text": "",
+        "imageUrl": null
+      }
+    },
+    "createdAt": "2025-08-10T12:28:27.093Z",
+    "updatedAt": "2025-08-10T12:28:55.956Z"
   }
 ]

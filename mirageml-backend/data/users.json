@@ -10,5 +10,13 @@
     ],
     "phone": "8 938 110-90-54",
     "country": "ru"
+  },
+  {
+    "id": "1754828891732",
+    "name": "Тиньков",
+    "email": "3126437sdgg@mail.ru",
+    "password": "$2b$10$p6TFo68w7MjvcEr4r1//IuB//Tioiqps/3sHH3D2pAQ3SSyalnFs.",
+    "createdAt": "2025-08-10T12:28:11.732Z",
+    "sessions": []
   }
 ]
