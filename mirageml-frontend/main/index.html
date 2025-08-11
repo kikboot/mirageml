@@ -11,13 +11,19 @@
 </head>
 
 <body>
-    <!-- Шапка -->
-    <header>
+    <!-- Шапка в стиле Figma -->
+    <header class="figma-header">
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    MirageML
+                    <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
+                    <span>MirageML</span>
                 </div>
+                <nav class="main-nav">
+                    <a href="#features">Возможности</a>
+                    <a href="#advantages">Преимущества</a>
+                    <a href="#reviews">Отзывы</a>
+                </nav>
                 <div class="auth-buttons">
                     <button class="btn btn-outline" id="login-btn">Войти</button>
                     <button class="btn btn-primary" id="register-btn">Регистрация</button>
@@ -27,25 +33,44 @@
     </header>
 
     <!-- Главная секция -->
-    <section class="hero">
+    <section class="hero figma-hero">
         <div class="container">
-            <h1>Создавайте сайты визуально</h1>
-            <p>MirageML - интуитивно понятный редактор для быстрого прототипирования и создания веб-страниц без
-                написания кода</p>
-            <a href="#" class="cta-btn" id="create-project-btn">Создать макет</a>
+            <div class="hero-content">
+                <h1>Создавайте сайты <span class="gradient-text">визуально</span></h1>
+                <p class="hero-subtitle">Интуитивный редактор для быстрого прототипирования и создания веб-страниц без написания кода</p>
+                <div class="hero-actions">
+                    <a href="#" class="cta-btn" id="create-project-btn">Создать макет</a>
+                    <a href="#features" class="secondary-btn">Узнать больше <i class="fas fa-arrow-down"></i></a>
+                </div>
+                <div class="hero-preview">
+                    <div class="editor-mockup">
+                        <div class="toolbar-mock"></div>
+                        <div class="canvas-mock">
+                            <div class="element mock-1"></div>
+                            <div class="element mock-2"></div>
+                            <div class="element mock-3"></div>
+                        </div>
+                        <div class="panel-mock"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Преимущества -->
-    <section class="advantages">
+    <section class="advantages figma-section" id="advantages">
         <div class="container">
-            <h2>Почему выбирают MirageML?</h2>
-            <p class="subtitle">Лучший выбор для тех, кто ценит простоту и качество</p>
+            <div class="section-header">
+                <h2>Почему выбирают MirageML?</h2>
+                <p class="section-subtitle">Лучший выбор для тех, кто ценит простоту и качество</p>
+            </div>
 
             <div class="advantages-grid">
                 <div class="advantage-card">
                     <div class="advantage-icon">
-                        <i class="fas fa-wallet"></i>
+                        <div class="icon-bg">
+                            <i class="fas fa-wallet"></i>
+                        </div>
                     </div>
                     <h3>Гибкая оплата</h3>
                     <p>Без подписок — платите только за дополнительные функции, которые вам действительно нужны</p>
@@ -53,25 +78,29 @@
 
                 <div class="advantage-card">
                     <div class="advantage-icon">
-                        <i class="fas fa-code"></i>
+                        <div class="icon-bg">
+                            <i class="fas fa-code"></i>
+                        </div>
                     </div>
                     <h3>Чистый код</h3>
-                    <p>Экспорт в чистый HTML/CSS без лишних тегов — ваш код будет выглядеть так, как будто его писал
-                        профессионал</p>
+                    <p>Экспорт в чистый HTML/CSS без лишних тегов — ваш код будет выглядеть так, как будто его писал профессионал</p>
                 </div>
 
                 <div class="advantage-card">
                     <div class="advantage-icon">
-                        <i class="fas fa-mobile-alt"></i>
+                        <div class="icon-bg">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
                     </div>
                     <h3>Адаптивность</h3>
-                    <p>Автоматическая поддержка мобильных устройств — ваш сайт будет идеально выглядеть на любом экране
-                    </p>
+                    <p>Автоматическая поддержка мобильных устройств — ваш сайт будет идеально выглядеть на любом экране</p>
                 </div>
 
                 <div class="advantage-card">
                     <div class="advantage-icon">
-                        <i class="fas fa-bolt"></i>
+                        <div class="icon-bg">
+                            <i class="fas fa-bolt"></i>
+                        </div>
                     </div>
                     <h3>Мгновенный результат</h3>
                     <p>Создавайте рабочие прототипы за минуты, а не за дни — ускорьте процесс разработки в 5 раз</p>
@@ -81,48 +110,63 @@
     </section>
 
     <!-- Особенности -->
-    <section class="features">
+    <section class="features figma-section" id="features">
         <div class="container">
-            <h2>Возможности редактора</h2>
+            <div class="section-header">
+                <h2>Возможности редактора</h2>
+                <p class="section-subtitle">Все необходимое для комфортной работы над проектами</p>
+            </div>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-th"></i>
+                        <div class="icon-bg">
+                            <i class="fas fa-th"></i>
+                        </div>
                     </div>
                     <h3>Блоки</h3>
                     <p>Добавляйте и настраивайте блоки с содержимым, изменяйте их размеры и расположение</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-heading"></i>
+                        <div class="icon-bg">
+                            <i class="fas fa-heading"></i>
+                        </div>
                     </div>
                     <h3>Текст</h3>
                     <p>Добавляйте заголовки и текстовые блоки с возможностью полного форматирования</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-image"></i>
+                        <div class="icon-bg">
+                            <i class="fas fa-image"></i>
+                        </div>
                     </div>
                     <h3>Изображения</h3>
                     <p>Загружайте свои изображения и настраивайте их отображение на странице</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-download"></i>
+                        <div class="icon-bg">
+                            <i class="fas fa-download"></i>
+                        </div>
                     </div>
                     <h3>Экспорт</h3>
                     <p>Получайте чистый HTML/CSS код или скачивайте готовый проект в ZIP архиве</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-sliders-h"></i>
+                        <div class="icon-bg">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
                     </div>
                     <h3>Настройки</h3>
                     <p>Гибкие настройки внешнего вида каждого элемента через удобную панель свойств</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-layer-group"></i>
+                        <div class="icon-bg">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
                     </div>
                     <h3>Слои</h3>
                     <p>Управляйте элементами через панель слоев и переименовывайте их</p>
@@ -132,9 +176,12 @@
     </section>
 
     <!-- Отзывы -->
-    <section class="reviews">
+    <section class="reviews figma-section" id="reviews">
         <div class="container">
-            <h2>Что говорят наши пользователи</h2>
+            <div class="section-header">
+                <h2>Что говорят наши пользователи</h2>
+                <p class="section-subtitle">Реальные отзывы от дизайнеров и разработчиков</p>
+            </div>
             <div class="reviews-grid" id="reviews-container">
                 <!-- Отзывы будут загружены через JS -->
                 <div class="loading-reviews">Загрузка отзывов...</div>
@@ -146,19 +193,19 @@
     </section>
 
     <!-- Секция доната -->
-    <section class="donate-section">
+    <section class="donate-section figma-section">
         <div class="container">
             <div class="donate-card">
-                <h2>Поддержать разработчика</h2>
-                <p>MirageML создается и развивается в одиночку. Если вам нравится проект, вы можете поддержать его
-                    развитие!</p>
+                <div class="donate-header">
+                    <h2>Поддержать разработчика</h2>
+                    <p>MirageML создается и развивается в одиночку. Если вам нравится проект, вы можете поддержать его развитие!</p>
+                </div>
 
                 <div class="donate-methods">
                     <!-- Метод 1: QR-код -->
                     <div class="donate-method">
                         <h3>Сканируйте QR-код</h3>
                         <div class="qr-code">
-                            <!-- Замените src на ваш реальный QR-код -->
                             <img src="../img/qr-код.jpg" alt="QR-код для доната">
                         </div>
                         <p>Любая сумма — это мотивация развивать проект дальше ❤️</p>
@@ -198,18 +245,18 @@
 
     <!-- Модальные окна -->
     <div class="modal" id="login-modal">
-        <div class="modal-content">
+        <div class="modal-content figma-modal">
             <span class="close-btn">&times;</span>
             <h2>Вход в аккаунт</h2>
             <div class="notification error" id="login-notification"></div>
             <form id="login-form">
                 <div class="form-group">
                     <label for="login-email">Email</label>
-                    <input type="email" id="login-email" required>
+                    <input type="email" id="login-email" required placeholder="Введите ваш email">
                 </div>
                 <div class="form-group">
                     <label for="login-password">Пароль</label>
-                    <input type="password" id="login-password" required>
+                    <input type="password" id="login-password" required placeholder="Введите пароль">
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-outline" id="cancel-login">Отмена</button>
@@ -223,26 +270,26 @@
     </div>
 
     <div class="modal" id="register-modal">
-        <div class="modal-content">
+        <div class="modal-content figma-modal">
             <span class="close-btn">&times;</span>
             <h2>Регистрация</h2>
             <div class="notification error" id="register-notification"></div>
             <form id="register-form">
                 <div class="form-group">
                     <label for="register-name">Имя</label>
-                    <input type="text" id="register-name" required>
+                    <input type="text" id="register-name" required placeholder="Как вас зовут?">
                 </div>
                 <div class="form-group">
                     <label for="register-email">Email</label>
-                    <input type="email" id="register-email" required>
+                    <input type="email" id="register-email" required placeholder="Введите ваш email">
                 </div>
                 <div class="form-group">
                     <label for="register-password">Пароль</label>
-                    <input type="password" id="register-password" required>
+                    <input type="password" id="register-password" required placeholder="Придумайте пароль">
                 </div>
                 <div class="form-group">
                     <label for="register-confirm">Подтвердите пароль</label>
-                    <input type="password" id="register-confirm" required>
+                    <input type="password" id="register-confirm" required placeholder="Повторите пароль">
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-outline" id="cancel-register">Отмена</button>
@@ -256,12 +303,15 @@
     </div>
 
     <!-- Подвал -->
-    <footer>
+    <footer class="figma-footer">
         <div class="container">
             <div class="footer-grid">
                 <!-- Колонка 1: О проекте -->
                 <div class="footer-col">
-                    <h3>MirageML</h3>
+                    <div class="logo">
+                        <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
+                        <span>MirageML</span>
+                    </div>
                     <p>Визуальный редактор для быстрого создания веб-страниц без написания кода</p>
                 </div>
 
@@ -269,9 +319,9 @@
                 <div class="footer-col">
                     <h3>Навигация</h3>
                     <ul>
-                        <li><a href="/features">Возможности</a></li>
-                        <li><a href="/blog">Блог</a></li>
-                        <li><a href="../reviews/index.html">Отзывы</a></li>
+                        <li><a href="#features">Возможности</a></li>
+                        <li><a href="#advantages">Преимущества</a></li>
+                        <li><a href="#reviews">Отзывы</a></li>
                     </ul>
                 </div>
 
@@ -295,24 +345,22 @@
                 </div>
             </div>
 
-            <div class="social-links">
-                <a href="#" aria-label="VKontakte"><i class="fab fa-vk"></i></a>
-                <a href="https://t.me/MirageML_Official" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
-                <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
-                <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <div class="footer-bottom">
+                <div class="social-links">
+                    <a href="#" aria-label="VKontakte"><i class="fab fa-vk"></i></a>
+                    <a href="https://t.me/MirageML_Official" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+                    <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                </div>
+                <div class="legal-links">
+                    <a href="../confidentiality/index.html">Политика конфиденциальности</a>
+                    <a href="../conditions/index.html">Условия использования</a>
+                </div>
+                <p class="copyright">&copy; 2025 MirageML. Все права защищены.<br>Сделано с <i class="fas fa-heart"></i> в России</p>
             </div>
-            <div class="legal-links">
-                <a href="../confidentiality/index.html">Политика конфиденциальности</a>
-                <a href="../conditions/index.html">Условия использования</a>
-            </div>
-            <p class="copyright">&copy; 2025 MirageML. Все права защищены.<br>Сделано с <i class="fas fa-heart"
-                    style="color: #ff4757;"></i> в России</p>
-        </div>
         </div>
     </footer>
 
     <script src="../main/script.js"></script>
 </body>
-
-</html>

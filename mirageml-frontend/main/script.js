@@ -208,6 +208,40 @@ function updateAuthUI(user) {
     document.getElementById('logout-btn')?.addEventListener('click', logout);
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    const userMenu = document.querySelector('.user-menu');
+    const dropdownContent = document.querySelector('.dropdown-content');
+    let closeTimeout;
+    
+    userMenu.addEventListener('mouseenter', function() {
+        clearTimeout(closeTimeout);
+        dropdownContent.style.opacity = '1';
+        dropdownContent.style.visibility = 'visible';
+        dropdownContent.style.transform = 'translateY(0)';
+    });
+    
+    userMenu.addEventListener('mouseleave', function() {
+        closeTimeout = setTimeout(function() {
+            dropdownContent.style.opacity = '0';
+            dropdownContent.style.visibility = 'hidden';
+            dropdownContent.style.transform = 'translateY(-10px)';
+        }, 1000);
+    });
+    
+    // Чтобы меню не закрывалось при наведении на него
+    dropdownContent.addEventListener('mouseenter', function() {
+        clearTimeout(closeTimeout);
+    });
+    
+    dropdownContent.addEventListener('mouseleave', function() {
+        closeTimeout = setTimeout(function() {
+            dropdownContent.style.opacity = '0';
+            dropdownContent.style.visibility = 'hidden';
+            dropdownContent.style.transform = 'translateY(-10px)';
+        }, 1000);
+    });
+});
+
 // Выход из системы
 async function logout() {
     const token = localStorage.getItem('token');
