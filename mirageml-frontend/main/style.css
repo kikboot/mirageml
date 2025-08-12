@@ -23,7 +23,7 @@
 }
 
 body {
-    background-color: #ffffff;
+    background: #ffffff;
     color: var(--dark);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
@@ -37,6 +37,7 @@ body {
 
 /* Шапка в стиле Figma */
 .figma-header {
+    color: #4a6bff;
     background-color: #ffffff;
     padding: 16px 0;
     position: sticky;
@@ -322,6 +323,7 @@ body {
 /* Сетка преимуществ */
 .advantages-grid {
     display: grid;
+    
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 30px;
 }

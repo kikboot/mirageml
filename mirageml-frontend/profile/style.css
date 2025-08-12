@@ -1,15 +1,27 @@
- * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
+:root {
+    --primary: #4a6bff;
+    --primary-dark: #3a5bef;
+    --primary-light: rgba(74, 107, 255, 0.05);
+    --danger: #ff4a4a;
+    --dark: #1e1e24;
+    --danger-dark: #e63939;
+    --gray-300: #D1D5DB;
+    --gray-700: #374151;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+    background: #f9faff;
+    color: var(--dark);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
         
         .container {
             max-width: 1200px;
@@ -19,13 +31,12 @@
         
         /* Шапка */
         header {
-            background-color: #ffffff;
-            color: #4a6bff;
-            padding: 15px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+    background-color: #ffffff;
+    padding: 16px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
         }
         
         .header-content {
@@ -34,57 +45,119 @@
             align-items: center;
         }
         
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-        }
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.logo-icon {
+    height: 28px;
+    width: auto;
+}
+
+.main-nav {
+    display: flex;
+    gap: 24px;
+}
+
+.main-nav a {
+    color: var(--gray);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    padding: 8px 0;
+    position: relative;
+}
+
+.main-nav a:hover {
+    color: var(--primary);
+}
+
+.main-nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary);
+    transition: var(--transition);
+}
+
+.main-nav a:hover::after {
+    width: 100%;
+}
         
-        .auth-buttons {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .btn {
-            padding: 8px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 1px solid rgb(0, 0, 0);
-            color: rgb(0, 0, 0);
-        }
-        
-        .btn-outline:hover {
-            background: #f0f0f0;
-        }
-        
-        .btn-primary {
-            background-color: #4a6bff;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background-color: #3a5bef;
-        }
-        
-        .btn-danger {
-            background-color: #ff4a4a;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background-color: #e63939;
-        }
+        /* Основные стили кнопок */
+.btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    font-size: 14px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+}
+
+/* Стиль для outline-кнопки */
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--gray-300, #D1D5DB);
+    color: var(--gray-700, #374151);
+}
+
+.btn-outline:hover {
+    border-color: var(--primary, #4a6bff);
+    color: var(--primary, #4a6bff);
+    background-color: var(--primary-light, rgba(74, 107, 255, 0.05));
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Стиль для primary-кнопки */
+.btn-primary {
+    background-color: var(--primary, #4a6bff);
+    color: white;
+    box-shadow: 0 2px 4px rgba(74, 107, 255, 0.2);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark, #3a5bef);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 107, 255, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(74, 107, 255, 0.2);
+}
+
+/* Стиль для danger-кнопки */
+.btn-danger {
+    background-color: var(--danger, #ff4a4a);
+    color: white;
+    box-shadow: 0 2px 4px rgba(255, 74, 74, 0.2);
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-dark, #e63939);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 74, 74, 0.3);
+}
+
+/* Контейнер для кнопок */
+.auth-buttons {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
         
         /* Основной контент */
         .profile-container {

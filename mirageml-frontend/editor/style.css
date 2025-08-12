@@ -9,6 +9,7 @@
     --light-gray: #f5f5f5;
     --medium-gray: #e0e0e0;
     --dark-gray: #aaa;
+    --dark: #1e1e24;
     --white: #fff;
     --grid-color: rgba(0, 0, 0, 0.05);
     --sidebar-width: 250px;
@@ -19,13 +20,14 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 body {
-    color: var(--text-color);
-    background-color: var(--light-gray);
-    overflow: hidden;
+    background-color: #ececec;
+    color: var(--dark);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
 
 .app-container {
@@ -46,9 +48,17 @@ body {
 }
 
 .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.logo-icon {
+    height: 28px;
+    width: auto;
 }
 
 .header-controls {
@@ -56,47 +66,72 @@ body {
     gap: 10px;
 }
 
+/* Базовый стиль кнопок */
 .btn {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
-    transition: background-color 0.2s;
-    display: flex;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: inline-flex;
     align-items: center;
     gap: 8px;
+    height: 40px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+/* Общий эффект при наведении */
 .btn:hover {
-    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0.95;
 }
 
+/* Кнопка профиля */
 .btn.profile-btn {
-    background-color: var(--profile-color);
+    background-color: var(--profile-color, #7C3AED);
     color: white;
 }
 
 .btn.profile-btn:hover {
-    background-color: var(--profile-hover);
+    background-color: var(--profile-hover, #6D28D9);
+    box-shadow: 0 4px 8px rgba(124, 58, 237, 0.2);
 }
 
+/* Основная кнопка */
 .btn.primary {
-    background-color: var(--primary-color);
+    background-color: var(--primary-color, #4a6bff);
     color: white;
 }
 
 .btn.primary:hover {
-    background-color: var(--primary-hover);
+    background-color: var(--primary-hover, #3a5bef);
+    box-shadow: 0 4px 12px rgba(74, 107, 255, 0.3);
 }
 
+/* Опасная кнопка */
 .btn.danger {
-    background-color: var(--danger-color);
+    background-color: var(--danger-color, #EF4444);
     color: white;
 }
 
 .btn.danger:hover {
-    background-color: var(--danger-hover);
+    background-color: var(--danger-hover, #DC2626);
+    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2);
+}
+
+/* Контейнер для кнопок в шапке */
+.auth-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* Для иконок в кнопках */
+.btn i {
+    font-size: 14px;
 }
 
 .main-content {
