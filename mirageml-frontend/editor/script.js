@@ -22,7 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
             showHelp: document.getElementById('show-help'),
             uploadImage: document.getElementById('upload-image-btn'),
             confirmImageUpload: document.getElementById('confirm-image-upload'),
-            cancelImageUpload: document.getElementById('cancel-image-upload')
+            cancelImageUpload: document.getElementById('cancel-image-upload'),
+            applyCanvasSize: document.getElementById('apply-canvas-size')
         },
         inputs: {
             text: document.getElementById('element-text'),
@@ -37,13 +38,17 @@ document.addEventListener('DOMContentLoaded', function () {
             imageUpload: document.getElementById('image-upload-input'),
             imagePreview: document.getElementById('image-preview'),
             imageWidth: document.getElementById('image-width'),
-            imageHeight: document.getElementById('image-height')
+            imageHeight: document.getElementById('image-height'),
+            canvasSizeSelect: document.getElementById('canvas-size-select'),
+            canvasWidth: document.getElementById('canvas-width'),
+            canvasHeight: document.getElementById('canvas-height')
         },
         outputs: {
             html: document.getElementById('export-html'),
             css: document.getElementById('export-css')
         },
-        previewFrame: document.getElementById('preview-frame')
+        previewFrame: document.getElementById('preview-frame'),
+        canvasContainer: document.querySelector('.canvas-container')
     };
 
     const state = {
@@ -65,6 +70,10 @@ document.addEventListener('DOMContentLoaded', function () {
         imageUpload: {
             file: null,
             url: null
+        },
+        canvasSize: {
+            width: 800,
+            height: 600
         }
     };
 
@@ -89,6 +98,10 @@ document.addEventListener('DOMContentLoaded', function () {
         setupElementTemplates();
         setupHelpSystem();
         setupImageUpload();
+        setupCanvasSizeControls();
+
+        // Устанавливаем размер холста по умолчанию
+        setCanvasSize(state.canvasSize.width, state.canvasSize.height);
 
         // Загружаем проект если есть ID
         if (currentProjectId) {
@@ -100,6 +113,70 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         console.log('MirageML Editor initialized');
+    }
+
+    function setupCanvasSizeControls() {
+        // Обработчик изменения выбора размера холста
+        DOM.inputs.canvasSizeSelect.addEventListener('change', function() {
+            const value = this.value;
+            
+            if (value === 'custom') {
+                DOM.inputs.canvasWidth.value = state.canvasSize.width;
+                DOM.inputs.canvasHeight.value = state.canvasSize.height;
+                document.querySelector('.custom-size-inputs').classList.add('active');
+                return;
+            } else {
+                document.querySelector('.custom-size-inputs').classList.remove('active');
+            }
+
+            const [width, height] = value.split('x').map(Number);
+            setCanvasSize(width, height);
+        });
+
+        // Обработчик кнопки применения размера холста
+        DOM.buttons.applyCanvasSize.addEventListener('click', function() {
+            const width = parseInt(DOM.inputs.canvasWidth.value);
+            const height = parseInt(DOM.inputs.canvasHeight.value);
+            
+            if (isNaN(width) || isNaN(height) || width < 100 || height < 100) {
+                showToast('Введите корректные размеры (мин. 100×100)', 'error');
+                return;
+            }
+            
+            setCanvasSize(width, height);
+        });
+    }
+
+    function setCanvasSize(width, height) {
+        state.canvasSize = { width, height };
+        DOM.canvasContainer.style.width = `${width}px`;
+        DOM.canvasContainer.style.height = `${height}px`;
+        DOM.canvas.style.width = `${width}px`;
+        DOM.canvas.style.height = `${height}px`;
+        
+        // Обновляем позиции элементов относительно нового размера холста
+        state.elements.forEach(el => {
+            const element = el.element;
+            const rect = element.getBoundingClientRect();
+            const canvasRect = DOM.canvas.getBoundingClientRect();
+            
+            // Проверяем, чтобы элемент не выходил за границы холста
+            let left = parseInt(element.style.left) || 0;
+            let top = parseInt(element.style.top) || 0;
+            
+            if (left + rect.width > width) {
+                left = width - rect.width;
+                element.style.left = `${left}px`;
+            }
+            
+            if (top + rect.height > height) {
+                top = height - rect.height;
+                element.style.top = `${top}px`;
+            }
+            
+            el.x = left;
+            el.y = top;
+        });
     }
 
     async function loadProject(projectId) {
@@ -117,6 +194,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Очищаем текущий холст
             clearCanvas();
+
+            // Устанавливаем размер холста из проекта, если есть
+            if (project.canvasSize) {
+                setCanvasSize(project.canvasSize.width, project.canvasSize.height);
+            }
 
             // Восстанавливаем элементы
             if (project.elements && Object.keys(project.elements).length > 0) {
@@ -178,10 +260,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const elementsData = {};
+            const projectData = {
+                elements: elementsData,
+                canvasSize: state.canvasSize
+            };
 
             // Собираем данные всех элементов
             state.elements.forEach(el => {
-                // Находим соответствующий элемент в DOM слоёв
                 const layerItem = document.querySelector(`.layer-item[data-id="${el.id}"]`);
                 const layerName = layerItem ?
                     (layerItem.querySelector('.layer-rename')?.value ||
@@ -191,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 elementsData[el.id] = {
                     id: el.id,
                     type: el.type,
-                    name: layerName || el.type, // Используем имя из слоёв
+                    name: layerName || el.type,
                     x: parseInt(el.element.style.left) || 0,
                     y: parseInt(el.element.style.top) || 0,
                     width: parseInt(el.element.style.width) || 100,
@@ -214,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ elements: elementsData })
+                body: JSON.stringify(projectData)
             });
 
             if (!response.ok) {
@@ -233,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function showToast(message, type) {
         const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
+        toast.className = `toast ${type} fade-in`;
         toast.textContent = message;
         document.body.appendChild(toast);
 
@@ -265,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!file) return;
 
             if (!file.type.match('image.*')) {
-                alert('Пожалуйста, выберите файл изображения (JPEG, PNG, GIF)');
+                showToast('Пожалуйста, выберите файл изображения (JPEG, PNG, GIF)', 'error');
                 return;
             }
 
@@ -292,7 +377,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         DOM.buttons.confirmImageUpload.addEventListener('click', function () {
             if (!state.imageUpload.url) {
-                alert('Пожалуйста, выберите изображение');
+                showToast('Пожалуйста, выберите изображение', 'error');
                 return;
             }
 
@@ -690,11 +775,23 @@ document.addEventListener('DOMContentLoaded', function () {
             const newLeft = state.dragState.startLeft + dx;
             const newTop = state.dragState.startTop + dy;
 
-            element.style.left = `${newLeft}px`;
-            element.style.top = `${newTop}px`;
+            // Проверяем границы холста
+            const canvasRect = DOM.canvas.getBoundingClientRect();
+            const elementRect = element.getBoundingClientRect();
+            
+            let boundedLeft = newLeft;
+            let boundedTop = newTop;
+            
+            if (newLeft < 0) boundedLeft = 0;
+            if (newTop < 0) boundedTop = 0;
+            if (newLeft + elementRect.width > canvasRect.width) boundedLeft = canvasRect.width - elementRect.width;
+            if (newTop + elementRect.height > canvasRect.height) boundedTop = canvasRect.height - elementRect.height;
 
-            state.selectedElement.x = newLeft;
-            state.selectedElement.y = newTop;
+            element.style.left = `${boundedLeft}px`;
+            element.style.top = `${boundedTop}px`;
+
+            state.selectedElement.x = boundedLeft;
+            state.selectedElement.y = boundedTop;
 
             updatePropertiesForm(state.selectedElement);
         }
@@ -739,6 +836,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     newWidth = Math.max(20, state.dragState.startWidth + dx);
                     newHeight = Math.max(20, state.dragState.startHeight + dy);
                     break;
+            }
+
+            // Проверяем границы холста
+            const canvasRect = DOM.canvas.getBoundingClientRect();
+            
+            if (newLeft + newWidth > canvasRect.width) {
+                newWidth = canvasRect.width - newLeft;
+            }
+            
+            if (newTop + newHeight > canvasRect.height) {
+                newHeight = canvasRect.height - newTop;
             }
 
             element.style.width = `${newWidth}px`;
@@ -945,13 +1053,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         layerRename.addEventListener('blur', () => {
-            elementData.name = layerRename.value; // Обновляем имя в данных элемента
+            elementData.name = layerRename.value;
             finishRenaming(layerName, layerRename, elementData);
         });
 
         layerRename.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                elementData.name = layerRename.value; // Обновляем имя в данных элемента
+                elementData.name = layerRename.value;
                 finishRenaming(layerName, layerRename, elementData);
             }
         });
@@ -1036,7 +1144,7 @@ document.addEventListener('DOMContentLoaded', function () {
         htmlCode += `    <title>Мой сайт</title>\n`;
         htmlCode += `    <link rel="stylesheet" href="styles.css">\n`;
         htmlCode += `</head>\n<body>\n`;
-        htmlCode += `    <div class="container">\n`;
+        htmlCode += `    <div class="container" style="width:${state.canvasSize.width}px; height:${state.canvasSize.height}px; position:relative;">\n`;
 
         state.elements.forEach(el => {
             const element = el.element;
@@ -1063,7 +1171,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         let cssCode = `/* Основные стили */\n`;
         cssCode += `body {\n    margin: 0;\n    padding: 0;\n    font-family: Arial, sans-serif;\n}\n\n`;
-        cssCode += `.container {\n    position: relative;\n    width: 100%;\n    min-height: 100vh;\n}\n\n`;
+        cssCode += `.container {\n    position: relative;\n    margin: 0 auto;\n}\n\n`;
 
         state.elements.forEach(el => {
             const element = el.element;
@@ -1120,8 +1228,9 @@ document.addEventListener('DOMContentLoaded', function () {
         previewHtml += `body { margin: 0; padding: 0; font-family: Arial, sans-serif; }`;
         previewHtml += `.container { 
             position: relative; 
-            width: 100%; 
-            min-height: 100vh; 
+            width: ${state.canvasSize.width}px;
+            height: ${state.canvasSize.height}px;
+            margin: 0 auto;
             background-color: white;
         }`;
 
@@ -1268,13 +1377,13 @@ document.addEventListener('DOMContentLoaded', function () {
     function copyHtml() {
         DOM.outputs.html.select();
         document.execCommand('copy');
-        alert('HTML скопирован в буфер обмена!');
+        showToast('HTML скопирован в буфер обмена!', 'success');
     }
 
     function copyCss() {
         DOM.outputs.css.select();
         document.execCommand('copy');
-        alert('CSS скопирован в буфер обмена!');
+        showToast('CSS скопирован в буфер обмена!', 'success');
     }
 
     function downloadZip() {
