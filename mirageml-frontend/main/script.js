@@ -305,3 +305,26 @@ function formatDate(dateString) {
 function renderStars(rating) {
     return '★'.repeat(rating) + '☆'.repeat(5 - rating);
 }
+
+// Анимация элементов в превью редактора
+function animateEditorElements() {
+    const elements = document.querySelectorAll('.element');
+    
+    // Функция для генерации случайных значений в пределах
+    const getRandomValue = (min, max) => Math.random() * (max - min) + min;
+    
+    // Анимируем каждый элемент
+    elements.forEach(el => {
+        // Устанавливаем случайную задержку для каждого элемента
+        el.style.animationDelay = `${getRandomValue(0, 5)}s`;
+        
+        // Периодически меняем параметры анимации
+        setInterval(() => {
+            const duration = getRandomValue(12, 20);
+            el.style.animationDuration = `${duration}s`;
+        }, 10000);
+    });
+}
+
+// Запускаем анимацию после загрузки страницы
+document.addEventListener('DOMContentLoaded', animateEditorElements);

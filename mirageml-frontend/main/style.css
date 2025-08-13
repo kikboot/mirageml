@@ -1022,3 +1022,112 @@ body {
 .user-avatar:active {
     transform: scale(0.95);
 }
+
+.canvas-mock {
+    position: relative;
+    overflow: hidden;
+    height: 400px;
+    background: white;
+}
+
+.element {
+    position: absolute;
+    background: rgba(67, 97, 238, 0.1);
+    border: 1px dashed var(--primary);
+    border-radius: 4px;
+    transition: all 8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    will-change: transform, width, height;
+}
+
+.mock-1 {
+    width: 200px;
+    height: 80px;
+    top: 40px;
+    left: 40px;
+    animation: element1Anim 16s infinite alternate;
+}
+
+.mock-2 {
+    width: 300px;
+    height: 200px;
+    top: 140px;
+    left: 280px;
+    animation: element2Anim 14s infinite alternate;
+}
+
+.mock-3 {
+    width: 150px;
+    height: 300px;
+    top: 80px;
+    right: 60px;
+    animation: element3Anim 18s infinite alternate;
+}
+
+@keyframes element1Anim {
+    0%, 100% {
+        transform: translate(0, 0);
+        width: 200px;
+        height: 80px;
+    }
+    25% {
+        transform: translate(50px, 30px);
+        width: 180px;
+        height: 100px;
+    }
+    50% {
+        transform: translate(20px, 60px);
+        width: 220px;
+        height: 60px;
+    }
+    75% {
+        transform: translate(-30px, 20px);
+        width: 160px;
+        height: 120px;
+    }
+}
+
+@keyframes element2Anim {
+    0%, 100% {
+        transform: translate(0, 0);
+        width: 300px;
+        height: 200px;
+    }
+    25% {
+        transform: translate(-80px, -40px);
+        width: 250px;
+        height: 180px;
+    }
+    50% {
+        transform: translate(40px, 30px);
+        width: 280px;
+        height: 220px;
+    }
+    75% {
+        transform: translate(-20px, 50px);
+        width: 320px;
+        height: 160px;
+    }
+}
+
+@keyframes element3Anim {
+    0%, 100% {
+        transform: translate(0, 0);
+        width: 150px;
+        height: 300px;
+    }
+    25% {
+        transform: translate(30px, -20px);
+        width: 180px;
+        height: 280px;
+    }
+    50% {
+        transform: translate(-40px, 40px);
+        width: 120px;
+        height: 320px;
+    }
+    75% {
+        transform: translate(20px, -30px);
+        width: 200px;
+        height: 260px;
+    }
+}
