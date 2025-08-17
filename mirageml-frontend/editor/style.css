@@ -720,3 +720,85 @@ body {
 .fade-in {
     animation: fadeIn 0.3s ease-out;
 }
+
+/* Основной фон */
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        /* Сетка с анимацией */
+        .grid-lines {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: 
+                linear-gradient(90deg, rgba(67, 97, 238, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(67, 97, 238, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridMove 120s linear infinite;
+            transform: rotate(5deg);
+        }
+
+        @keyframes gridMove {
+            0% { transform: rotate(5deg) translate(0, 0); }
+            100% { transform: rotate(5deg) translate(-50%, -50%); }
+        }
+
+        /* Плавающие элементы */
+        .floating-element {
+            position: absolute;
+            border-radius: 6px;
+            opacity: 0.2;
+            animation-timing-function: ease-in-out;
+            animation-iteration-count: infinite;
+            z-index: 1;
+            transition: all 0.5s ease;
+        }
+
+        /* Соединительные линии */
+        .connection-line {
+            position: absolute;
+            background: rgba(67, 97, 238, 0.1);
+            height: 1px;
+            transform-origin: left center;
+            z-index: 0;
+            animation: linePulse 3s infinite alternate;
+        }
+
+        @keyframes linePulse {
+            0% { opacity: 0.1; }
+            100% { opacity: 0.3; }
+        }
+
+        /* Контент (для демонстрации) */
+        .content {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(5px);
+            margin-top: 50px;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: var(--gray);
+            line-height: 1.6;
+        }

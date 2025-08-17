@@ -4,8 +4,8 @@
     "name": "Первый проект, в котором работает режим сохранения",
     "userId": "1753031911724",
     "elements": {
-      "element-1754989128921": {
-        "id": "element-1754989128921",
+      "element-1755417630282": {
+        "id": "element-1755417630282",
         "type": "div",
         "name": "div",
         "x": 248,
@@ -20,18 +20,35 @@
         "border": "",
         "text": "",
         "imageUrl": null
+      },
+      "element-1755417644794": {
+        "id": "element-1755417644794",
+        "type": "button",
+        "name": "button",
+        "x": 255,
+        "y": 170,
+        "width": 100,
+        "height": 100,
+        "rotation": 0,
+        "backgroundColor": "rgb(74, 107, 255)",
+        "textColor": "white",
+        "fontSize": "",
+        "padding": "8px 16px",
+        "border": "none",
+        "text": "Кнопка",
+        "imageUrl": null
       }
     },
     "createdAt": "2025-08-09T19:10:31.327Z",
-    "updatedAt": "2025-08-12T08:58:51.729Z"
+    "updatedAt": "2025-08-17T08:01:25.777Z"
   },
   {
     "id": "1754768538286",
     "name": "вапор",
     "userId": "1753031911724",
     "elements": {
-      "element-1754831977489": {
-        "id": "element-1754831977489",
+      "element-1754995996102": {
+        "id": "element-1754995996102",
         "type": "button",
         "name": "Очень длинная кнопка",
         "x": 69,
@@ -47,8 +64,8 @@
         "text": "Кнопка",
         "imageUrl": null
       },
-      "element-1754831977490": {
-        "id": "element-1754831977490",
+      "element-1754995996103": {
+        "id": "element-1754995996103",
         "type": "ellipse",
         "name": "ellipse",
         "x": 361,
@@ -66,7 +83,7 @@
       }
     },
     "createdAt": "2025-08-09T19:42:18.286Z",
-    "updatedAt": "2025-08-10T13:55:32.284Z"
+    "updatedAt": "2025-08-12T10:53:17.317Z"
   },
   {
     "id": "1754828907093",
@@ -110,5 +127,31 @@
     },
     "createdAt": "2025-08-10T12:28:27.093Z",
     "updatedAt": "2025-08-10T12:28:55.956Z"
+  },
+  {
+    "id": "1754996007301",
+    "name": "1920x1080",
+    "userId": "1753031911724",
+    "elements": {
+      "element-1755096655654": {
+        "id": "element-1755096655654",
+        "type": "div",
+        "name": "div",
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "rotation": 0,
+        "backgroundColor": "rgb(176, 74, 74)",
+        "textColor": "",
+        "fontSize": "",
+        "padding": "",
+        "border": "",
+        "text": "",
+        "imageUrl": null
+      }
+    },
+    "createdAt": "2025-08-12T10:53:27.301Z",
+    "updatedAt": "2025-08-13T14:51:16.406Z"
   }
 ]
