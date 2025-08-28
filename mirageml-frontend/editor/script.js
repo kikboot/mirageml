@@ -198,22 +198,29 @@ document.addEventListener('DOMContentLoaded', function () {
             // Устанавливаем размер холста из проекта, если есть
             if (project.canvasSize) {
                 setCanvasSize(project.canvasSize.width, project.canvasSize.height);
+                updateCanvasSizeSelector(project.canvasSize.width, project.canvasSize.height);
             }
 
-            // Восстанавливаем элементы
+            // Восстанавливаем элементы с точными координатами
             if (project.elements && Object.keys(project.elements).length > 0) {
                 Object.values(project.elements).forEach(elData => {
                     const element = createElement(elData.type, elData.x, elData.y);
 
-                    // Восстанавливаем свойства
+                    // Восстанавливаем ВСЕ свойства точно
                     element.element.style.width = `${elData.width}px`;
                     element.element.style.height = `${elData.height}px`;
-                    element.element.style.backgroundColor = elData.backgroundColor;
-                    element.element.style.color = elData.textColor;
-                    element.element.style.fontSize = elData.fontSize;
-                    element.element.style.padding = elData.padding;
-                    element.element.style.border = elData.border;
-                    element.element.style.transform = `rotate(${elData.rotation}deg)`;
+                    element.element.style.left = `${elData.x}px`;
+                    element.element.style.top = `${elData.y}px`;
+                    element.element.style.backgroundColor = elData.backgroundColor || '';
+                    element.element.style.color = elData.textColor || '';
+                    element.element.style.fontSize = elData.fontSize || '';
+                    element.element.style.padding = elData.padding || '';
+                    element.element.style.border = elData.border || '';
+                    
+                    if (elData.rotation) {
+                        element.element.style.transform = `rotate(${elData.rotation}deg)`;
+                        element.rotation = elData.rotation;
+                    }
 
                     if (elData.text) {
                         element.element.textContent = elData.text;
@@ -221,20 +228,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     if (elData.type === 'img' && elData.imageUrl) {
                         element.element.style.backgroundImage = `url(${elData.imageUrl})`;
+                        element.element.style.backgroundSize = 'contain';
+                        element.element.style.backgroundRepeat = 'no-repeat';
+                        element.element.style.backgroundPosition = 'center';
                         element.imageUrl = elData.imageUrl;
                     }
 
-                    // Обновляем имя в данных элемента
-                    element.name = elData.name || elData.type;
-
-                    // Обновляем имя в интерфейсе слоёв
-                    const layerItem = document.querySelector(`.layer-item[data-id="${element.id}"]`);
-                    if (layerItem) {
-                        const layerName = layerItem.querySelector('.layer-name');
-                        const layerRename = layerItem.querySelector('.layer-rename');
-                        if (layerName) layerName.textContent = element.name;
-                        if (layerRename) layerRename.value = element.name;
-                    }
+                    // Обновляем данные элемента
+                    element.x = elData.x;
+                    element.y = elData.y;
+                    element.width = elData.width;
+                    element.height = elData.height;
                 });
             }
 
@@ -242,6 +246,31 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('Ошибка загрузки проекта:', error);
             showToast(error.message, 'error');
+        }
+    }
+
+    // Функция для обновления селектора размера
+    function updateCanvasSizeSelector(width, height) {
+        const sizeString = `${width}x${height}`;
+        const select = DOM.inputs.canvasSizeSelect;
+        const customInputs = document.querySelector('.custom-size-inputs');
+        
+        // Проверяем, есть ли такой размер в options
+        let found = false;
+        for (let option of select.options) {
+            if (option.value === sizeString) {
+                select.value = sizeString;
+                customInputs.classList.remove('active');
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found) {
+            select.value = 'custom';
+            customInputs.classList.add('active');
+            DOM.inputs.canvasWidth.value = width;
+            DOM.inputs.canvasHeight.value = height;
         }
     }
 
@@ -265,8 +294,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 canvasSize: state.canvasSize
             };
 
-            // Собираем данные всех элементов
+            // Собираем данные всех элементов с более точной информацией
             state.elements.forEach(el => {
+                const rect = el.element.getBoundingClientRect();
+                const canvasRect = DOM.canvas.getBoundingClientRect();
+                
                 const layerItem = document.querySelector(`.layer-item[data-id="${el.id}"]`);
                 const layerName = layerItem ?
                     (layerItem.querySelector('.layer-rename')?.value ||
@@ -279,8 +311,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     name: layerName || el.type,
                     x: parseInt(el.element.style.left) || 0,
                     y: parseInt(el.element.style.top) || 0,
-                    width: parseInt(el.element.style.width) || 100,
-                    height: parseInt(el.element.style.height) || 100,
+                    width: rect.width,
+                    height: rect.height,
                     rotation: el.rotation || 0,
                     backgroundColor: el.element.style.backgroundColor || '',
                     textColor: el.element.style.color || '',
@@ -317,6 +349,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function showToast(message, type) {
+        // Удаляем старые уведомления
+        document.querySelectorAll('.toast').forEach(toast => toast.remove());
+        
         const toast = document.createElement('div');
         toast.className = `toast ${type} fade-in`;
         toast.textContent = message;
@@ -1089,7 +1124,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updateLayersOrder() {
         const layers = Array.from(DOM.layersList.children);
-        layers.forEach((layer, index) => {
+        layers.forEach((layer, index) =>{
             const elementId = layer.dataset.id;
             const element = state.elements.find(el => el.id === elementId);
             if (element) {
@@ -1448,15 +1483,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
-    // Добавим обработчик перед закрытием страницы
-    window.addEventListener('beforeunload', (e) => {
-        if (currentProjectId && state.elements.length > 0) {
-            saveProject();
-            // Стандартное сообщение для браузера
-            e.preventDefault();
-            e.returnValue = '';
-        }
-    });
+// Добавим обработчик перед закрытием страницы
+window.addEventListener('beforeunload', (e) => {
+    if (currentProjectId && state.elements.length > 0) {
+        saveProject();
+        // Стандартное сообщение для браузера
+        e.preventDefault();
+        e.returnValue = '';
+    }
+});
 
-    init();
+init();
 });

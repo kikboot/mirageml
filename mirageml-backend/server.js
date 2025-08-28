@@ -366,6 +366,7 @@ app.post('/api/projects', authenticateToken, (req, res) => {
             name: name || 'Новый проект',
             userId: req.user.userId,
             elements: {},
+            canvasSize: { width: 800, height: 600 },
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
@@ -386,7 +387,7 @@ app.post('/api/projects', authenticateToken, (req, res) => {
 app.put('/api/projects/:id', authenticateToken, (req, res) => {
     try {
         const { id } = req.params;
-        const { elements } = req.body;
+        const { elements, canvasSize } = req.body;
         const projects = getProjects();
 
         console.log('Сохранение проекта:', id);
@@ -400,6 +401,7 @@ app.put('/api/projects/:id', authenticateToken, (req, res) => {
         projects[projectIndex] = {
             ...projects[projectIndex],
             elements: elements || {},
+            canvasSize: canvasSize || { width: 800, height: 600 },
             updatedAt: new Date().toISOString()
         };
 

@@ -1,16 +1,33 @@
 [
   {
-    "id": "1754766631327",
-    "name": "Первый проект, в котором работает режим сохранения",
-    "userId": "1753031911724",
+    "id": "1755533788704",
+    "name": "ывп",
+    "userId": "1755533775801",
     "elements": {
-      "element-1755417630282": {
-        "id": "element-1755417630282",
+      "element-1756386727422": {
+        "id": "element-1756386727422",
+        "type": "button",
+        "name": "button",
+        "x": 67,
+        "y": 32,
+        "width": 100,
+        "height": 50,
+        "rotation": 0,
+        "backgroundColor": "rgb(74, 107, 255)",
+        "textColor": "rgb(0, 0, 0)",
+        "fontSize": "",
+        "padding": "8px 16px",
+        "border": "none",
+        "text": "Кнопка",
+        "imageUrl": null
+      },
+      "element-1756386727424": {
+        "id": "element-1756386727424",
         "type": "div",
         "name": "div",
-        "x": 248,
-        "y": 132,
-        "width": 100,
+        "x": 36,
+        "y": 129,
+        "width": 800,
         "height": 100,
         "rotation": 0,
         "backgroundColor": "rgb(240, 240, 240)",
@@ -20,130 +37,31 @@
         "border": "",
         "text": "",
         "imageUrl": null
-      },
-      "element-1755417644794": {
-        "id": "element-1755417644794",
-        "type": "button",
-        "name": "button",
-        "x": 255,
-        "y": 170,
-        "width": 100,
-        "height": 100,
-        "rotation": 0,
-        "backgroundColor": "rgb(74, 107, 255)",
-        "textColor": "white",
-        "fontSize": "",
-        "padding": "8px 16px",
-        "border": "none",
-        "text": "Кнопка",
-        "imageUrl": null
       }
     },
-    "createdAt": "2025-08-09T19:10:31.327Z",
-    "updatedAt": "2025-08-17T08:01:25.777Z"
+    "createdAt": "2025-08-18T16:16:28.704Z",
+    "updatedAt": "2025-08-28T13:12:10.585Z",
+    "canvasSize": {
+      "width": 1024,
+      "height": 768
+    }
   },
   {
-    "id": "1754768538286",
-    "name": "вапор",
-    "userId": "1753031911724",
+    "id": "1756386758920",
+    "name": "авы",
+    "userId": "1755533775801",
     "elements": {
-      "element-1754995996102": {
-        "id": "element-1754995996102",
-        "type": "button",
-        "name": "Очень длинная кнопка",
-        "x": 69,
-        "y": 84,
-        "width": 904,
-        "height": 33,
-        "rotation": 0,
-        "backgroundColor": "rgb(74, 107, 255)",
-        "textColor": "white",
-        "fontSize": "",
-        "padding": "8px 16px",
-        "border": "none",
-        "text": "Кнопка",
-        "imageUrl": null
-      },
-      "element-1754995996103": {
-        "id": "element-1754995996103",
-        "type": "ellipse",
-        "name": "ellipse",
-        "x": 361,
-        "y": 290,
-        "width": 3045,
-        "height": 80,
-        "rotation": 0,
-        "backgroundColor": "rgb(74, 107, 255)",
-        "textColor": "",
-        "fontSize": "",
-        "padding": "",
-        "border": "",
-        "text": "",
-        "imageUrl": null
-      }
-    },
-    "createdAt": "2025-08-09T19:42:18.286Z",
-    "updatedAt": "2025-08-12T10:53:17.317Z"
-  },
-  {
-    "id": "1754828907093",
-    "name": "gerds",
-    "userId": "1754828891732",
-    "elements": {
-      "element-1754828922281": {
-        "id": "element-1754828922281",
-        "type": "p",
-        "name": "p",
-        "x": 469,
-        "y": 319,
-        "width": 200,
-        "height": 100,
-        "rotation": 0,
-        "backgroundColor": "",
-        "textColor": "",
-        "fontSize": "",
-        "padding": "5px",
-        "border": "",
-        "text": "Текст абзаца",
-        "imageUrl": null
-      },
-      "element-1754828922282": {
-        "id": "element-1754828922282",
-        "type": "ellipse",
-        "name": "ellipse",
-        "x": 14,
-        "y": 42,
-        "width": 80,
-        "height": 80,
-        "rotation": 0,
-        "backgroundColor": "rgb(74, 107, 255)",
-        "textColor": "",
-        "fontSize": "",
-        "padding": "",
-        "border": "",
-        "text": "",
-        "imageUrl": null
-      }
-    },
-    "createdAt": "2025-08-10T12:28:27.093Z",
-    "updatedAt": "2025-08-10T12:28:55.956Z"
-  },
-  {
-    "id": "1754996007301",
-    "name": "1920x1080",
-    "userId": "1753031911724",
-    "elements": {
-      "element-1755096655654": {
-        "id": "element-1755096655654",
+      "element-1756386768935": {
+        "id": "element-1756386768935",
         "type": "div",
         "name": "div",
         "x": 0,
         "y": 0,
-        "width": 1920,
+        "width": 1678,
         "height": 1080,
         "rotation": 0,
-        "backgroundColor": "rgb(176, 74, 74)",
-        "textColor": "",
+        "backgroundColor": "rgb(127, 46, 46)",
+        "textColor": "rgb(255, 255, 255)",
         "fontSize": "",
         "padding": "",
         "border": "",
@@ -151,7 +69,11 @@
         "imageUrl": null
       }
     },
-    "createdAt": "2025-08-12T10:53:27.301Z",
-    "updatedAt": "2025-08-13T14:51:16.406Z"
+    "canvasSize": {
+      "width": 1920,
+      "height": 1080
+    },
+    "createdAt": "2025-08-28T13:12:38.920Z",
+    "updatedAt": "2025-08-28T13:13:12.971Z"
   }
 ]
