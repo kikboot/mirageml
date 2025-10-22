@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const DOM = {
         canvas: document.getElementById('canvas'),
-        elementsPanel: document.querySelector('.elements-panel'),
+        elementsPanel: document.querySelector('.elements-panel-modern'),
         propertiesForm: document.getElementById('properties-form'),
         layersList: document.getElementById('layers-list'),
         modals: {
@@ -23,7 +23,13 @@ document.addEventListener('DOMContentLoaded', function () {
             uploadImage: document.getElementById('upload-image-btn'),
             confirmImageUpload: document.getElementById('confirm-image-upload'),
             cancelImageUpload: document.getElementById('cancel-image-upload'),
-            applyCanvasSize: document.getElementById('apply-canvas-size')
+            applyCanvasSize: document.getElementById('apply-canvas-size'),
+            backToMain: document.getElementById('back-to-main'),
+            save: document.getElementById('save-btn'),
+            zoomIn: document.getElementById('zoom-in'),
+            zoomOut: document.getElementById('zoom-out'),
+            resetZoom: document.getElementById('reset-zoom'),
+            browseImages: document.getElementById('browse-images')
         },
         inputs: {
             text: document.getElementById('element-text'),
@@ -48,7 +54,11 @@ document.addEventListener('DOMContentLoaded', function () {
             css: document.getElementById('export-css')
         },
         previewFrame: document.getElementById('preview-frame'),
-        canvasContainer: document.querySelector('.canvas-container')
+        canvasContainer: document.querySelector('.canvas-container-modern'),
+        canvasGrid: document.querySelector('.canvas-grid-modern'),
+        canvasSizeDisplay: document.getElementById('canvas-size-display'),
+        zoomLevel: document.getElementById('zoom-level'),
+        uploadArea: document.getElementById('upload-area')
     };
 
     const state = {
@@ -72,12 +82,12 @@ document.addEventListener('DOMContentLoaded', function () {
             url: null
         },
         canvasSize: {
-            width: 800,
-            height: 600
-        }
+            width: 1024,
+            height: 768
+        },
+        zoom: 1,
+        currentProjectId: null
     };
-
-    let currentProjectId = null;
 
     function init() {
         // Проверяем авторизацию
@@ -90,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Получаем ID проекта из URL
         const urlParams = new URLSearchParams(window.location.search);
-        currentProjectId = urlParams.get('project');
+        state.currentProjectId = urlParams.get('project');
 
         // Инициализация интерфейса
         setupDragAndDrop();
@@ -99,20 +109,92 @@ document.addEventListener('DOMContentLoaded', function () {
         setupHelpSystem();
         setupImageUpload();
         setupCanvasSizeControls();
+        setupZoomControls();
+        setupTabs();
 
         // Устанавливаем размер холста по умолчанию
         setCanvasSize(state.canvasSize.width, state.canvasSize.height);
 
         // Загружаем проект если есть ID
-        if (currentProjectId) {
-            loadProject(currentProjectId)
+        if (state.currentProjectId) {
+            loadProject(state.currentProjectId)
                 .catch(error => {
                     console.error('Ошибка загрузки проекта:', error);
                     showToast('Не удалось загрузить проект', 'error');
                 });
         }
 
+        // Адаптация для 1366x768
+        adaptForSmallScreens();
+
         console.log('MirageML Editor initialized');
+    }
+
+    function adaptForSmallScreens() {
+        // Проверяем размер экрана
+        const isSmallScreen = window.innerWidth <= 1366 || window.innerHeight <= 768;
+        
+        if (isSmallScreen) {
+            // Уменьшаем минимальные размеры холста
+            DOM.canvasGrid.style.minWidth = '600px';
+            DOM.canvasGrid.style.minHeight = '400px';
+            
+            // Адаптируем размеры для лучшего отображения
+            document.documentElement.style.setProperty('--sidebar-width', '240px');
+            document.documentElement.style.setProperty('--header-height', '60px');
+            
+            // Показываем подсказку об адаптации
+            setTimeout(() => {
+                showToast('Режим адаптации для вашего разрешения экрана', 'info');
+            }, 1000);
+        }
+    }
+
+    function setupTabs() {
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.dataset.tab;
+                
+                // Убираем активные классы
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Добавляем активные классы
+                btn.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+    }
+
+    function setupZoomControls() {
+        DOM.buttons.zoomIn.addEventListener('click', () => {
+            state.zoom = Math.min(state.zoom + 0.1, 2);
+            applyZoom();
+        });
+
+        DOM.buttons.zoomOut.addEventListener('click', () => {
+            state.zoom = Math.max(state.zoom - 0.1, 0.5);
+            applyZoom();
+        });
+
+        DOM.buttons.resetZoom.addEventListener('click', () => {
+            state.zoom = 1;
+            applyZoom();
+        });
+    }
+
+    function applyZoom() {
+        DOM.canvasGrid.style.transform = `scale(${state.zoom})`;
+        DOM.zoomLevel.textContent = `${Math.round(state.zoom * 100)}%`;
+        
+        // Обновляем позиции элементов при зуме
+        state.elements.forEach(el => {
+            const element = el.element;
+            element.style.transform = `rotate(${el.rotation || 0}deg) scale(${1/state.zoom})`;
+        });
     }
 
     function setupCanvasSizeControls() {
@@ -123,10 +205,10 @@ document.addEventListener('DOMContentLoaded', function () {
             if (value === 'custom') {
                 DOM.inputs.canvasWidth.value = state.canvasSize.width;
                 DOM.inputs.canvasHeight.value = state.canvasSize.height;
-                document.querySelector('.custom-size-inputs').classList.add('active');
+                document.querySelector('.custom-size-inputs-modern').classList.add('active');
                 return;
             } else {
-                document.querySelector('.custom-size-inputs').classList.remove('active');
+                document.querySelector('.custom-size-inputs-modern').classList.remove('active');
             }
 
             const [width, height] = value.split('x').map(Number);
@@ -143,40 +225,72 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             
+            if (width > 2000 || height > 2000) {
+                showToast('Максимальный размер холста: 2000×2000', 'error');
+                return;
+            }
+            
             setCanvasSize(width, height);
         });
     }
 
     function setCanvasSize(width, height) {
         state.canvasSize = { width, height };
-        DOM.canvasContainer.style.width = `${width}px`;
-        DOM.canvasContainer.style.height = `${height}px`;
-        DOM.canvas.style.width = `${width}px`;
-        DOM.canvas.style.height = `${height}px`;
+        DOM.canvasGrid.style.width = `${width}px`;
+        DOM.canvasGrid.style.height = `${height}px`;
+        DOM.canvasSizeDisplay.textContent = `${width}×${height}`;
+        
+        // Обновляем селектор размера
+        updateCanvasSizeSelector(width, height);
         
         // Обновляем позиции элементов относительно нового размера холста
         state.elements.forEach(el => {
             const element = el.element;
             const rect = element.getBoundingClientRect();
-            const canvasRect = DOM.canvas.getBoundingClientRect();
             
             // Проверяем, чтобы элемент не выходил за границы холста
             let left = parseInt(element.style.left) || 0;
             let top = parseInt(element.style.top) || 0;
             
             if (left + rect.width > width) {
-                left = width - rect.width;
+                left = Math.max(0, width - rect.width);
                 element.style.left = `${left}px`;
             }
             
             if (top + rect.height > height) {
-                top = height - rect.height;
+                top = Math.max(0, height - rect.height);
                 element.style.top = `${top}px`;
             }
             
             el.x = left;
             el.y = top;
         });
+
+        showToast(`Размер холста изменен на ${width}×${height}`, 'success');
+    }
+
+    function updateCanvasSizeSelector(width, height) {
+        const sizeString = `${width}x${height}`;
+        const select = DOM.inputs.canvasSizeSelect;
+        const customInputs = document.querySelector('.custom-size-inputs-modern');
+        
+        // Проверяем, есть ли такой размер в options
+        let found = false;
+        for (let option of select.options) {
+            if (option.value === sizeString) {
+                select.value = sizeString;
+                customInputs.classList.remove('active');
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found) {
+            select.value = 'custom';
+            customInputs.classList.add('active');
+            DOM.inputs.canvasWidth.value = width;
+            DOM.inputs.canvasHeight.value = height;
+        }
     }
 
     async function loadProject(projectId) {
@@ -198,15 +312,14 @@ document.addEventListener('DOMContentLoaded', function () {
             // Устанавливаем размер холста из проекта, если есть
             if (project.canvasSize) {
                 setCanvasSize(project.canvasSize.width, project.canvasSize.height);
-                updateCanvasSizeSelector(project.canvasSize.width, project.canvasSize.height);
             }
 
-            // Восстанавливаем элементы с точными координатами
+            // Восстанавливаем элементы
             if (project.elements && Object.keys(project.elements).length > 0) {
                 Object.values(project.elements).forEach(elData => {
                     const element = createElement(elData.type, elData.x, elData.y);
 
-                    // Восстанавливаем ВСЕ свойства точно
+                    // Восстанавливаем свойства
                     element.element.style.width = `${elData.width}px`;
                     element.element.style.height = `${elData.height}px`;
                     element.element.style.left = `${elData.x}px`;
@@ -242,6 +355,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
 
+            showToast('Проект успешно загружен', 'success');
             return project;
         } catch (error) {
             console.error('Ошибка загрузки проекта:', error);
@@ -249,33 +363,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Функция для обновления селектора размера
-    function updateCanvasSizeSelector(width, height) {
-        const sizeString = `${width}x${height}`;
-        const select = DOM.inputs.canvasSizeSelect;
-        const customInputs = document.querySelector('.custom-size-inputs');
-        
-        // Проверяем, есть ли такой размер в options
-        let found = false;
-        for (let option of select.options) {
-            if (option.value === sizeString) {
-                select.value = sizeString;
-                customInputs.classList.remove('active');
-                found = true;
-                break;
-            }
-        }
-        
-        if (!found) {
-            select.value = 'custom';
-            customInputs.classList.add('active');
-            DOM.inputs.canvasWidth.value = width;
-            DOM.inputs.canvasHeight.value = height;
-        }
-    }
-
     async function saveProject() {
-        if (!currentProjectId) {
+        if (!state.currentProjectId) {
             showToast('Сначала создайте проект', 'error');
             return;
         }
@@ -294,15 +383,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 canvasSize: state.canvasSize
             };
 
-            // Собираем данные всех элементов с более точной информацией
+            // Собираем данные всех элементов
             state.elements.forEach(el => {
                 const rect = el.element.getBoundingClientRect();
-                const canvasRect = DOM.canvas.getBoundingClientRect();
                 
-                const layerItem = document.querySelector(`.layer-item[data-id="${el.id}"]`);
+                const layerItem = document.querySelector(`.layer-item-modern[data-id="${el.id}"]`);
                 const layerName = layerItem ?
                     (layerItem.querySelector('.layer-rename')?.value ||
-                        layerItem.querySelector('.layer-name')?.textContent) :
+                        layerItem.querySelector('.layer-name-modern')?.textContent) :
                     el.name;
 
                 elementsData[el.id] = {
@@ -325,7 +413,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             // Отправляем на сервер
-            const response = await fetch(`http://localhost:3001/api/projects/${currentProjectId}`, {
+            const response = await fetch(`http://localhost:3001/api/projects/${state.currentProjectId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -354,7 +442,10 @@ document.addEventListener('DOMContentLoaded', function () {
         
         const toast = document.createElement('div');
         toast.className = `toast ${type} fade-in`;
-        toast.textContent = message;
+        toast.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        `;
         document.body.appendChild(toast);
 
         setTimeout(() => {
@@ -365,49 +456,47 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function setupImageUpload() {
         DOM.buttons.uploadImage.addEventListener('click', () => {
-            DOM.modals.imageUpload.style.display = 'flex';
-            DOM.modals.imageUpload.style.zIndex = '10000';
-            DOM.inputs.imageUpload.value = '';
-            DOM.inputs.imagePreview.innerHTML = 'Изображение не выбрано';
-            DOM.inputs.imagePreview.style.backgroundImage = 'none';
-            DOM.inputs.imageWidth.value = '';
-            DOM.inputs.imageHeight.value = '';
-            state.imageUpload.file = null;
-            state.imageUpload.url = null;
+            showModal('image-upload-modal');
+        });
+
+        DOM.buttons.browseImages.addEventListener('click', () => {
+            DOM.inputs.imageUpload.click();
+        });
+
+        DOM.uploadArea.addEventListener('click', () => {
+            DOM.inputs.imageUpload.click();
+        });
+
+        DOM.uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            DOM.uploadArea.style.borderColor = 'var(--primary)';
+            DOM.uploadArea.style.background = 'rgba(99, 102, 241, 0.1)';
+        });
+
+        DOM.uploadArea.addEventListener('dragleave', () => {
+            DOM.uploadArea.style.borderColor = 'var(--glass-border)';
+            DOM.uploadArea.style.background = 'rgba(255, 255, 255, 0.02)';
+        });
+
+        DOM.uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            DOM.uploadArea.style.borderColor = 'var(--glass-border)';
+            DOM.uploadArea.style.background = 'rgba(255, 255, 255, 0.02)';
+            
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                handleImageFile(file);
+            }
         });
 
         DOM.buttons.cancelImageUpload.addEventListener('click', () => {
-            DOM.modals.imageUpload.style.display = 'none';
+            hideModal('image-upload-modal');
         });
 
         DOM.inputs.imageUpload.addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (!file) return;
-
-            if (!file.type.match('image.*')) {
-                showToast('Пожалуйста, выберите файл изображения (JPEG, PNG, GIF)', 'error');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                state.imageUpload.file = file;
-                state.imageUpload.url = e.target.result;
-
-                DOM.inputs.imagePreview.innerHTML = '';
-                DOM.inputs.imagePreview.style.backgroundImage = `url(${e.target.result})`;
-                DOM.inputs.imagePreview.style.backgroundSize = 'contain';
-                DOM.inputs.imagePreview.style.backgroundRepeat = 'no-repeat';
-                DOM.inputs.imagePreview.style.backgroundPosition = 'center';
-
-                const img = new Image();
-                img.onload = function () {
-                    DOM.inputs.imageWidth.value = this.width;
-                    DOM.inputs.imageHeight.value = this.height;
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+            handleImageFile(file);
         });
 
         DOM.buttons.confirmImageUpload.addEventListener('click', function () {
@@ -434,15 +523,42 @@ document.addEventListener('DOMContentLoaded', function () {
             elementData.imageUrl = state.imageUpload.url;
             elementData.imageFile = state.imageUpload.file;
 
-            DOM.modals.imageUpload.style.display = 'none';
+            hideModal('image-upload-modal');
             selectElement(elementData);
         });
     }
 
+    function handleImageFile(file) {
+        if (!file.type.match('image.*')) {
+            showToast('Пожалуйста, выберите файл изображения (JPEG, PNG, GIF)', 'error');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            state.imageUpload.file = file;
+            state.imageUpload.url = e.target.result;
+
+            DOM.inputs.imagePreview.innerHTML = `
+                <img src="${e.target.result}" alt="Preview" style="max-width: 100%; max-height: 180px; border-radius: 8px;">
+            `;
+
+            const img = new Image();
+            img.onload = function () {
+                DOM.inputs.imageWidth.value = this.width;
+                DOM.inputs.imageHeight.value = this.height;
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
     function setupElementTemplates() {
-        document.querySelectorAll('.element-item').forEach(item => {
+        document.querySelectorAll('.element-card').forEach(item => {
             const type = item.dataset.type;
-            item.addEventListener('click', () => createElement(type));
+            if (type) {
+                item.addEventListener('click', () => createElement(type));
+            }
         });
     }
 
@@ -455,7 +571,7 @@ document.addEventListener('DOMContentLoaded', function () {
         element.id = id;
         element.draggable = false;
 
-        const canvasRect = DOM.canvas.getBoundingClientRect();
+        const canvasRect = DOM.canvasGrid.getBoundingClientRect();
         x = x || canvasRect.width / 2 - 50;
         y = y || canvasRect.height / 2 - 25;
 
@@ -473,7 +589,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         applyElementTemplate(element, type);
 
-        DOM.canvas.appendChild(element);
+        DOM.canvasGrid.appendChild(element);
 
         const elementData = {
             id,
@@ -642,7 +758,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 state.dragState.isRotating = true;
                 state.dragState.startAngle = elementData.rotation || 0;
 
-                // Получаем центр элемента
                 const rect = element.getBoundingClientRect();
                 state.dragState.centerX = rect.left + rect.width / 2;
                 state.dragState.centerY = rect.top + rect.height / 2;
@@ -722,22 +837,13 @@ document.addEventListener('DOMContentLoaded', function () {
         DOM.buttons.copyCss.addEventListener('click', copyCss);
         DOM.buttons.downloadZip.addEventListener('click', downloadZip);
         DOM.buttons.showHelp.addEventListener('click', () => {
-            DOM.modals.help.style.display = 'flex';
-            DOM.modals.help.style.zIndex = '10000';
+            showModal('help-modal');
         });
-
-        // Создаем кнопку сохранения (если её нет)
-        if (!document.getElementById('save-btn')) {
-            const saveBtn = document.createElement('button');
-            saveBtn.id = 'save-btn';
-            saveBtn.className = 'btn primary';
-            saveBtn.innerHTML = '<i class="fas fa-save"></i> Сохранить';
-            document.querySelector('.header-controls').prepend(saveBtn);
-        }
-
-        // Обработчик клика по кнопке сохранения
-        document.getElementById('save-btn').addEventListener('click', async () => {
-            const saveBtn = document.getElementById('save-btn');
+        DOM.buttons.backToMain.addEventListener('click', () => {
+            window.location.href = '../main/index.html';
+        });
+        DOM.buttons.save.addEventListener('click', async () => {
+            const saveBtn = DOM.buttons.save;
             saveBtn.disabled = true;
             saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...';
 
@@ -772,7 +878,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.close-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 Object.values(DOM.modals).forEach(modal => {
-                    modal.style.display = 'none';
+                    hideModal(modal.id);
                 });
             });
         });
@@ -780,22 +886,45 @@ document.addEventListener('DOMContentLoaded', function () {
         window.addEventListener('click', (e) => {
             Object.values(DOM.modals).forEach(modal => {
                 if (e.target === modal) {
-                    modal.style.display = 'none';
+                    hideModal(modal.id);
                 }
             });
         });
 
-        DOM.canvas.addEventListener('mousedown', (e) => {
-            if (e.target === DOM.canvas) {
+        DOM.canvasGrid.addEventListener('mousedown', (e) => {
+            if (e.target === DOM.canvasGrid) {
                 deselectElement();
             }
+        });
+
+        // Автосохранение при изменении
+        setupAutoSave();
+    }
+
+    function setupAutoSave() {
+        let saveTimeout;
+        
+        function scheduleSave() {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                if (state.currentProjectId && state.elements.length > 0) {
+                    saveProject().catch(console.error);
+                }
+            }, 2000);
+        }
+        
+        // Слушаем изменения элементов
+        const observer = new MutationObserver(scheduleSave);
+        observer.observe(DOM.canvasGrid, {
+            childList: true,
+            attributes: true,
+            subtree: true
         });
     }
 
     function setupHelpSystem() {
         DOM.buttons.showHelp.addEventListener('click', () => {
-            DOM.modals.help.style.display = 'flex';
-            DOM.modals.help.style.zIndex = '10000';
+            showModal('help-modal');
         });
     }
 
@@ -811,7 +940,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const newTop = state.dragState.startTop + dy;
 
             // Проверяем границы холста
-            const canvasRect = DOM.canvas.getBoundingClientRect();
+            const canvasRect = DOM.canvasGrid.getBoundingClientRect();
             const elementRect = element.getBoundingClientRect();
             
             let boundedLeft = newLeft;
@@ -874,7 +1003,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Проверяем границы холста
-            const canvasRect = DOM.canvas.getBoundingClientRect();
+            const canvasRect = DOM.canvasGrid.getBoundingClientRect();
             
             if (newLeft + newWidth > canvasRect.width) {
                 newWidth = canvasRect.width - newLeft;
@@ -918,7 +1047,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function setupDragAndDrop() {
-        const elementItems = document.querySelectorAll('.element-item');
+        const elementItems = document.querySelectorAll('.element-card');
 
         elementItems.forEach(item => {
             item.addEventListener('dragstart', function (e) {
@@ -926,14 +1055,14 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        DOM.canvas.addEventListener('dragover', function (e) {
+        DOM.canvasGrid.addEventListener('dragover', function (e) {
             e.preventDefault();
         });
 
-        DOM.canvas.addEventListener('drop', function (e) {
+        DOM.canvasGrid.addEventListener('drop', function (e) {
             e.preventDefault();
             const type = e.dataTransfer.getData('text/plain');
-            const rect = DOM.canvas.getBoundingClientRect();
+            const rect = DOM.canvasGrid.getBoundingClientRect();
             createElement(type, e.clientX - rect.left, e.clientY - rect.top);
         });
     }
@@ -946,11 +1075,11 @@ document.addEventListener('DOMContentLoaded', function () {
         elementData.element.classList.add('selected');
         state.selectedElement = elementData;
 
-        document.querySelectorAll('.layer-item').forEach(el => {
+        document.querySelectorAll('.layer-item-modern').forEach(el => {
             el.classList.remove('active');
         });
 
-        const layerItem = document.querySelector(`.layer-item[data-id="${elementData.id}"]`);
+        const layerItem = document.querySelector(`.layer-item-modern[data-id="${elementData.id}"]`);
         if (layerItem) {
             layerItem.classList.add('active');
             layerItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -965,7 +1094,7 @@ document.addEventListener('DOMContentLoaded', function () {
             state.selectedElement = null;
         }
 
-        document.querySelectorAll('.layer-item').forEach(el => {
+        document.querySelectorAll('.layer-item-modern').forEach(el => {
             el.classList.remove('active');
         });
 
@@ -1043,6 +1172,8 @@ document.addEventListener('DOMContentLoaded', function () {
             element.style.transform = `rotate(${angle}deg)`;
             elementData.rotation = angle;
         }
+
+        showToast('Свойства применены', 'success');
     }
 
     function deleteSelectedElement() {
@@ -1052,50 +1183,54 @@ document.addEventListener('DOMContentLoaded', function () {
             state.selectedElement.element.remove();
             state.elements = state.elements.filter(el => el.id !== state.selectedElement.id);
 
-            const layerItem = document.querySelector(`.layer-item[data-id="${state.selectedElement.id}"]`);
+            const layerItem = document.querySelector(`.layer-item-modern[data-id="${state.selectedElement.id}"]`);
             if (layerItem) {
                 layerItem.remove();
             }
 
             deselectElement();
+            showToast('Элемент удален', 'success');
         }
     }
 
     function addToLayersList(elementData) {
+        // Убираем пустое состояние
+        const emptyState = DOM.layersList.querySelector('.empty-layers-state');
+        if (emptyState) {
+            emptyState.remove();
+        }
+
         const layerItem = document.createElement('div');
-        layerItem.className = 'layer-item';
+        layerItem.className = 'layer-item-modern';
         layerItem.dataset.id = elementData.id;
         layerItem.innerHTML = `
-            <i class="fas fa-${getIconForType(elementData.type)}"></i>
-            <span class="layer-name">${elementData.name || elementData.type}</span>
-            <input type="text" class="layer-rename" value="${elementData.name || elementData.type}" style="display:none;">
+            <div class="layer-icon-modern">
+                <i class="fas fa-${getIconForType(elementData.type)}"></i>
+            </div>
+            <div class="layer-info-modern">
+                <div class="layer-name-modern">${elementData.name || elementData.type}</div>
+                <div class="layer-type-modern">${elementData.type}</div>
+            </div>
+            <div class="layer-actions-modern">
+                <button class="btn btn-ghost small" title="Переименовать">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </div>
         `;
 
-        layerItem.addEventListener('mousedown', (e) => {
-            if (!e.target.classList.contains('layer-rename')) {
+        layerItem.addEventListener('click', (e) => {
+            if (!e.target.closest('.layer-actions-modern')) {
                 bringToFront(elementData.element);
                 selectElement(elementData);
             }
         });
 
-        const layerName = layerItem.querySelector('.layer-name');
-        const layerRename = layerItem.querySelector('.layer-rename');
-
-        layerName.addEventListener('dblclick', () => {
-            layerName.style.display = 'none';
-            layerRename.style.display = 'inline-block';
-            layerRename.focus();
-        });
-
-        layerRename.addEventListener('blur', () => {
-            elementData.name = layerRename.value;
-            finishRenaming(layerName, layerRename, elementData);
-        });
-
-        layerRename.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                elementData.name = layerRename.value;
-                finishRenaming(layerName, layerRename, elementData);
+        const renameBtn = layerItem.querySelector('.layer-actions-modern button');
+        renameBtn.addEventListener('click', () => {
+            const newName = prompt('Введите новое название:', elementData.name || elementData.type);
+            if (newName !== null) {
+                elementData.name = newName;
+                layerItem.querySelector('.layer-name-modern').textContent = newName;
             }
         });
 
@@ -1115,16 +1250,9 @@ document.addEventListener('DOMContentLoaded', function () {
         DOM.layersList.appendChild(layerItem);
     }
 
-    function finishRenaming(layerName, layerRename, elementData) {
-        layerName.style.display = 'inline-block';
-        layerRename.style.display = 'none';
-        layerName.textContent = layerRename.value;
-        elementData.name = layerRename.value;
-    }
-
     function updateLayersOrder() {
         const layers = Array.from(DOM.layersList.children);
-        layers.forEach((layer, index) =>{
+        layers.forEach((layer, index) => {
             const elementId = layer.dataset.id;
             const element = state.elements.find(el => el.id === elementId);
             if (element) {
@@ -1156,19 +1284,45 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         element.style.zIndex = maxZIndex + 1;
-        DOM.canvas.appendChild(element);
+        DOM.canvasGrid.appendChild(element);
         updateLayersOrder();
     }
 
+    function showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Фокусируемся на первом поле ввода
+            const firstInput = modal.querySelector('input');
+            if (firstInput) {
+                setTimeout(() => firstInput.focus(), 100);
+            }
+        }
+    }
+
+    function hideModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+            
+            // Сбрасываем форму
+            const form = modal.querySelector('form');
+            if (form) {
+                form.reset();
+            }
+        }
+    }
+
     function showExportModal() {
-        DOM.modals.export.style.display = 'flex';
-        DOM.modals.export.style.zIndex = '10000';
+        showModal('export-modal');
         generateExportCode();
     }
 
     function showPreviewModal() {
-        DOM.modals.preview.style.display = 'flex';
-        DOM.modals.preview.style.zIndex = '10000';
+        showModal('preview-modal');
         generatePreview();
     }
 
@@ -1179,7 +1333,7 @@ document.addEventListener('DOMContentLoaded', function () {
         htmlCode += `    <title>Мой сайт</title>\n`;
         htmlCode += `    <link rel="stylesheet" href="styles.css">\n`;
         htmlCode += `</head>\n<body>\n`;
-        htmlCode += `    <div class="container" style="width:${state.canvasSize.width}px; height:${state.canvasSize.height}px; position:relative;">\n`;
+        htmlCode += `    <div class="container" style="width:${state.canvasSize.width}px; height:${state.canvasSize.height}px; position:relative; margin:0 auto;">\n`;
 
         state.elements.forEach(el => {
             const element = el.element;
@@ -1205,8 +1359,8 @@ document.addEventListener('DOMContentLoaded', function () {
         DOM.outputs.html.value = htmlCode;
 
         let cssCode = `/* Основные стили */\n`;
-        cssCode += `body {\n    margin: 0;\n    padding: 0;\n    font-family: Arial, sans-serif;\n}\n\n`;
-        cssCode += `.container {\n    position: relative;\n    margin: 0 auto;\n}\n\n`;
+        cssCode += `body {\n    margin: 0;\n    padding: 0;\n    font-family: Arial, sans-serif;\n    background: #f5f5f5;\n}\n\n`;
+        cssCode += `.container {\n    position: relative;\n    margin: 0 auto;\n    background: white;\n    box-shadow: 0 4px 20px rgba(0,0,0,0.1);\n}\n\n`;
 
         state.elements.forEach(el => {
             const element = el.element;
@@ -1260,13 +1414,13 @@ document.addEventListener('DOMContentLoaded', function () {
     function generatePreview() {
         let previewHtml = `<!DOCTYPE html><html><head><style>`;
 
-        previewHtml += `body { margin: 0; padding: 0; font-family: Arial, sans-serif; }`;
+        previewHtml += `body { margin: 0; padding: 0; font-family: Arial, sans-serif; background: #f5f5f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; }`;
         previewHtml += `.container { 
             position: relative; 
             width: ${state.canvasSize.width}px;
             height: ${state.canvasSize.height}px;
-            margin: 0 auto;
             background-color: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }`;
 
         state.elements.forEach(el => {
@@ -1387,14 +1541,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function clearCanvas() {
         if (confirm('Очистить весь холст? Это действие нельзя отменить.')) {
-            while (DOM.canvas.firstChild) {
-                DOM.canvas.removeChild(DOM.canvas.firstChild);
+            while (DOM.canvasGrid.firstChild) {
+                DOM.canvasGrid.removeChild(DOM.canvasGrid.firstChild);
             }
 
             state.elements = [];
             state.selectedElement = null;
-            DOM.layersList.innerHTML = '';
+            DOM.layersList.innerHTML = `
+                <div class="empty-layers-state">
+                    <i class="fas fa-layer-group"></i>
+                    <p>Нет элементов</p>
+                    <span>Добавьте элементы на холст</span>
+                </div>
+            `;
             clearPropertiesForm();
+            showToast('Холст очищен', 'success');
         }
     }
 
@@ -1449,6 +1610,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
             }, 0);
+
+            showToast('ZIP архив скачан', 'success');
         });
     }
 
@@ -1457,7 +1620,7 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
 
-        const draggingItem = document.querySelector('.layer-item.dragging');
+        const draggingItem = document.querySelector('.layer-item-modern.dragging');
         if (!draggingItem) return;
 
         const afterElement = getDragAfterElement(DOM.layersList, e.clientY);
@@ -1469,7 +1632,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function getDragAfterElement(container, y) {
-        const draggableElements = [...container.querySelectorAll('.layer-item:not(.dragging)')];
+        const draggableElements = [...container.querySelectorAll('.layer-item-modern:not(.dragging)')];
 
         return draggableElements.reduce((closest, child) => {
             const box = child.getBoundingClientRect();
@@ -1483,15 +1646,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
-// Добавим обработчик перед закрытием страницы
-window.addEventListener('beforeunload', (e) => {
-    if (currentProjectId && state.elements.length > 0) {
-        saveProject();
-        // Стандартное сообщение для браузера
-        e.preventDefault();
-        e.returnValue = '';
-    }
-});
+    // Автосохранение при закрытии
+    window.addEventListener('beforeunload', (e) => {
+        if (state.currentProjectId && state.elements.length > 0) {
+            saveProject().catch(console.error);
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
 
-init();
+    init();
 });

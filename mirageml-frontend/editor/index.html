@@ -7,221 +7,466 @@
     <link rel="stylesheet" href="../editor/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link type="image/x-icon" href="../logo/logo3.svg" rel="shortcut icon">
-    <title>Редактор</title>
+    <title>Редактор - MirageML</title>
 </head>
 
 <body>
-    <div class="app-container">
-        <header class="header">
-            <div class="logo">
-                <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
-                <span>MirageML</span>
-            </div>
-            <div class="header-controls">
-                <button id="preview-btn" class="btn"><i class="fas fa-eye"></i> Предпросмотр</button>
-                <button id="export-btn" class="btn primary"><i class="fas fa-file-export"></i> Экспорт</button>
-                <button id="clear-btn" class="btn danger"><i class="fas fa-trash"></i> Очистить</button>
-                <a href="../profile/index.html" class="btn profile-btn"><i class="fas fa-user"></i> Профиль</a>
+    <div class="background-container">
+        <div class="animated-grid">
+            <div class="grid-orbit"></div>
+            <div class="grid-orbit"></div>
+            <div class="grid-orbit"></div>
+        </div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+    </div>
+
+    <div class="editor-container">
+        <!-- Обновленный хедер в стиле главной страницы -->
+        <header class="glass-header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <div class="logo-wrapper">
+                            <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
+                            <span class="logo-text">MirageML</span>
+                        </div>
+                    </div>
+                    <div class="header-controls-modern">
+                        <button class="btn btn-ghost" id="back-to-main">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>На главную</span>
+                        </button>
+                        <button class="btn btn-primary" id="save-btn">
+                            <i class="fas fa-save"></i>
+                            <span>Сохранить</span>
+                        </button>
+                        <button id="preview-btn" class="btn btn-outline-modern">
+                            <i class="fas fa-eye"></i>
+                            <span>Предпросмотр</span>
+                        </button>
+                        <button id="export-btn" class="btn btn-primary">
+                            <i class="fas fa-file-export"></i>
+                            <span>Экспорт</span>
+                        </button>
+                        <button id="clear-btn" class="btn btn-outline-modern danger">
+                            <i class="fas fa-trash"></i>
+                            <span>Очистить</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </header>
 
-        <div class="main-content">
-            <aside class="sidebar elements-panel">
-                <div class="panel-header">
-                    <h3>Элементы</h3>
-                    <div class="canvas-size-controls">
-                        <select id="canvas-size-select">
-                            <option value="custom">Пользовательский</option>
-                            <option value="800x600">800×600</option>
-                            <option value="1024x768">1024×768</option>
-                            <option value="1280x720">1280×720 (HD)</option>
-                            <option value="1280x1024">1280×1024</option>
-                            <option value="1920x1080">1920×1080 (Full HD)</option>
-                        </select>
-                        <div class="custom-size-inputs" id="custom-size-inputs">
-                            <input type="number" id="canvas-width" placeholder="Ширина" min="100">
-                            <span>×</span>
-                            <input type="number" id="canvas-height" placeholder="Высота" min="100">
-                            <button id="apply-canvas-size" class="btn small">Применить</button>
-                        </div>
+        <div class="editor-main-content">
+            <!-- Левая панель элементов -->
+            <aside class="editor-sidebar elements-panel-modern">
+                <div class="panel-header-modern">
+                    <div class="panel-title">
+                        <i class="fas fa-shapes"></i>
+                        <h3>Элементы</h3>
                     </div>
                 </div>
-                <div class="elements-list">
-                    <div class="element-item" draggable="true" data-type="div">
-                        <i class="fas fa-square"></i> Блок
+                
+                <div class="canvas-size-section">
+                    <div class="section-label">
+                        <i class="fas fa-expand-alt"></i>
+                        <span>Размер холста</span>
                     </div>
-                    <div class="element-item" draggable="true" data-type="button">
-                        <i class="fas fa-square"></i> Кнопка
+                    <select id="canvas-size-select" class="modern-select">
+                        <option value="custom">Пользовательский</option>
+                        <option value="800x600">800×600</option>
+                        <option value="1024x768" selected>1024×768</option>
+                        <option value="1280x720">1280×720 (HD)</option>
+                        <option value="1280x1024">1280×1024</option>
+                        <option value="1366x768">1366×768 (Ноутбук)</option>
+                        <option value="1920x1080">1920×1080 (Full HD)</option>
+                    </select>
+                    <div class="custom-size-inputs-modern" id="custom-size-inputs">
+                        <div class="input-group">
+                            <input type="number" id="canvas-width" placeholder="Ширина" min="100" max="2000">
+                            <span>×</span>
+                            <input type="number" id="canvas-height" placeholder="Высота" min="100" max="2000">
+                        </div>
+                        <button id="apply-canvas-size" class="btn btn-primary small">Применить</button>
                     </div>
-                    <div class="element-item" draggable="true" data-type="p">
-                        <i class="fas fa-paragraph"></i> Текст
+                </div>
+
+                <div class="elements-grid-modern">
+                    <div class="element-card" draggable="true" data-type="div">
+                        <div class="element-icon">
+                            <i class="fas fa-square"></i>
+                        </div>
+                        <span class="element-name">Блок</span>
                     </div>
-                    <div class="element-item" draggable="true" data-type="line">
-                        <i class="fas fa-minus"></i> Линия
+                    <div class="element-card" draggable="true" data-type="button">
+                        <div class="element-icon">
+                            <i class="fas fa-square"></i>
+                        </div>
+                        <span class="element-name">Кнопка</span>
                     </div>
-                    <div class="element-item" draggable="true" data-type="ellipse">
-                        <i class="fas fa-circle"></i> Круг
+                    <div class="element-card" draggable="true" data-type="p">
+                        <div class="element-icon">
+                            <i class="fas fa-paragraph"></i>
+                        </div>
+                        <span class="element-name">Текст</span>
                     </div>
-                    <button id="upload-image-btn" class="btn">
-                        <i class="fas fa-image"></i> Добавить изображение
-                    </button>
+                    <div class="element-card" draggable="true" data-type="line">
+                        <div class="element-icon">
+                            <i class="fas fa-minus"></i>
+                        </div>
+                        <span class="element-name">Линия</span>
+                    </div>
+                    <div class="element-card" draggable="true" data-type="ellipse">
+                        <div class="element-icon">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                        <span class="element-name">Круг</span>
+                    </div>
+                    <div class="element-card" id="upload-image-btn">
+                        <div class="element-icon">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <span class="element-name">Изображение</span>
+                    </div>
                 </div>
             </aside>
 
-            <main class="workspace">
-                <div class="canvas-container">
-                    <div class="canvas-grid" id="canvas"></div>
+            <!-- Центральная рабочая область -->
+            <main class="editor-workspace">
+                <div class="workspace-header">
+                    <div class="workspace-info">
+                        <h3>Рабочая область</h3>
+                        <span class="canvas-size-display" id="canvas-size-display">1024×768</span>
+                    </div>
+                    <div class="workspace-actions">
+                        <button class="btn btn-ghost small" id="zoom-out">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <span class="zoom-level" id="zoom-level">100%</span>
+                        <button class="btn btn-ghost small" id="zoom-in">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button class="btn btn-ghost small" id="reset-zoom">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="canvas-container-modern">
+                    <div class="canvas-grid-modern" id="canvas"></div>
                 </div>
             </main>
 
-            <aside class="sidebar properties-panel">
-                <div class="panel-header">
-                    <h3>Свойства</h3>
+            <!-- Правая панель свойств и слоев -->
+            <aside class="editor-sidebar properties-panel-modern">
+                <div class="properties-tabs">
+                    <button class="tab-btn active" data-tab="properties-tab">
+                        <i class="fas fa-sliders-h"></i>
+                        Свойства
+                    </button>
+                    <button class="tab-btn" data-tab="layers-tab">
+                        <i class="fas fa-layer-group"></i>
+                        Слои
+                    </button>
                 </div>
-                <div class="properties-form" id="properties-form">
-                    <div class="form-group">
-                        <label>Текст</label>
-                        <input type="text" id="element-text">
-                    </div>
-                    <div class="form-group">
-                        <label>Ширина</label>
-                        <input type="text" id="element-width" placeholder="например: 100px или 50%">
-                    </div>
-                    <div class="form-group">
-                        <label>Высота</label>
-                        <input type="text" id="element-height" placeholder="например: 100px или 50%">
-                    </div>
-                    <div class="form-group">
-                        <label>Цвет фона</label>
-                        <input type="color" id="element-bg-color">
-                    </div>
-                    <div class="form-group">
-                        <label>Цвет текста</label>
-                        <input type="color" id="element-text-color">
-                    </div>
-                    <div class="form-group">
-                        <label>Размер шрифта</label>
-                        <input type="text" id="element-font-size" placeholder="например: 16px">
-                    </div>
-                    <div class="form-group">
-                        <label>Отступы (padding)</label>
-                        <input type="text" id="element-padding" placeholder="например: 10px">
-                    </div>
-                    <div class="form-group">
-                        <label>Граница</label>
-                        <input type="text" id="element-border" placeholder="например: 1px solid #000">
-                    </div>
-                    <div class="form-group">
-                        <label>Угол поворота</label>
-                        <input type="number" id="element-rotation" placeholder="градусы" min="0" max="360">
-                    </div>
-                    <div class="form-group">
-                        <button id="apply-properties" class="btn primary">Применить</button>
-                        <button id="delete-element" class="btn danger">Удалить</button>
-                    </div>
-                </div>
-            </aside>
 
-            <aside class="sidebar layers-panel">
-                <div class="panel-header">
-                    <h3>Слои</h3>
+                <!-- Вкладка свойств -->
+                <div id="properties-tab" class="tab-content active">
+                    <div class="panel-header-modern">
+                        <div class="panel-title">
+                            <i class="fas fa-cog"></i>
+                            <h3>Свойства элемента</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="properties-form-modern" id="properties-form">
+                        <div class="form-section">
+                            <h4 class="section-title">Содержимое</h4>
+                            <div class="form-group-modern">
+                                <label for="element-text" class="form-label-modern">
+                                    <i class="fas fa-font"></i>
+                                    Текст
+                                </label>
+                                <input type="text" id="element-text" class="form-input-modern">
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h4 class="section-title">Размер и позиция</h4>
+                            <div class="form-row">
+                                <div class="form-group-modern">
+                                    <label for="element-width" class="form-label-modern">Ширина</label>
+                                    <input type="text" id="element-width" class="form-input-modern" placeholder="100px">
+                                </div>
+                                <div class="form-group-modern">
+                                    <label for="element-height" class="form-label-modern">Высота</label>
+                                    <input type="text" id="element-height" class="form-input-modern" placeholder="100px">
+                                </div>
+                            </div>
+                            <div class="form-group-modern">
+                                <label for="element-rotation" class="form-label-modern">
+                                    <i class="fas fa-redo"></i>
+                                    Поворот
+                                </label>
+                                <div class="rotation-control">
+                                    <input type="number" id="element-rotation" class="form-input-modern" min="0" max="360" placeholder="0">
+                                    <span class="rotation-unit">°</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h4 class="section-title">Внешний вид</h4>
+                            <div class="form-row">
+                                <div class="form-group-modern">
+                                    <label for="element-bg-color" class="form-label-modern">Фон</label>
+                                    <input type="color" id="element-bg-color" class="form-input-modern color-picker">
+                                </div>
+                                <div class="form-group-modern">
+                                    <label for="element-text-color" class="form-label-modern">Текст</label>
+                                    <input type="color" id="element-text-color" class="form-input-modern color-picker">
+                                </div>
+                            </div>
+                            <div class="form-group-modern">
+                                <label for="element-font-size" class="form-label-modern">Размер шрифта</label>
+                                <input type="text" id="element-font-size" class="form-input-modern" placeholder="16px">
+                            </div>
+                            <div class="form-group-modern">
+                                <label for="element-padding" class="form-label-modern">Отступы</label>
+                                <input type="text" id="element-padding" class="form-input-modern" placeholder="10px">
+                            </div>
+                            <div class="form-group-modern">
+                                <label for="element-border" class="form-label-modern">Граница</label>
+                                <input type="text" id="element-border" class="form-input-modern" placeholder="1px solid #000">
+                            </div>
+                        </div>
+
+                        <div class="form-actions-modern">
+                            <button id="apply-properties" class="btn btn-primary">
+                                <i class="fas fa-check"></i>
+                                Применить
+                            </button>
+                            <button id="delete-element" class="btn btn-outline-modern danger">
+                                <i class="fas fa-trash"></i>
+                                Удалить
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="layers-list" id="layers-list"></div>
+
+                <!-- Вкладка слоев -->
+                <div id="layers-tab" class="tab-content">
+                    <div class="panel-header-modern">
+                        <div class="panel-title">
+                            <i class="fas fa-layer-group"></i>
+                            <h3>Слои</h3>
+                        </div>
+                        <button class="btn btn-ghost small" id="toggle-layers-visibility">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="layers-container-modern">
+                        <div class="layers-list-modern" id="layers-list">
+                            <div class="empty-layers-state">
+                                <i class="fas fa-layer-group"></i>
+                                <p>Нет элементов</p>
+                                <span>Добавьте элементы на холст</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </aside>
         </div>
 
-        <div class="modal" id="export-modal">
-            <div class="modal-content">
-                <span class="close-btn">&times;</span>
+        <!-- Кнопка помощи -->
+        <div class="help-btn-modern">
+            <button id="show-help" class="btn btn-primary">
+                <i class="fas fa-question-circle"></i>
+                <span>Помощь</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Модальные окна -->
+    <!-- Модальное окно экспорта -->
+    <div class="modal" id="export-modal">
+        <div class="modal-content modal-modern">
+            <span class="close-btn">&times;</span>
+            <div class="modal-header-modern">
+                <i class="fas fa-file-export"></i>
                 <h2>Экспорт проекта</h2>
-                <div class="export-options">
-                    <div class="export-option">
-                        <h3>HTML</h3>
-                        <textarea id="export-html" readonly></textarea>
-                        <button class="btn" id="copy-html">Копировать HTML</button>
+            </div>
+            <div class="export-options-modern">
+                <div class="export-option-modern">
+                    <div class="option-header">
+                        <i class="fab fa-html5"></i>
+                        <h3>HTML код</h3>
                     </div>
-                    <div class="export-option">
-                        <h3>CSS</h3>
-                        <textarea id="export-css" readonly></textarea>
-                        <button class="btn" id="copy-css">Копировать CSS</button>
+                    <textarea id="export-html" readonly class="code-output"></textarea>
+                    <button class="btn btn-primary" id="copy-html">
+                        <i class="fas fa-copy"></i>
+                        Копировать HTML
+                    </button>
+                </div>
+                <div class="export-option-modern">
+                    <div class="option-header">
+                        <i class="fab fa-css3-alt"></i>
+                        <h3>CSS стили</h3>
                     </div>
-                    <div class="export-option">
-                        <h3>Полный архив</h3>
-                        <p>Скачайте ZIP-архив со всеми файлами</p>
-                        <button class="btn primary" id="download-zip">Скачать ZIP</button>
+                    <textarea id="export-css" readonly class="code-output"></textarea>
+                    <button class="btn btn-primary" id="copy-css">
+                        <i class="fas fa-copy"></i>
+                        Копировать CSS
+                    </button>
+                </div>
+                <div class="export-option-modern">
+                    <div class="option-header">
+                        <i class="fas fa-file-archive"></i>
+                        <h3>Полный проект</h3>
+                    </div>
+                    <div class="option-content">
+                        <p>Скачайте ZIP-архив со всеми файлами проекта</p>
+                        <button class="btn btn-primary" id="download-zip">
+                            <i class="fas fa-download"></i>
+                            Скачать ZIP
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="modal" id="preview-modal">
-            <div class="modal-content preview-content">
-                <span class="close-btn">&times;</span>
+    <!-- Модальное окно предпросмотра -->
+    <div class="modal" id="preview-modal">
+        <div class="modal-content modal-modern preview-modal">
+            <span class="close-btn">&times;</span>
+            <div class="modal-header-modern">
+                <i class="fas fa-eye"></i>
                 <h2>Предпросмотр</h2>
+            </div>
+            <div class="preview-container">
                 <iframe id="preview-frame"></iframe>
             </div>
         </div>
+    </div>
 
-        <div class="modal" id="help-modal">
-            <div class="modal-content" style="max-width: 750px;">
-                <span class="close-btn">&times;</span>
-                <h2>Инструкция</h2>
-                <br>
-                <div class="video-container">
-                    <video width="690" height="400" controls>
-                        <source src="2.mp4">
-                    </video>
+    <!-- Модальное окно помощи -->
+    <div class="modal" id="help-modal">
+        <div class="modal-content modal-modern">
+            <span class="close-btn">&times;</span>
+            <div class="modal-header-modern">
+                <i class="fas fa-question-circle"></i>
+                <h2>Инструкция по работе с редактором</h2>
+            </div>
+            <div class="help-content">
+                <div class="video-section">
+                    <div class="video-container-modern">
+                        <video controls poster="../editor/video-poster.jpg">
+                            <source src="../editor/tutorial.mp4" type="video/mp4">
+                            Ваш браузер не поддерживает видео.
+                        </video>
+                    </div>
                 </div>
-                <div class="instructions">
-                    <h3>Здравствуйте! Это бета-версия сайта MirageML. Проект находится в разработке,
-                        и здесь вы найдете руководство по основным функциям и возможностям сервиса. Основные функции
-                        включают в себя:</h3>
-                    <br>
-                    <ul>
-                        <li><strong>Добавление элементов</strong> - Нажмите на нужный объект из левой панели</li>
-                        <li><strong>Перемещение</strong> - зажмите левую кнопку мыши на элементе и перемещайте</li>
-                        <li><strong>Изменение размера</strong> - тяните за маркеры по углам и сторонам объекта</li>
-                        <li><strong>Редактирование текста</strong> - двойной клик по элементу</li>
-                        <li><strong>Слои</strong> - правой панели можно переименовывать и переупорядочивать элементы
-                        </li>
-                        <li><strong>Загрузка фотографии</strong> - нажмите левой кнопкой мыши на объект "Добавить
-                            изображение" и выберите изображение</li>
-                        <li><strong>Удалить</strong> - на правой панели можно удалить нужный объект или можно очистить
-                            холст на верхней панели</li>
-                    </ul>
+                <div class="instructions-section">
+                    <div class="instruction-grid">
+                        <div class="instruction-card">
+                            <div class="instruction-icon">
+                                <i class="fas fa-mouse-pointer"></i>
+                            </div>
+                            <h4>Добавление элементов</h4>
+                            <p>Нажмите на нужный элемент в левой панели или перетащите его на холст</p>
+                        </div>
+                        <div class="instruction-card">
+                            <div class="instruction-icon">
+                                <i class="fas fa-arrows-alt"></i>
+                            </div>
+                            <h4>Перемещение</h4>
+                            <p>Зажмите левую кнопку мыши на элементе и перемещайте его по холсту</p>
+                        </div>
+                        <div class="instruction-card">
+                            <div class="instruction-icon">
+                                <i class="fas fa-expand-alt"></i>
+                            </div>
+                            <h4>Изменение размера</h4>
+                            <p>Тяните за маркеры по углам и сторонам элемента для изменения размера</p>
+                        </div>
+                        <div class="instruction-card">
+                            <div class="instruction-icon">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <h4>Редактирование текста</h4>
+                            <p>Двойной клик по текстовому элементу для редактирования содержимого</p>
+                        </div>
+                        <div class="instruction-card">
+                            <div class="instruction-icon">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <h4>Управление слоями</h4>
+                            <p>Используйте правую панель для переименования и упорядочивания элементов</p>
+                        </div>
+                        <div class="instruction-card">
+                            <div class="instruction-icon">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            <h4>Загрузка изображений</h4>
+                            <p>Нажмите на элемент "Изображение" и выберите файл для загрузки</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div id="image-upload-modal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn">&times;</span>
-                <h3>Загрузка изображения</h3>
-                <div class="form-group">
-                    <label for="image-upload-input">Выберите изображение:</label>
-                    <input type="file" id="image-upload-input" accept="image/*">
+    <!-- Модальное окно загрузки изображения -->
+    <div class="modal" id="image-upload-modal">
+        <div class="modal-content modal-modern">
+            <span class="close-btn">&times;</span>
+            <div class="modal-header-modern">
+                <i class="fas fa-image"></i>
+                <h2>Загрузка изображения</h2>
+            </div>
+            <div class="upload-content">
+                <div class="upload-area" id="upload-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Перетащите изображение сюда или нажмите для выбора</p>
+                    <input type="file" id="image-upload-input" accept="image/*" hidden>
+                    <button class="btn btn-primary" id="browse-images">
+                        <i class="fas fa-folder-open"></i>
+                        Выбрать файл
+                    </button>
                 </div>
-                <div id="image-preview"
-                    style="width: 100%; height: 200px; border: 1px dashed #ccc; margin: 10px 0; display: flex; align-items: center; justify-content: center;">
-                    Изображение не выбрано
+                <div id="image-preview" class="image-preview">
+                    <div class="preview-placeholder">
+                        <i class="fas fa-image"></i>
+                        <p>Изображение не выбрано</p>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="image-width">Ширина (px):</label>
-                    <input type="number" id="image-width" min="20" value="200">
+                <div class="image-settings">
+                    <div class="form-row">
+                        <div class="form-group-modern">
+                            <label for="image-width" class="form-label-modern">Ширина (px)</label>
+                            <input type="number" id="image-width" class="form-input-modern" min="20" value="200">
+                        </div>
+                        <div class="form-group-modern">
+                            <label for="image-height" class="form-label-modern">Высота (px)</label>
+                            <input type="number" id="image-height" class="form-input-modern" min="20" value="200">
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="image-height">Высота (px):</label>
-                    <input type="number" id="image-height" min="20" value="200">
-                </div>
-                <div class="modal-actions">
-                    <button id="cancel-image-upload" class="btn btn-secondary">Отмена</button>
-                    <button id="confirm-image-upload" class="btn btn-primary">Добавить</button>
+                <div class="modal-actions-modern">
+                    <button id="cancel-image-upload" class="btn btn-ghost">Отмена</button>
+                    <button id="confirm-image-upload" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Добавить на холст
+                    </button>
                 </div>
             </div>
-        </div>
-
-        <div class="help-btn">
-            <button id="show-help"><i class="fas fa-question-circle"></i> Помощь</button>
         </div>
     </div>
 

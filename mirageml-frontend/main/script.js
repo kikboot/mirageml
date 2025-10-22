@@ -10,18 +10,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const switchToRegister = document.getElementById('switch-to-register');
     const switchToLogin = document.getElementById('switch-to-login');
 
+    // Инициализация анимаций
+    initAnimations();
+    
     // Проверка авторизации при загрузке
     checkAuthStatus();
 
     // Открытие модальных окон с очисткой уведомлений
     if (loginBtn) loginBtn.addEventListener('click', () => {
-        loginModal.style.display = 'flex';
-        document.getElementById('login-notification').style.display = 'none';
+        showModal(loginModal);
+        hideNotification('login-notification');
     });
     
     if (registerBtn) registerBtn.addEventListener('click', () => {
-        registerModal.style.display = 'flex';
-        document.getElementById('register-notification').style.display = 'none';
+        showModal(registerModal);
+        hideNotification('register-notification');
     });
     
     if (createProjectBtn) {
@@ -29,9 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const token = localStorage.getItem('token');
             if (token) {
-                window.location.href = '/editor';
+                redirectToEditor();
             } else {
-                loginModal.style.display = 'flex';
+                showModal(loginModal);
             }
         });
     }
@@ -39,132 +42,321 @@ document.addEventListener('DOMContentLoaded', () => {
     // Переключение между формами
     if (switchToRegister) {
         switchToRegister.addEventListener('click', () => {
-            loginModal.style.display = 'none';
-            registerModal.style.display = 'flex';
+            switchModals(loginModal, registerModal);
         });
     }
     
     if (switchToLogin) {
         switchToLogin.addEventListener('click', () => {
-            registerModal.style.display = 'none';
-            loginModal.style.display = 'flex';
+            switchModals(registerModal, loginModal);
         });
     }
 
     // Закрытие модалок
-    document.querySelectorAll('.close-btn, .btn-outline').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.style.display = 'none';
-            });
-        });
-    });
+    setupModalCloseHandlers();
 
     // Обработка формы входа
     if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const notification = document.getElementById('login-notification');
-
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-                
-                if (data.success) {
-                    localStorage.setItem('token', data.token);
-                    updateAuthUI(data.user);
-                    document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-                    window.location.reload();
-                } else {
-                    // Показываем конкретное сообщение об ошибке
-                    if (response.status === 401) {
-                        notification.textContent = data.error || 'Неверный email или пароль';
-                    } else if (response.status === 404) {
-                        notification.textContent = 'Такого аккаунта не существует';
-                    } else {
-                        notification.textContent = data.error || 'Ошибка авторизации';
-                    }
-                    notification.style.display = 'block';
-                }
-            } catch (error) {
-                notification.textContent = 'Ошибка соединения с сервером';
-                notification.style.display = 'block';
-            }
-        });
+        loginForm.addEventListener('submit', handleLogin);
     }
 
     // Обработка формы регистрации
     if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('register-name').value;
-            const email = document.getElementById('register-email').value;
-            const password = document.getElementById('register-password').value;
-            const confirm = document.getElementById('register-confirm').value;
-            const notification = document.getElementById('register-notification');
-
-            // Скрываем уведомление при новом вводе
-            notification.style.display = 'none';
-
-            if (password !== confirm) {
-                notification.textContent = 'Пароли не совпадают';
-                notification.style.display = 'block';
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, password })
-                });
-
-                const data = await response.json();
-                
-                if (data.success) {
-                    notification.textContent = 'Регистрация успешна! Теперь войдите в систему.';
-                    notification.className = 'notification success';
-                    notification.style.display = 'block';
-                    
-                    // Очищаем форму
-                    registerForm.reset();
-                    
-                    // Переключаем на форму входа через 2 секунды
-                    setTimeout(() => {
-                        notification.style.display = 'none';
-                        registerModal.style.display = 'none';
-                        loginModal.style.display = 'flex';
-                        notification.className = 'notification error';
-                    }, 2000);
-                } else {
-                    if (response.status === 400 && data.error.includes('уже используется')) {
-                        notification.textContent = 'Такая почта уже зарегистрирована';
-                    } else {
-                        notification.textContent = data.error || 'Ошибка регистрации';
-                    }
-                    notification.style.display = 'block';
-                }
-            } catch (error) {
-                notification.textContent = 'Ошибка соединения с сервером';
-                notification.style.display = 'block';
-            }
-        });
+        registerForm.addEventListener('submit', handleRegister);
     }
 
     // Загрузка отзывов
     if (document.getElementById('reviews-container')) {
         loadReviews();
     }
+
+    // Инициализация параллакс эффектов
+    initParallaxEffects();
+
+    // Инициализация анимаций при скролле
+    initScrollAnimations();
 });
 
-// Проверка статуса авторизации
+// Анимации и эффекты
+function initAnimations() {
+    // Анимация плавающих элементов в герое
+    animateFloatingElements();
+    
+    // Анимация сетки на фоне
+    animateBackgroundGrid();
+    
+    // Анимация статистики
+    animateStats();
+}
+
+function animateFloatingElements() {
+    const elements = document.querySelectorAll('.preview-element');
+    if (!elements.length) return;
+
+    elements.forEach((element, index) => {
+        // Случайные параметры анимации для каждого элемента
+        const duration = 15 + Math.random() * 10;
+        const delay = index * 2;
+        
+        element.style.animation = `floatElement ${duration}s ease-in-out ${delay}s infinite alternate`;
+    });
+}
+
+function animateBackgroundGrid() {
+    const orbits = document.querySelectorAll('.grid-orbit');
+    orbits.forEach((orbit, index) => {
+        const speed = 60 + index * 15;
+        orbit.style.animationDuration = `${speed}s`;
+    });
+}
+
+function animateStats() {
+    const stats = document.querySelectorAll('.stat-number');
+    if (!stats.length) return;
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const stat = entry.target;
+                const finalValue = parseInt(stat.textContent);
+                animateCounter(stat, 0, finalValue, 2000);
+                observer.unobserve(stat);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    stats.forEach(stat => observer.observe(stat));
+}
+
+function animateCounter(element, start, end, duration) {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const value = Math.floor(progress * (end - start) + start);
+        
+        if (end === 99) {
+            element.textContent = value + '%';
+        } else if (end === 5) {
+            element.textContent = value + 'x';
+        } else {
+            element.textContent = value.toLocaleString() + '+';
+        }
+        
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        }
+    };
+    window.requestAnimationFrame(step);
+}
+
+// Параллакс эффекты
+function initParallaxEffects() {
+    const shapes = document.querySelectorAll('.shape');
+    
+    window.addEventListener('mousemove', (e) => {
+        const mouseX = e.clientX / window.innerWidth;
+        const mouseY = e.clientY / window.innerHeight;
+        
+        shapes.forEach((shape, index) => {
+            const speed = 0.05 + (index * 0.02);
+            const x = (mouseX - 0.5) * speed * 100;
+            const y = (mouseY - 0.5) * speed * 100;
+            
+            shape.style.transform = `translate(${x}px, ${y}px)`;
+        });
+    });
+}
+
+// Анимации при скролле
+function initScrollAnimations() {
+    const animatedElements = document.querySelectorAll('.advantage-card-modern, .feature-card-modern, .donate-method-modern');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    animatedElements.forEach(element => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(30px)';
+        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(element);
+    });
+}
+
+// Управление модальными окнами
+function showModal(modal) {
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function hideModal(modal) {
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function switchModals(fromModal, toModal) {
+    hideModal(fromModal);
+    showModal(toModal);
+}
+
+function setupModalCloseHandlers() {
+    // Закрытие по кнопке закрытия
+    document.querySelectorAll('.close-btn, .btn-ghost').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            if (e.target.id === 'cancel-login' || e.target.id === 'cancel-register' || e.target.classList.contains('close-btn')) {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    hideModal(modal);
+                });
+            }
+        });
+    });
+
+    // Закрытие по клику вне модального окна
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                hideModal(modal);
+            }
+        });
+    });
+
+    // Закрытие по ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal').forEach(modal => {
+                hideModal(modal);
+            });
+        }
+    });
+}
+
+function hideNotification(notificationId) {
+    const notification = document.getElementById(notificationId);
+    if (notification) {
+        notification.style.display = 'none';
+    }
+}
+
+function showNotification(notificationId, message, type = 'error') {
+    const notification = document.getElementById(notificationId);
+    if (notification) {
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.style.display = 'block';
+    }
+}
+
+// Обработка форм
+async function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    
+    try {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            localStorage.setItem('token', data.token);
+            updateAuthUI(data.user);
+            document.querySelectorAll('.modal').forEach(m => hideModal(m));
+            showSuccessMessage('Вход выполнен успешно!');
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            handleLoginError(response.status, data.error);
+        }
+    } catch (error) {
+        showNotification('login-notification', 'Ошибка соединения с сервером');
+    }
+}
+
+async function handleRegister(e) {
+    e.preventDefault();
+    const name = document.getElementById('register-name').value;
+    const email = document.getElementById('register-email').value;
+    const password = document.getElementById('register-password').value;
+    const confirm = document.getElementById('register-confirm').value;
+    
+    // Скрываем уведомление при новом вводе
+    hideNotification('register-notification');
+
+    if (password !== confirm) {
+        showNotification('register-notification', 'Пароли не совпадают');
+        return;
+    }
+
+    if (password.length < 6) {
+        showNotification('register-notification', 'Пароль должен содержать минимум 6 символов');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification('register-notification', 'Регистрация успешна! Теперь войдите в систему.', 'success');
+            registerForm.reset();
+            
+            setTimeout(() => {
+                hideNotification('register-notification');
+                switchModals(registerModal, loginModal);
+            }, 2000);
+        } else {
+            handleRegisterError(response.status, data.error);
+        }
+    } catch (error) {
+        showNotification('register-notification', 'Ошибка соединения с сервером');
+    }
+}
+
+// Обработка ошибок
+function handleLoginError(status, error) {
+    const notification = document.getElementById('login-notification');
+    if (status === 401) {
+        showNotification('login-notification', error || 'Неверный email или пароль');
+    } else if (status === 404) {
+        showNotification('login-notification', 'Такого аккаунта не существует');
+    } else if (status === 429) {
+        showNotification('login-notification', 'Слишком много попыток входа. Попробуйте позже.');
+    } else {
+        showNotification('login-notification', error || 'Ошибка авторизации');
+    }
+}
+
+function handleRegisterError(status, error) {
+    if (status === 400 && error.includes('уже используется')) {
+        showNotification('register-notification', 'Такая почта уже зарегистрирована');
+    } else if (status === 400) {
+        showNotification('register-notification', 'Некорректные данные для регистрации');
+    } else if (status === 429) {
+        showNotification('register-notification', 'Слишком много попыток регистрации. Попробуйте позже.');
+    } else {
+        showNotification('register-notification', error || 'Ошибка регистрации');
+    }
+}
+
+// Управление авторизацией
 async function checkAuthStatus() {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -182,6 +374,7 @@ async function checkAuthStatus() {
         }
     } catch (error) {
         console.error('Ошибка проверки авторизации:', error);
+        localStorage.removeItem('token');
     }
 }
 
@@ -189,15 +382,18 @@ function updateAuthUI(user) {
     const authButtons = document.querySelector('.auth-buttons');
     if (!authButtons) return;
 
+    const userInitials = getInitials(user.name);
+    
     authButtons.innerHTML = `
         <div class="user-menu">
             <button class="user-avatar" aria-label="Меню пользователя">
-                ${user.avatar}
+                ${userInitials}
             </button>
             <div class="dropdown-content">
                 <a href="/profile" class="dropdown-item">
                     <i class="fas fa-user"></i> Профиль
                 </a>
+                <div class="dropdown-divider"></div>
                 <a href="#" id="logout-btn" class="dropdown-item">
                     <i class="fas fa-sign-out-alt"></i> Выйти
                 </a>
@@ -205,13 +401,18 @@ function updateAuthUI(user) {
         </div>
     `;
 
+    // Инициализация пользовательского меню
+    initUserMenu();
+    
     document.getElementById('logout-btn')?.addEventListener('click', logout);
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function initUserMenu() {
     const userMenu = document.querySelector('.user-menu');
     const dropdownContent = document.querySelector('.dropdown-content');
     let closeTimeout;
+    
+    if (!userMenu || !dropdownContent) return;
     
     userMenu.addEventListener('mouseenter', function() {
         clearTimeout(closeTimeout);
@@ -225,10 +426,9 @@ document.addEventListener('DOMContentLoaded', function() {
             dropdownContent.style.opacity = '0';
             dropdownContent.style.visibility = 'hidden';
             dropdownContent.style.transform = 'translateY(-10px)';
-        }, 1000);
+        }, 300);
     });
     
-    // Чтобы меню не закрывалось при наведении на него
     dropdownContent.addEventListener('mouseenter', function() {
         clearTimeout(closeTimeout);
     });
@@ -238,11 +438,19 @@ document.addEventListener('DOMContentLoaded', function() {
             dropdownContent.style.opacity = '0';
             dropdownContent.style.visibility = 'hidden';
             dropdownContent.style.transform = 'translateY(-10px)';
-        }, 1000);
+        }, 300);
     });
-});
 
-// Выход из системы
+    // Закрытие меню при клике вне его
+    document.addEventListener('click', (e) => {
+        if (!userMenu.contains(e.target)) {
+            dropdownContent.style.opacity = '0';
+            dropdownContent.style.visibility = 'hidden';
+            dropdownContent.style.transform = 'translateY(-10px)';
+        }
+    });
+}
+
 async function logout() {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -257,7 +465,8 @@ async function logout() {
     }
 
     localStorage.removeItem('token');
-    window.location.reload();
+    showSuccessMessage('Вы успешно вышли из системы');
+    setTimeout(() => window.location.reload(), 1000);
 }
 
 // Загрузка отзывов
@@ -266,6 +475,13 @@ async function loadReviews() {
     if (!container) return;
 
     try {
+        // Показываем скелетон загрузки
+        container.innerHTML = `
+            <div class="review-skeleton"></div>
+            <div class="review-skeleton"></div>
+            <div class="review-skeleton"></div>
+        `;
+
         const response = await fetch('/api/reviews');
         const reviews = await response.json();
         
@@ -274,22 +490,42 @@ async function loadReviews() {
             return;
         }
         
-        container.innerHTML = reviews.slice(0, 3).map(review => `
-            <div class="review-card">
-                <div class="review-header">
-                    <div class="user-avatar">${getInitials(review.name)}</div>
-                    <div>
+        // Отображаем только первые 3 отзыва
+        const limitedReviews = reviews.slice(0, 3);
+        container.innerHTML = limitedReviews.map(review => `
+            <div class="review-card-modern">
+                <div class="review-header-modern">
+                    <div class="user-avatar-modern">${getInitials(review.name)}</div>
+                    <div class="user-info">
                         <div class="user-name">${review.name}</div>
                         <div class="review-date">${formatDate(review.createdAt)}</div>
                     </div>
                 </div>
                 <div class="review-text">${review.comment}</div>
                 <div class="review-rating">${renderStars(review.rating)}</div>
+                <div class="review-decoration"></div>
             </div>
         `).join('');
+
+        // Анимация появления отзывов
+        animateReviews();
     } catch (error) {
         container.innerHTML = '<div class="error-loading">Не удалось загрузить отзывы</div>';
     }
+}
+
+function animateReviews() {
+    const reviewCards = document.querySelectorAll('.review-card-modern');
+    reviewCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateX(-30px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateX(0)';
+        }, index * 200);
+    });
 }
 
 // Вспомогательные функции
@@ -303,198 +539,174 @@ function formatDate(dateString) {
 }
 
 function renderStars(rating) {
-    return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+    const fullStars = '★'.repeat(rating);
+    const emptyStars = '☆'.repeat(5 - rating);
+    return `<span class="stars-full">${fullStars}</span><span class="stars-empty">${emptyStars}</span>`;
 }
 
-// Анимация элементов в превью редактора
-function animateEditorElements() {
-    const elements = document.querySelectorAll('.element');
+function redirectToEditor() {
+    window.location.href = '/editor';
+}
+
+function showSuccessMessage(message) {
+    // Создаем временное уведомление об успехе
+    const successNotification = document.createElement('div');
+    successNotification.className = 'success-message';
+    successNotification.textContent = message;
+    successNotification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--success);
+        color: white;
+        padding: 12px 20px;
+        border-radius: var(--border-radius);
+        z-index: 10000;
+        box-shadow: var(--shadow-md);
+        animation: slideInRight 0.3s ease;
+    `;
     
-    // Функция для генерации случайных значений в пределах
-    const getRandomValue = (min, max) => Math.random() * (max - min) + min;
+    document.body.appendChild(successNotification);
     
-    // Анимируем каждый элемент
-    elements.forEach(el => {
-        // Устанавливаем случайную задержку для каждого элемента
-        el.style.animationDelay = `${getRandomValue(0, 5)}s`;
-        
-        // Периодически меняем параметры анимации
-        setInterval(() => {
-            const duration = getRandomValue(12, 20);
-            el.style.animationDuration = `${duration}s`;
-        }, 10000);
+    setTimeout(() => {
+        successNotification.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => {
+            document.body.removeChild(successNotification);
+        }, 300);
+    }, 3000);
+}
+
+// CSS для анимаций (добавляем динамически)
+const dynamicStyles = `
+@keyframes floatElement {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.7;
+    }
+    50% {
+        transform: translateY(-20px) rotate(5deg);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.review-skeleton {
+    background: var(--glass-bg);
+    border-radius: var(--border-radius-lg);
+    padding: 30px;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+}
+
+.review-skeleton::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.stars-full {
+    color: #ffd700;
+}
+
+.stars-empty {
+    color: var(--gray-light);
+}
+
+.user-avatar-modern {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: var(--glass-border);
+    margin: 8px 0;
+}
+`;
+
+// Добавляем динамические стили
+const styleSheet = document.createElement('style');
+styleSheet.textContent = dynamicStyles;
+document.head.appendChild(styleSheet);
+
+// Обработка ошибок загрузки изображений
+document.addEventListener('error', (e) => {
+    if (e.target.tagName === 'IMG') {
+        e.target.style.display = 'none';
+        console.warn('Изображение не загружено:', e.target.src);
+    }
+}, true);
+
+// Оптимизация производительности при скролле
+let scrollTimeout;
+window.addEventListener('scroll', () => {
+    if (!scrollTimeout) {
+        scrollTimeout = setTimeout(() => {
+            scrollTimeout = null;
+            // Обновление позиций параллакс элементов
+            const shapes = document.querySelectorAll('.shape');
+            shapes.forEach(shape => {
+                const scrolled = window.pageYOffset;
+                const rate = scrolled * -0.5;
+                shape.style.transform = `translateY(${rate}px)`;
+            });
+        }, 10);
+    }
+});
+
+// Предзагрузка критичных ресурсов
+function preloadCriticalResources() {
+    const criticalImages = [
+        '../logo/logo3.svg',
+        '../img/qr-код.jpg'
+    ];
+    
+    criticalImages.forEach(src => {
+        const img = new Image();
+        img.src = src;
     });
 }
 
-// Запускаем анимацию после загрузки страницы
-document.addEventListener('DOMContentLoaded', animateEditorElements);
-
-// Конфигурация
-        const config = {
-            elementsCount: 25,
-            lineCount: 15,
-            types: ['button', 'input', 'card', 'dropdown', 'slider', 'checkbox', 'radio'],
-            colors: ['#4361ee', '#3f37c9', '#4895ef', '#4cc9f0', '#7209b7', '#560bad']
-        };
-
-        // Состояние элементов
-        const elements = [];
-        const lines = [];
-
-        // Создаем плавающие элементы
-        function createFloatingElements() {
-            const container = document.getElementById('floating-elements-container');
-            
-            for (let i = 0; i < config.elementsCount; i++) {
-                const element = document.createElement('div');
-                const type = config.types[Math.floor(Math.random() * config.types.length)];
-                const size = Math.random() * 80 + 40;
-                const duration = Math.random() * 25 + 15;
-                const delay = Math.random() * 20;
-                const color = config.colors[Math.floor(Math.random() * config.colors.length)];
-                
-                element.className = `floating-element floating-${type}`;
-                element.dataset.id = i;
-                
-                // Позиционирование
-                const left = Math.random() * 90 + 5;
-                const top = Math.random() * 90 + 5;
-                
-                element.style.left = `${left}vw`;
-                element.style.top = `${top}vh`;
-                element.style.width = `${size}px`;
-                element.style.height = `${type === 'input' ? size/3 : size/1.5}px`;
-                element.style.animationDuration = `${duration}s`;
-                element.style.animationDelay = `-${delay}s`;
-                element.style.opacity = Math.random() * 0.3 + 0.1;
-                
-                // Стилизация по типам
-                switch(type) {
-                    case 'button':
-                        element.style.backgroundColor = color;
-                        element.style.borderRadius = '6px';
-                        break;
-                    case 'input':
-                        element.style.backgroundColor = 'white';
-                        element.style.border = `1px solid ${color}`;
-                        element.style.borderRadius = '4px';
-                        break;
-                    case 'card':
-                        element.style.backgroundColor = 'white';
-                        element.style.boxShadow = `0 2px 8px ${color}20`;
-                        element.style.borderRadius = '8px';
-                        break;
-                    case 'dropdown':
-                        element.style.backgroundColor = color;
-                        element.style.borderRadius = '4px';
-                        element.style.position = 'relative';
-                        element.innerHTML = '<div style="position: absolute; bottom: 0; width: 100%; height: 30%; background: rgba(0,0,0,0.1); border-radius: 0 0 4px 4px;"></div>';
-                        break;
-                    case 'slider':
-                        element.style.backgroundColor = 'white';
-                        element.style.border = `1px solid ${color}`;
-                        element.style.borderRadius = '10px';
-                        element.innerHTML = `<div style="width: ${Math.random() * 70 + 30}%; height: 100%; background: ${color}; border-radius: 10px;"></div>`;
-                        break;
-                    case 'checkbox':
-                        element.style.width = element.style.height = `${size/2}px`;
-                        element.style.backgroundColor = 'white';
-                        element.style.border = `2px solid ${color}`;
-                        element.style.borderRadius = '4px';
-                        if (Math.random() > 0.5) {
-                            element.innerHTML = '<div style="width: 60%; height: 60%; margin: 20%; background: ' + color + ';"></div>';
-                        }
-                        break;
-                    case 'radio':
-                        element.style.width = element.style.height = `${size/2}px`;
-                        element.style.backgroundColor = 'white';
-                        element.style.border = `2px solid ${color}`;
-                        element.style.borderRadius = '50%';
-                        if (Math.random() > 0.5) {
-                            element.innerHTML = '<div style="width: 60%; height: 60%; margin: 20%; background: ' + color + '; border-radius: 50%;"></div>';
-                        }
-                        break;
-                }
-                
-                container.appendChild(element);
-                elements.push({
-                    id: i,
-                    element: element,
-                    x: left,
-                    y: top,
-                    type: type
-                });
-            }
-        }
-
-        // Создаем соединительные линии
-        function createConnectionLines() {
-            const svg = document.getElementById('connections-svg');
-            
-            for (let i = 0; i < config.lineCount; i++) {
-                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                
-                // Выбираем два случайных элемента
-                const el1 = elements[Math.floor(Math.random() * elements.length)];
-                const el2 = elements[Math.floor(Math.random() * elements.length)];
-                
-                if (el1 && el2 && el1.id !== el2.id) {
-                    line.setAttribute('x1', `${el1.x}%`);
-                    line.setAttribute('y1', `${el1.y}%`);
-                    line.setAttribute('x2', `${el2.x}%`);
-                    line.setAttribute('y2', `${el2.y}%`);
-                    line.setAttribute('stroke', 'rgba(67, 97, 238, 0.15)');
-                    line.setAttribute('stroke-width', '1');
-                    line.setAttribute('stroke-dasharray', '5,3');
-                    
-                    svg.appendChild(line);
-                    lines.push({
-                        element: line,
-                        el1: el1,
-                        el2: el2
-                    });
-                }
-            }
-        }
-
-        // Анимация элементов и линий
-        function animateElements() {
-            elements.forEach(el => {
-                // Случайное движение
-                const moveX = (Math.random() - 0.5) * 2;
-                const moveY = (Math.random() - 0.5) * 2;
-                
-                el.x = Math.max(5, Math.min(95, el.x + moveX * 0.05));
-                el.y = Math.max(5, Math.min(95, el.y + moveY * 0.05));
-                
-                el.element.style.left = `${el.x}vw`;
-                el.element.style.top = `${el.y}vh`;
-            });
-
-            // Обновление линий
-            lines.forEach(line => {
-                line.element.setAttribute('x1', `${line.el1.x}%`);
-                line.element.setAttribute('y1', `${line.el1.y}%`);
-                line.element.setAttribute('x2', `${line.el2.x}%`);
-                line.element.setAttribute('y2', `${line.el2.y}%`);
-            });
-
-            requestAnimationFrame(animateElements);
-        }
-
-        // Инициализация
-        window.addEventListener('load', () => {
-            createFloatingElements();
-            createConnectionLines();
-            animateElements();
-            
-            // Периодическое обновление линий
-            setInterval(() => {
-                const svg = document.getElementById('connections-svg');
-                while (svg.firstChild) {
-                    svg.removeChild(svg.firstChild);
-                }
-                lines.length = 0;
-                createConnectionLines();
-            }, 10000);
-        });
+// Инициализация предзагрузки после загрузки страницы
+window.addEventListener('load', preloadCriticalResources);
