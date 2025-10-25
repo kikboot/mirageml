@@ -4,30 +4,30 @@
     "name": "ывп",
     "userId": "1755533775801",
     "elements": {
-      "element-1756386727422": {
-        "id": "element-1756386727422",
+      "element-1761289994329": {
+        "id": "element-1761289994329",
         "type": "button",
         "name": "button",
-        "x": 67,
-        "y": 32,
-        "width": 100,
-        "height": 50,
+        "x": 345,
+        "y": 7,
+        "width": 99.9375,
+        "height": 49.97916793823242,
         "rotation": 0,
         "backgroundColor": "rgb(74, 107, 255)",
         "textColor": "rgb(0, 0, 0)",
         "fontSize": "",
         "padding": "8px 16px",
-        "border": "none",
+        "border": "medium",
         "text": "Кнопка",
         "imageUrl": null
       },
-      "element-1756386727424": {
-        "id": "element-1756386727424",
+      "element-1761289994358": {
+        "id": "element-1761289994358",
         "type": "div",
         "name": "div",
-        "x": 36,
-        "y": 129,
-        "width": 800,
+        "x": 315,
+        "y": 0,
+        "width": 485,
         "height": 100,
         "rotation": 0,
         "backgroundColor": "rgb(240, 240, 240)",
@@ -40,28 +40,74 @@
       }
     },
     "createdAt": "2025-08-18T16:16:28.704Z",
-    "updatedAt": "2025-08-28T13:12:10.585Z",
+    "updatedAt": "2025-10-24T07:29:44.005Z",
     "canvasSize": {
-      "width": 1024,
-      "height": 768
+      "width": 800,
+      "height": 600
     }
   },
   {
-    "id": "1756386758920",
-    "name": "авы",
+    "id": "1760527270884",
+    "name": "Алоха",
+    "userId": "1755533775801",
+    "elements": {},
+    "canvasSize": {
+      "width": 800,
+      "height": 600
+    },
+    "createdAt": "2025-10-15T11:21:10.884Z",
+    "updatedAt": "2025-10-15T11:21:10.884Z"
+  },
+  {
+    "id": "1760527574507",
+    "name": "Первый проект",
     "userId": "1755533775801",
     "elements": {
-      "element-1756386768935": {
-        "id": "element-1756386768935",
-        "type": "div",
-        "name": "div",
-        "x": 0,
-        "y": 0,
-        "width": 1678,
-        "height": 1080,
+      "element-1761023131945": {
+        "id": "element-1761023131945",
+        "type": "button",
+        "name": "button",
+        "x": 427,
+        "y": 78,
+        "width": 75.28125,
+        "height": 30,
         "rotation": 0,
-        "backgroundColor": "rgb(127, 46, 46)",
-        "textColor": "rgb(255, 255, 255)",
+        "backgroundColor": "rgb(74, 107, 255)",
+        "textColor": "white",
+        "fontSize": "",
+        "padding": "8px 16px",
+        "border": "none",
+        "text": "Кнопка",
+        "imageUrl": null
+      },
+      "element-1761023131953": {
+        "id": "element-1761023131953",
+        "type": "p",
+        "name": "p",
+        "x": 345,
+        "y": 254,
+        "width": 200,
+        "height": 44.6875,
+        "rotation": 0,
+        "backgroundColor": "rgb(255, 255, 255)",
+        "textColor": "rgb(0, 0, 0)",
+        "fontSize": "",
+        "padding": "5px",
+        "border": "",
+        "text": "Перевеуырпиомтолывипгмвкпмшлдвапшывптроыиволп",
+        "imageUrl": null
+      },
+      "element-1761023131959": {
+        "id": "element-1761023131959",
+        "type": "line",
+        "name": "line",
+        "x": 387,
+        "y": 120,
+        "width": 100,
+        "height": 20,
+        "rotation": 0,
+        "backgroundColor": "rgb(0, 0, 0)",
+        "textColor": "",
         "fontSize": "",
         "padding": "",
         "border": "",
@@ -70,10 +116,10 @@
       }
     },
     "canvasSize": {
-      "width": 1920,
-      "height": 1080
+      "width": 800,
+      "height": 600
     },
-    "createdAt": "2025-08-28T13:12:38.920Z",
-    "updatedAt": "2025-08-28T13:13:12.971Z"
+    "createdAt": "2025-10-15T11:26:14.507Z",
+    "updatedAt": "2025-10-21T05:05:34.070Z"
   }
 ]

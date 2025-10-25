@@ -5,138 +5,285 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Отзывы о MirageML</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../reviews/style.css">
     <link type="image/x-icon" href="../logo/logo3.svg" rel="shortcut icon">
-    </head>
+</head>
 <body>
     <div class="background-container">
-        <div class="grid-lines"></div>
-        <div id="floating-elements-container"></div>
-        <svg id="connections-svg" width="100%" height="100%" style="position: absolute; top: 0; left: 0; z-index: 0;"></svg>
+        <div class="animated-grid">
+            <div class="grid-orbit"></div>
+            <div class="grid-orbit"></div>
+            <div class="grid-orbit"></div>
+        </div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
     </div>
 
-    <header>
+    <header class="glass-header">
         <div class="container">
             <div class="header-content">
-                <div class="header-actions">
-                    <div class="logo">
+                <div class="logo-wrapper">
                     <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
-                    <span>MirageML</span>
+                    <span class="logo-text">MirageML</span>
                 </div>
-                </div>
+                
+                <nav class="main-nav">
+                    <a href="../main/index.html" class="nav-link">
+                        <i class="fas fa-home nav-icon"></i>
+                        Главная
+                    </a>
+                </nav>  
             </div>
         </div>
     </header>
 
     <main>
         <div class="container">
-            <div class="reviews-header">
-                <h1>Отзывы о MirageML</h1>
-                <p>Читайте, что говорят наши пользователи, и поделитесь своим опытом использования нашего визуального редактора</p>
-            </div>
-            
-            <div class="review-form">
-                <h2>Оставить отзыв</h2>
-                <form id="reviewForm">
-                    <div class="form-group">
-                        <label for="name">Ваше имя*</label>
-                        <input type="text" id="name" name="name" required>
+            <section class="reviews-hero">
+                <div class="section-header-modern">
+                    <span class="section-badge">
+                        <i class="fas fa-comments"></i>
+                        Мнения сообщества
+                    </span>
+                    <h1>Отзывы о <span class="text-gradient">MirageML</span></h1>
+                    <p class="section-subtitle">
+                        Читайте реальные отзывы пользователей и поделитесь своим опытом использования нашего визуального редактора
+                    </p>
+                </div>
+            </section>
+
+            <section class="review-form-modern">
+                <div class="form-container glass-effect">
+                    <div class="form-header">
+                        <h2><i class="fas fa-edit"></i> Оставить отзыв</h2>
+                        <p>Поделитесь вашим опытом работы с MirageML</p>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="email">Ваш email (необязательно)</label>
-                        <input type="email" id="email" name="email">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Ваша оценка*</label>
-                        <div class="rating-stars">
-                            <input type="radio" id="star5" name="rating" value="5" required>
-                            <label for="star5"><i class="fas fa-star"></i></label>
+                    <form id="reviewForm" class="modern-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">
+                                    <i class="fas fa-user"></i>
+                                    Ваше имя*
+                                </label>
+                                <input type="text" id="name" name="name" required placeholder="Введите ваше имя">
+                            </div>
                             
-                            <input type="radio" id="star4" name="rating" value="4">
-                            <label for="star4"><i class="fas fa-star"></i></label>
-                            
-                            <input type="radio" id="star3" name="rating" value="3">
-                            <label for="star3"><i class="fas fa-star"></i></label>
-                            
-                            <input type="radio" id="star2" name="rating" value="2">
-                            <label for="star2"><i class="fas fa-star"></i></label>
-                            
-                            <input type="radio" id="star1" name="rating" value="1">
-                            <label for="star1"><i class="fas fa-star"></i></label>
+                            <div class="form-group">
+                                <label for="email">
+                                    <i class="fas fa-envelope"></i>
+                                    Ваш email
+                                </label>
+                                <input type="email" id="email" name="email" placeholder="email@example.com (необязательно)">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-star"></i>
+                                Ваша оценка*
+                            </label>
+                            <div class="rating-stars-modern">
+                                <input type="radio" id="star5" name="rating" value="5" required>
+                                <label for="star5" class="star-label">
+                                    <i class="fas fa-star"></i>
+                                    <span>Ужасно</span>
+                                </label>
+                                
+                                <input type="radio" id="star4" name="rating" value="4">
+                                <label for="star4" class="star-label">
+                                    <i class="fas fa-star"></i>
+                                    <span>Плохо</span>
+                                </label>
+                                
+                                <input type="radio" id="star3" name="rating" value="3">
+                                <label for="star3" class="star-label">
+                                    <i class="fas fa-star"></i>
+                                    <span>Нормально</span>
+                                </label>
+                                
+                                <input type="radio" id="star2" name="rating" value="2">
+                                <label for="star2" class="star-label">
+                                    <i class="fas fa-star"></i>
+                                    <span>Хорошо/span>
+                                </label>
+                                
+                                <input type="radio" id="star1" name="rating" value="1">
+                                <label for="star1" class="star-label">
+                                    <i class="fas fa-star"></i>
+                                    <span>Отлично</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="comment">
+                                <i class="fas fa-comment"></i>
+                                Ваш отзыв*
+                            </label>
+                            <textarea id="comment" name="comment" required placeholder="Расскажите о вашем опыте использования MirageML..."></textarea>
+                            <div class="char-counter">0/500</div>
+                        </div>
+                        
+                        <button type="submit" class="cta-button primary submit-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Опубликовать отзыв
+                            <div class="btn-shine"></div>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <section class="reviews-display">
+                <div class="reviews-header">
+                    <h2>Отзывы сообщества</h2>
+                    <div class="reviews-stats">
+                        <div class="stat">
+                            <span class="stat-number" id="totalReviews">0</span>
+                            <span class="stat-label">Всего отзывов</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="averageRating">0.0</span>
+                            <span class="stat-label">Средний рейтинг</span>
                         </div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="comment">Ваш отзыв*</label>
-                        <textarea id="comment" name="comment" required></textarea>
-                    </div>
-                    
-                    <button type="submit" class="btn-submit">Отправить отзыв</button>
-                </form>
-            </div>
-            
-            <div class="reviews-list" id="reviewsList">
-                <!-- Отзывы будут загружены здесь -->
-                <div class="no-reviews">
-                    <p>Пока нет отзывов. Будьте первым!</p>
                 </div>
-            </div>
+                
+                <div class="reviews-filters">
+                    <div class="filter-group">
+                        <label>Сортировка:</label>
+                        <select id="sortSelect">
+                            <option value="newest">Сначала новые</option>
+                            <option value="oldest">Сначала старые</option>
+                            <option value="highest">Высокий рейтинг</option>
+                            <option value="lowest">Низкий рейтинг</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Рейтинг:</label>
+                        <div class="rating-filter">
+                            <button class="rating-filter-btn active" data-rating="all">Все</button>
+                            <button class="rating-filter-btn" data-rating="5">5★</button>
+                            <button class="rating-filter-btn" data-rating="4">4★</button>
+                            <button class="rating-filter-btn" data-rating="3">3★</button>
+                            <button class="rating-filter-btn" data-rating="2">2★</button>
+                            <button class="rating-filter-btn" data-rating="1">1★</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="reviews-grid-modern" id="reviewsList">
+                    <div class="loading-reviews">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Загрузка отзывов...</p>
+                    </div>
+                </div>
+                
+                <div class="reviews-actions">
+                    <button class="btn-outline-modern" id="loadMoreBtn">
+                        <i class="fas fa-redo"></i>
+                        Загрузить еще
+                    </button>
+                </div>
+            </section>
         </div>
     </main>
 
-    <!-- Подвал -->
-    <footer class="figma-footer">
+    <footer class="footer-modern">
         <div class="container">
-            <div class="footer-grid">
-                <!-- Колонка 1: О проекте -->
-                <div class="footer-col">
-                    <div class="logo">
-                        <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
-                        <span>MirageML</span>
+            <div class="footer-content">
+                <div class="footer-main">
+                    <div class="footer-brand">
+                        <div class="logo-wrapper">
+                            <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
+                            <span class="logo-text">MirageML</span>
+                        </div>
+                        <p class="footer-description">
+                            Визуальный редактор для быстрого создания веб-страниц без написания кода
+                        </p>
+                        <div class="social-links-modern">
+                            <a href="#" class="social-link" aria-label="VKontakte">
+                                <i class="fab fa-vk"></i>
+                            </a>
+                            <a href="https://t.me/MirageML_Official" class="social-link" aria-label="Telegram">
+                                <i class="fab fa-telegram"></i>
+                            </a>
+                            <a href="#" class="social-link" aria-label="Discord">
+                                <i class="fab fa-discord"></i>
+                            </a>
+                            <a href="#" class="social-link" aria-label="YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a href="https://github.com/kikboot" class="social-link" aria-label="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </div>
                     </div>
-                    <p>Визуальный редактор для быстрого создания веб-страниц без написания кода</p>
+                    
+                    <div class="footer-links">
+                        <div class="link-group">
+                            <h4>Продукт</h4>
+                            <ul>
+                                <li><a href="../index.html">Главная</a></li>
+                                <li><a href="../editor/index.html">Редактор</a></li>
+                                <li><a href="../features/index.html">Возможности</a></li>
+                                <li><a href="../templates/index.html">Шаблоны</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="link-group">
+                            <h4>Поддержка</h4>
+                            <ul>
+                                <li><a href="../help/index.html">Документация</a></li>
+                                <li><a href="../tutorials/index.html">Обучающие материалы</a></li>
+                                <li><a href="../faq/index.html">Частые вопросы</a></li>
+                                <li><a href="../contact/index.html">Контакты</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="link-group">
+                            <h4>Компания</h4>
+                            <ul class="contact-list">
+                                <li>
+                                    <i class="fas fa-envelope"></i>
+                                    support@mirage-ml.com
+                                </li>
+                                <li>
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Россия, Москва
+                                </li>
+                            </ul>
+                            <div class="input-group">
+                                <input type="email" placeholder="Ваш email">
+                                <button type="submit">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Колонка 3: Контакты -->
-                <div class="footer-col">
-                    <h3>Контакты</h3>
-                    <ul class="contact-list">
-                        <li><i class="fas fa-envelope"></i> support@mirage-ml.com</li>
-                        <li><i class="fas fa-map-marker-alt"></i> Россия, Москва</li>
-                    </ul>
+                
+                <div class="footer-bottom">
+                    <div class="legal-links">
+                        <a href="../confidentiality/index.html">Политика конфиденциальности</a>
+                        <a href="../conditions/index.html">Условия использования</a>
+                    </div>
+                    <div class="copyright">
+                        <div>&copy; 2025 MirageML. Все права защищены.</div>
+                        <div class="made-with-love">
+                            Сделано с <i class="fas fa-heart"></i> в России
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Колонка 4: Подписка -->
-                <div class="footer-col">
-                    <h3>Новостная рассылка</h3>
-                    <p>Подпишитесь, чтобы получать обновления</p>
-                    <form class="subscribe-form">
-                        <input type="email" placeholder="Ваш email" required>
-                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <div class="social-links">
-                    <a href="#" aria-label="VKontakte"><i class="fab fa-vk"></i></a>
-                    <a href="https://t.me/MirageML_Official" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
-                    <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
-                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                </div>
-                <div class="legal-links">
-                    <a href="../confidentiality/index.html">Политика конфиденциальности</a>
-                    <a href="../conditions/index.html">Условия использования</a>
-                </div>
-                <p class="copyright">&copy; 2025 MirageML. Все права защищены.<br>Сделано с <i class="fas fa-heart"></i> в России</p>
             </div>
         </div>
     </footer>
 
     <script src="../reviews/script.js"></script>
-    </body>
+</body>
 </html>
