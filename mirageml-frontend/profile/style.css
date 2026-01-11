@@ -53,6 +53,726 @@ body {
     padding: 0 20px;
 }
 
+/* ============================================
+   МОБИЛЬНАЯ ВЕРСИЯ
+   ============================================ */
+
+/* Мобильный хедер */
+.mobile-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+    z-index: 1000;
+    padding: 12px 0;
+}
+
+.mobile-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.mobile-back-btn {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    background: transparent;
+    color: var(--light);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.mobile-back-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.mobile-header-title {
+    flex: 1;
+}
+
+.mobile-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mobile-logo .logo-icon {
+    height: 28px;
+    width: auto;
+}
+
+.mobile-logo .logo-text {
+    font-size: 18px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--light) 0%, var(--gray-light) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.mobile-menu-btn {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    background: transparent;
+    color: var(--light);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.mobile-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Мобильное меню профиля */
+.mobile-menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 1999;
+}
+
+.mobile-profile-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 85%;
+    max-width: 320px;
+    height: 100%;
+    background: var(--dark);
+    z-index: 2000;
+    box-shadow: var(--shadow-xl);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+}
+
+.mobile-profile-menu.active {
+    transform: translateX(0);
+}
+
+.mobile-menu-header {
+    padding: 20px;
+    background: var(--darker);
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mobile-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mobile-user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.mobile-user-name {
+    font-weight: 600;
+    color: var(--light);
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+
+.mobile-user-email {
+    color: var(--gray);
+    font-size: 12px;
+}
+
+.mobile-menu-close {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--light);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.mobile-menu-close:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.mobile-menu-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 20px;
+    background: var(--darker);
+}
+
+.mobile-stat-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    text-align: center;
+}
+
+.mobile-stat-number {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 4px;
+}
+
+.mobile-stat-label {
+    font-size: 0.75rem;
+    color: var(--gray-light);
+    font-weight: 500;
+}
+
+.mobile-profile-nav {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mobile-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    color: var(--gray-light);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.mobile-nav-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--light);
+}
+
+.mobile-nav-item i {
+    width: 20px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.mobile-nav-badge {
+    background: var(--primary);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: auto;
+}
+
+.mobile-nav-item.mobile-nav-danger {
+    color: var(--danger);
+}
+
+.mobile-nav-item.mobile-nav-danger:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.mobile-menu-actions {
+    padding: 20px;
+    border-top: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: auto;
+}
+
+.mobile-full-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Мобильный контейнер профиля */
+.mobile-profile-container {
+    display: none;
+    padding: 120px 0 80px;
+    min-height: 100vh;
+}
+
+/* Мобильные табы */
+.mobile-tabs-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--dark);
+    border-top: 1px solid var(--glass-border);
+    z-index: 100;
+    padding: 10px 0;
+    backdrop-filter: blur(20px);
+}
+
+.mobile-tabs {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.mobile-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    color: var(--gray);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 10px;
+    transition: var(--transition);
+    flex: 1;
+    max-width: 100px;
+}
+
+.mobile-tab.active {
+    color: var(--primary);
+}
+
+.mobile-tab i {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.mobile-tab-badge {
+    position: absolute;
+    top: -5px;
+    right: 10px;
+    background: var(--primary);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+/* Мобильный контент табов */
+.mobile-tab-content {
+    display: none;
+}
+
+.mobile-tab-content.active {
+    display: block;
+    animation: fadeInUp 0.3s ease-out;
+}
+
+.mobile-tab-header {
+    margin-bottom: 30px;
+}
+
+.mobile-tab-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--light);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mobile-tab-header h2 i {
+    color: var(--primary);
+}
+
+.mobile-tab-header p {
+    color: var(--gray-light);
+    font-size: 0.95rem;
+}
+
+/* Мобильная форма профиля */
+.mobile-profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.mobile-form-group {
+    margin-bottom: 15px;
+}
+
+.mobile-form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: var(--light);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.mobile-form-group label i {
+    color: var(--primary);
+    width: 16px;
+}
+
+.mobile-form-group input,
+.mobile-form-group select {
+    width: 100%;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    color: var(--light);
+    font-size: 16px;
+    transition: var(--transition);
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.mobile-form-group input:focus,
+.mobile-form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.mobile-form-group input::placeholder {
+    color: var(--gray);
+}
+
+.mobile-form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+/* Мобильная безопасность */
+.mobile-security-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.mobile-security-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-lg);
+    padding: 20px;
+}
+
+.mobile-section-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.mobile-section-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.mobile-section-content h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--light);
+    margin-bottom: 4px;
+}
+
+.mobile-section-content p {
+    color: var(--gray-light);
+    font-size: 13px;
+}
+
+/* Мобильные сессии */
+.mobile-sessions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mobile-session-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--border-radius);
+    border: 1px solid transparent;
+    transition: var(--transition);
+}
+
+.mobile-session-item.current {
+    background: rgba(99, 102, 241, 0.05);
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+.mobile-session-info {
+    flex: 1;
+}
+
+.mobile-session-device {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--light);
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.mobile-session-device i {
+    color: var(--primary);
+    width: 16px;
+}
+
+.mobile-session-location {
+    color: var(--gray-light);
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+.mobile-session-time {
+    color: var(--gray);
+    font-size: 11px;
+}
+
+.mobile-session-status {
+    color: var(--success);
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.mobile-session-action {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    background: transparent;
+    color: var(--gray-light);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.mobile-session-action:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+/* Мобильные проекты */
+.mobile-projects-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 25px;
+}
+
+.mobile-icon-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.mobile-projects-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.mobile-projects-loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray-light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.mobile-projects-loading i {
+    font-size: 2rem;
+    color: var(--primary);
+}
+
+.mobile-project-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    padding: 20px;
+    transition: var(--transition);
+}
+
+.mobile-project-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.mobile-project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.mobile-project-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: white;
+}
+
+.mobile-project-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.mobile-project-action-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: var(--border-radius);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--gray-light);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-project-action-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.mobile-project-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--light);
+    margin-bottom: 8px;
+}
+
+.mobile-project-description {
+    color: var(--gray-light);
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.mobile-project-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mobile-project-date {
+    color: var(--gray);
+    font-size: 12px;
+}
+
+.mobile-project-status {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.mobile-status-active {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
+
+.mobile-status-draft {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+/* Кнопка создания проекта на пустом экране */
+.mobile-empty-projects {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--gray-light);
+}
+
+.mobile-empty-projects i {
+    font-size: 3rem;
+    color: var(--gray);
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.mobile-empty-projects h3 {
+    font-size: 1.25rem;
+    margin-bottom: 12px;
+    color: var(--light);
+}
+
+.mobile-empty-projects p {
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
+
+/* Десктопный контейнер (скрыт на мобильных) */
+.desktop-profile-container {
+    display: block;
+}
+
+/* ============================================
+   ОСНОВНЫЕ СТИЛИ ДЛЯ ВСЕХ УСТРОЙСТВ
+   ============================================ */
+
 /* Background Animations */
 .background-container {
     position: fixed;
@@ -158,7 +878,7 @@ body {
     66% { transform: translateY(30px) rotate(240deg); }
 }
 
-/* Glass Header */
+/* Glass Header (десктоп) */
 .glass-header {
     position: sticky;
     top: 0;
@@ -191,7 +911,6 @@ body {
 .logo-icon {
     height: 32px;
     width: auto;
-    
 }
 
 .logo-text {
@@ -1012,7 +1731,10 @@ body {
     }
 }
 
-/* Responsive Design */
+/* ============================================
+   АДАПТИВНОСТЬ
+   ============================================ */
+
 @media (max-width: 1024px) {
     .profile-modern-content {
         grid-template-columns: 1fr;
@@ -1029,6 +1751,20 @@ body {
 }
 
 @media (max-width: 768px) {
+    /* Скрываем десктопную версию, показываем мобильную */
+    .desktop-profile-container {
+        display: none;
+    }
+    
+    .mobile-header {
+        display: block;
+    }
+    
+    .mobile-profile-container {
+        display: block;
+    }
+    
+    /* Мобильные стили */
     .profile-modern-container {
         padding: 100px 0 40px;
     }
@@ -1093,6 +1829,35 @@ body {
         width: 100%;
         justify-content: center;
     }
+    
+    /* Улучшенные стили для мобильных */
+    .mobile-tab {
+        font-size: 11px;
+    }
+    
+    .mobile-tab i {
+        font-size: 18px;
+    }
+    
+    .mobile-form-group input,
+    .mobile-form-group select {
+        padding: 14px;
+        font-size: 15px;
+    }
+    
+    .mobile-security-section {
+        padding: 15px;
+    }
+    
+    .mobile-section-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+    
+    .mobile-project-card {
+        padding: 15px;
+    }
 }
 
 /* Loading States */
@@ -1134,7 +1899,9 @@ body {
 /* Focus States for Accessibility */
 .btn:focus,
 .form-input-modern:focus,
-.form-select-modern:focus {
+.form-select-modern:focus,
+.mobile-form-group input:focus,
+.mobile-form-group select:focus {
     outline: 2px solid var(--primary);
     outline-offset: 2px;
 }
@@ -1145,5 +1912,74 @@ body {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+    }
+}
+
+/* Анимация для мобильного меню */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(100%);
+    }
+}
+
+.mobile-profile-menu.active {
+    animation: slideInRight 0.3s ease-out;
+}
+
+.mobile-profile-menu:not(.active) {
+    animation: slideOutRight 0.3s ease-out;
+}
+
+/* Стили для улучшенной читаемости на мобильных */
+@media (max-width: 768px) {
+    body {
+        font-size: 15px;
+    }
+    
+    .mobile-tab-header h2 {
+        font-size: 1.3rem;
+    }
+    
+    .mobile-section-content h4 {
+        font-size: 15px;
+    }
+    
+    .mobile-project-title {
+        font-size: 15px;
+    }
+}
+
+/* Оптимизация для тач-устройств */
+@media (hover: none) and (pointer: coarse) {
+    .btn,
+    .mobile-nav-item,
+    .mobile-tab,
+    .mobile-session-action,
+    .mobile-project-action-btn {
+        min-height: 44px;
+    }
+    
+    .mobile-form-group input,
+    .mobile-form-group select {
+        min-height: 50px;
+    }
+    
+    .mobile-back-btn,
+    .mobile-menu-btn,
+    .mobile-menu-close {
+        min-width: 44px;
+        min-height: 44px;
     }
 }

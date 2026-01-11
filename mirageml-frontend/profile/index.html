@@ -25,292 +25,546 @@
         </div>
     </div>
 
-    <!-- Обновленный хедер в стиле главной страницы -->
-    <header class="glass-header">
+    <!-- Мобильный хедер -->
+    <header class="mobile-header">
         <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <div class="logo-wrapper">
+            <div class="mobile-header-content">
+                <button class="mobile-back-btn" id="back-to-main-mobile">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                
+                <div class="mobile-header-title">
+                    <div class="mobile-logo">
                         <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
-                        <span class="logo-text">MirageML</span>
+                        <span class="logo-text">Профиль</span>
                     </div>
                 </div>
-                <div class="header-actions">
-                    <button class="btn btn-ghost" id="back-to-main">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>На главную</span>
-                    </button>
-                    <button class="btn btn-primary" id="create-project-btn">
-                        <i class="fas fa-plus"></i>
-                        <span>Создать проект</span>
-                    </button>
-                    <button class="btn btn-outline-modern" id="logout-btn">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Выйти</span>
-                    </button>
-                </div>
+                
+                <button class="mobile-menu-btn" id="mobile-profile-menu">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- Основной контент -->
-    <div class="profile-modern-container">
+    <!-- Мобильное меню -->
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+    <div class="mobile-profile-menu" id="mobile-profile-menu-content">
+        <div class="mobile-menu-header">
+            <div class="mobile-user-info">
+                <div class="mobile-user-avatar" id="mobile-user-avatar">JD</div>
+                <div>
+                    <div class="mobile-user-name" id="mobile-user-name">Загрузка...</div>
+                    <div class="mobile-user-email" id="mobile-user-email">user@example.com</div>
+                </div>
+            </div>
+            <button class="mobile-menu-close" id="close-mobile-menu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="mobile-menu-stats">
+            <div class="mobile-stat-item">
+                <div class="mobile-stat-number" id="mobile-projects-count">0</div>
+                <div class="mobile-stat-label">Проектов</div>
+            </div>
+            <div class="mobile-stat-item">
+                <div class="mobile-stat-number" id="mobile-sessions-count">1</div>
+                <div class="mobile-stat-label">Сессий</div>
+            </div>
+        </div>
+        
+        <nav class="mobile-profile-nav">
+            <a href="#" class="mobile-nav-item" data-tab="profile-tab">
+                <i class="fas fa-user-cog"></i>
+                <span>Настройки профиля</span>
+            </a>
+            <a href="#" class="mobile-nav-item" data-tab="security-tab">
+                <i class="fas fa-shield-alt"></i>
+                <span>Безопасность</span>
+            </a>
+            <a href="#" class="mobile-nav-item" data-tab="projects-tab">
+                <i class="fas fa-project-diagram"></i>
+                <span>Мои проекты</span>
+                <span class="mobile-nav-badge" id="mobile-projects-badge">0</span>
+            </a>
+            <a href="#" class="mobile-nav-item mobile-nav-danger" id="mobile-delete-account">
+                <i class="fas fa-trash"></i>
+                <span>Удалить аккаунт</span>
+            </a>
+        </nav>
+        
+        <div class="mobile-menu-actions">
+            <button class="btn btn-primary mobile-full-btn" id="mobile-create-project">
+                <i class="fas fa-plus"></i>
+                <span>Создать проект</span>
+            </button>
+            <button class="btn btn-outline-modern mobile-full-btn" id="mobile-logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Выйти</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Основной контент для мобильных -->
+    <div class="mobile-profile-container">
         <div class="container">
-            <div class="profile-modern-content">
-                <!-- Боковая панель -->
-                <aside class="profile-modern-sidebar">
-                    <div class="user-card-modern">
-                        <div class="user-avatar-modern-large" id="user-avatar">
-                            <div class="avatar-content">JD</div>
-                            <div class="avatar-status online"></div>
-                        </div>
-                        <div class="user-info-modern">
-                            <h3 class="user-name-modern" id="user-name">Загрузка...</h3>
-                            <p class="user-email-modern" id="user-email">user@example.com</p>
-                        </div>
-                        <div class="user-stats-modern">
-                            <div class="stat-item-modern">
-                                <div class="stat-number" id="projects-count">0</div>
-                                <div class="stat-label">Проектов</div>
-                            </div>
-                            <div class="stat-item-modern">
-                                <div class="stat-number" id="sessions-count">1</div>
-                                <div class="stat-label">Сессий</div>
-                            </div>
-                        </div>
+            <!-- Мобильная панель вкладок -->
+            <div class="mobile-tabs-container">
+                <div class="mobile-tabs">
+                    <button class="mobile-tab active" data-tab="profile-tab">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Профиль</span>
+                    </button>
+                    <button class="mobile-tab" data-tab="security-tab">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Безопасность</span>
+                    </button>
+                    <button class="mobile-tab" data-tab="projects-tab">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>Проекты</span>
+                        <span class="mobile-tab-badge" id="mobile-tab-projects-badge">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Вкладка профиля (мобильная) -->
+            <div id="mobile-profile-tab" class="mobile-tab-content active">
+                <div class="mobile-tab-header">
+                    <h2><i class="fas fa-user-cog"></i> Настройки профиля</h2>
+                    <p>Управление вашими личными данными</p>
+                </div>
+
+                <form id="mobile-profile-form" class="mobile-profile-form">
+                    <div class="mobile-form-group">
+                        <label for="mobile-name">
+                            <i class="fas fa-user"></i>
+                            Имя
+                        </label>
+                        <input type="text" id="mobile-name" required placeholder="Ваше имя">
                     </div>
 
-                    <nav class="profile-nav-modern">
-                        <a href="#" class="nav-item-modern active" data-tab="profile-tab">
-                            <div class="nav-icon">
-                                <i class="fas fa-user-cog"></i>
-                            </div>
-                            <span class="nav-text">Настройки профиля</span>
-                            <div class="nav-indicator"></div>
-                        </a>
-                        <a href="#" class="nav-item-modern" data-tab="security-tab">
-                            <div class="nav-icon">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <span class="nav-text">Безопасность</span>
-                            <div class="nav-indicator"></div>
-                        </a>
-                        <a href="#" class="nav-item-modern" data-tab="projects-tab">
-                            <div class="nav-icon">
-                                <i class="fas fa-project-diagram"></i>
-                            </div>
-                            <span class="nav-text">Мои проекты</span>
-                            <div class="nav-badge" id="projects-badge">0</div>
-                            <div class="nav-indicator"></div>
-                        </a>
-                        <a href="#" class="nav-item-modern danger" id="delete-account-link">
-                            <div class="nav-icon">
-                                <i class="fas fa-trash"></i>
-                            </div>
-                            <span class="nav-text">Удалить аккаунт</span>
-                            <div class="nav-indicator"></div>
-                        </a>
-                    </nav>
-                </aside>
-
-                <!-- Основное содержимое -->
-                <main class="profile-modern-main">
-                    <!-- Вкладка профиля -->
-                    <div id="profile-tab" class="profile-tab-modern active">
-                        <div class="tab-header-modern">
-                            <div class="tab-title-section">
-                                <h1 class="tab-title-modern">
-                                    <i class="fas fa-user-cog"></i>
-                                    Настройки профиля
-                                </h1>
-                                <p class="tab-subtitle">Управление вашими личными данными и настройками аккаунта</p>
-                            </div>
-                            <div class="tab-actions">
-                                <button class="btn btn-ghost" id="cancel-changes">
-                                    <i class="fas fa-times"></i>
-                                    Отмена
-                                </button>
-                                <button class="btn btn-primary" id="save-changes">
-                                    <i class="fas fa-save"></i>
-                                    Сохранить изменения
-                                </button>
-                            </div>
-                        </div>
-
-                        <form id="profile-form" class="profile-form-modern">
-                            <div class="form-grid-modern">
-                                <div class="form-group-modern">
-                                    <label for="name" class="form-label-modern">
-                                        <i class="fas fa-user"></i>
-                                        Имя
-                                    </label>
-                                    <input type="text" id="name" class="form-input-modern" required>
-                                    <div class="form-hint">Ваше отображаемое имя в системе</div>
-                                </div>
-
-                                <div class="form-group-modern">
-                                    <label for="email" class="form-label-modern">
-                                        <i class="fas fa-envelope"></i>
-                                        Email
-                                    </label>
-                                    <input type="email" id="email" class="form-input-modern" required>
-                                    <div class="form-hint">Используется для входа и уведомлений</div>
-                                </div>
-
-                                <div class="form-group-modern">
-                                    <label for="phone" class="form-label-modern">
-                                        <i class="fas fa-phone"></i>
-                                        Телефон
-                                    </label>
-                                    <input type="tel" id="phone" class="form-input-modern">
-                                    <div class="form-hint">Необязательно для заполнения</div>
-                                </div>
-
-                                <div class="form-group-modern">
-                                    <label for="country" class="form-label-modern">
-                                        <i class="fas fa-globe"></i>
-                                        Страна
-                                    </label>
-                                    <select id="country" class="form-select-modern" required>
-                                        <option value="ru">Россия</option>
-                                        <option value="us">США</option>
-                                        <option value="eu">Европа</option>
-                                        <option value="other">Другая</option>
-                                    </select>
-                                    <div class="form-hint">Ваше местоположение</div>
-                                </div>
-                            </div>
-                        </form>
+                    <div class="mobile-form-group">
+                        <label for="mobile-email">
+                            <i class="fas fa-envelope"></i>
+                            Email
+                        </label>
+                        <input type="email" id="mobile-email" required placeholder="Ваш email">
                     </div>
 
-                    <!-- Вкладка безопасности -->
-                    <div id="security-tab" class="profile-tab-modern">
-                        <div class="tab-header-modern">
-                            <div class="tab-title-section">
-                                <h1 class="tab-title-modern">
-                                    <i class="fas fa-shield-alt"></i>
-                                    Безопасность
-                                </h1>
-                                <p class="tab-subtitle">Управление безопасностью вашего аккаунта</p>
+                    <div class="mobile-form-group">
+                        <label for="mobile-phone">
+                            <i class="fas fa-phone"></i>
+                            Телефон
+                        </label>
+                        <input type="tel" id="mobile-phone" placeholder="Номер телефона">
+                    </div>
+
+                    <div class="mobile-form-group">
+                        <label for="mobile-country">
+                            <i class="fas fa-globe"></i>
+                            Страна
+                        </label>
+                        <select id="mobile-country" required>
+                            <option value="ru">Россия</option>
+                            <option value="us">США</option>
+                            <option value="eu">Европа</option>
+                            <option value="other">Другая</option>
+                        </select>
+                    </div>
+
+                    <div class="mobile-form-actions">
+                        <button type="button" class="btn btn-ghost mobile-full-btn" id="mobile-cancel-changes">
+                            <i class="fas fa-times"></i>
+                            Отмена
+                        </button>
+                        <button type="submit" class="btn btn-primary mobile-full-btn" id="mobile-save-changes">
+                            <i class="fas fa-save"></i>
+                            Сохранить
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Вкладка безопасности (мобильная) -->
+            <div id="mobile-security-tab" class="mobile-tab-content">
+                <div class="mobile-tab-header">
+                    <h2><i class="fas fa-shield-alt"></i> Безопасность</h2>
+                    <p>Управление безопасностью аккаунта</p>
+                </div>
+
+                <div class="mobile-security-sections">
+                    <!-- Смена пароля -->
+                    <div class="mobile-security-section">
+                        <div class="mobile-section-header">
+                            <div class="mobile-section-icon">
+                                <i class="fas fa-key"></i>
+                            </div>
+                            <div class="mobile-section-content">
+                                <h4>Смена пароля</h4>
+                                <p>Обновите ваш пароль</p>
                             </div>
                         </div>
+                        <button class="btn btn-outline-modern mobile-full-btn" id="mobile-change-password">
+                            <i class="fas fa-edit"></i>
+                            Изменить пароль
+                        </button>
+                    </div>
 
-                        <div class="security-sections-modern">
-                            <!-- Смена пароля -->
-                            <div class="security-section-modern">
-                                <div class="section-header-modern">
-                                    <div class="section-icon">
-                                        <i class="fas fa-key"></i>
-                                    </div>
-                                    <div class="section-content">
-                                        <h3>Смена пароля</h3>
-                                        <p>Обновите ваш пароль для повышения безопасности</p>
-                                    </div>
-                                </div>
-                                <button class="btn btn-outline-modern" id="change-password-btn">
-                                    <i class="fas fa-edit"></i>
-                                    Изменить пароль
-                                </button>
+                    <!-- Активные сессии -->
+                    <div class="mobile-security-section">
+                        <div class="mobile-section-header">
+                            <div class="mobile-section-icon">
+                                <i class="fas fa-laptop"></i>
                             </div>
-
-                            <!-- Активные сессии -->
-                            <div class="security-section-modern">
-                                <div class="section-header-modern">
-                                    <div class="section-icon">
-                                        <i class="fas fa-laptop"></i>
-                                    </div>
-                                    <div class="section-content">
-                                        <h3>Активные сессии</h3>
-                                        <p>Управление устройствами, с которых выполнен вход</p>
-                                    </div>
-                                </div>
-                                <div class="sessions-container-modern">
-                                    <div class="session-item-modern current">
-                                        <div class="session-info">
-                                            <div class="session-device">
-                                                <i class="fas fa-desktop"></i>
-                                                Chrome, Windows
-                                            </div>
-                                            <div class="session-location">Москва, Россия (текущая)</div>
-                                            <div class="session-time">Только что</div>
-                                        </div>
-                                        <div class="session-status">Активна</div>
-                                    </div>
-                                    <div class="session-item-modern">
-                                        <div class="session-info">
-                                            <div class="session-device">
-                                                <i class="fas fa-mobile-alt"></i>
-                                                Safari, iPhone
-                                            </div>
-                                            <div class="session-location">Санкт-Петербург, Россия</div>
-                                            <div class="session-time">2 дня назад</div>
-                                        </div>
-                                        <button class="btn btn-outline-modern danger session-action" onclick="terminateSession(this)">
-                                            Завершить
-                                        </button>
-                                    </div>
-                                    <div class="session-item-modern">
-                                        <div class="session-info">
-                                            <div class="session-device">
-                                                <i class="fas fa-laptop"></i>
-                                                Firefox, MacOS
-                                            </div>
-                                            <div class="session-location">Нью-Йорк, США</div>
-                                            <div class="session-time">1 неделю назад</div>
-                                        </div>
-                                        <button class="btn btn-outline-modern danger session-action" onclick="terminateSession(this)">
-                                            Завершить
-                                        </button>
-                                    </div>
-                                </div>
+                            <div class="mobile-section-content">
+                                <h4>Активные сессии</h4>
+                                <p>Управление устройствами</p>
                             </div>
-
-                            <!-- Двухфакторная аутентификация -->
-                            <div class="security-section-modern">
-                                <div class="section-header-modern">
-                                    <div class="section-icon">
+                        </div>
+                        <div class="mobile-sessions-list">
+                            <div class="mobile-session-item current">
+                                <div class="mobile-session-info">
+                                    <div class="mobile-session-device">
+                                        <i class="fas fa-desktop"></i>
+                                        Chrome, Windows
+                                    </div>
+                                    <div class="mobile-session-location">Текущая сессия</div>
+                                    <div class="mobile-session-time">Только что</div>
+                                </div>
+                                <div class="mobile-session-status">Активна</div>
+                            </div>
+                            <div class="mobile-session-item">
+                                <div class="mobile-session-info">
+                                    <div class="mobile-session-device">
                                         <i class="fas fa-mobile-alt"></i>
+                                        Safari, iPhone
                                     </div>
-                                    <div class="section-content">
-                                        <h3>Двухфакторная аутентификация</h3>
-                                        <p>Добавьте дополнительный уровень безопасности к вашему аккаунту</p>
+                                    <div class="mobile-session-location">Санкт-Петербург</div>
+                                    <div class="mobile-session-time">2 дня назад</div>
+                                </div>
+                                <button class="mobile-session-action" onclick="terminateMobileSession(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вкладка проектов (мобильная) -->
+            <div id="mobile-projects-tab" class="mobile-tab-content">
+                <div class="mobile-tab-header">
+                    <div class="mobile-projects-header">
+                        <div>
+                            <h2><i class="fas fa-project-diagram"></i> Мои проекты</h2>
+                            <p>Создавайте и управляйте проектами</p>
+                        </div>
+                        <button class="btn btn-primary mobile-icon-btn" id="mobile-create-project-btn">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mobile-projects-container" id="mobile-projects-container">
+                    <div class="mobile-projects-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>Загрузка проектов...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Десктопный контент (скрыт на мобильных) -->
+    <div class="desktop-profile-container">
+        <!-- Обновленный хедер в стиле главной страницы -->
+        <header class="glass-header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <div class="logo-wrapper">
+                            <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
+                            <span class="logo-text">MirageML</span>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-ghost" id="back-to-main">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>На главную</span>
+                        </button>
+                        <button class="btn btn-primary" id="create-project-btn">
+                            <i class="fas fa-plus"></i>
+                            <span>Создать проект</span>
+                        </button>
+                        <button class="btn btn-outline-modern" id="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Выйти</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <div class="profile-modern-container">
+            <div class="container">
+                <div class="profile-modern-content">
+                    <!-- Боковая панель -->
+                    <aside class="profile-modern-sidebar">
+                        <div class="user-card-modern">
+                            <div class="user-avatar-modern-large" id="user-avatar">
+                                <div class="avatar-content">JD</div>
+                                <div class="avatar-status online"></div>
+                            </div>
+                            <div class="user-info-modern">
+                                <h3 class="user-name-modern" id="user-name">Загрузка...</h3>
+                                <p class="user-email-modern" id="user-email">user@example.com</p>
+                            </div>
+                            <div class="user-stats-modern">
+                                <div class="stat-item-modern">
+                                    <div class="stat-number" id="projects-count">0</div>
+                                    <div class="stat-label">Проектов</div>
+                                </div>
+                                <div class="stat-item-modern">
+                                    <div class="stat-number" id="sessions-count">1</div>
+                                    <div class="stat-label">Сессий</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <nav class="profile-nav-modern">
+                            <a href="#" class="nav-item-modern active" data-tab="profile-tab">
+                                <div class="nav-icon">
+                                    <i class="fas fa-user-cog"></i>
+                                </div>
+                                <span class="nav-text">Настройки профиля</span>
+                                <div class="nav-indicator"></div>
+                            </a>
+                            <a href="#" class="nav-item-modern" data-tab="security-tab">
+                                <div class="nav-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <span class="nav-text">Безопасность</span>
+                                <div class="nav-indicator"></div>
+                            </a>
+                            <a href="#" class="nav-item-modern" data-tab="projects-tab">
+                                <div class="nav-icon">
+                                    <i class="fas fa-project-diagram"></i>
+                                </div>
+                                <span class="nav-text">Мои проекты</span>
+                                <div class="nav-badge" id="projects-badge">0</div>
+                                <div class="nav-indicator"></div>
+                            </a>
+                            <a href="#" class="nav-item-modern danger" id="delete-account-link">
+                                <div class="nav-icon">
+                                    <i class="fas fa-trash"></i>
+                                </div>
+                                <span class="nav-text">Удалить аккаунт</span>
+                                <div class="nav-indicator"></div>
+                            </a>
+                        </nav>
+                    </aside>
+
+                    <!-- Основное содержимое -->
+                    <main class="profile-modern-main">
+                        <!-- Вкладка профиля -->
+                        <div id="profile-tab" class="profile-tab-modern active">
+                            <div class="tab-header-modern">
+                                <div class="tab-title-section">
+                                    <h1 class="tab-title-modern">
+                                        <i class="fas fa-user-cog"></i>
+                                        Настройки профиля
+                                    </h1>
+                                    <p class="tab-subtitle">Управление вашими личными данными и настройками аккаунта</p>
+                                </div>
+                                <div class="tab-actions">
+                                    <button class="btn btn-ghost" id="cancel-changes">
+                                        <i class="fas fa-times"></i>
+                                        Отмена
+                                    </button>
+                                    <button class="btn btn-primary" id="save-changes">
+                                        <i class="fas fa-save"></i>
+                                        Сохранить изменения
+                                    </button>
+                                </div>
+                            </div>
+
+                            <form id="profile-form" class="profile-form-modern">
+                                <div class="form-grid-modern">
+                                    <div class="form-group-modern">
+                                        <label for="name" class="form-label-modern">
+                                            <i class="fas fa-user"></i>
+                                            Имя
+                                        </label>
+                                        <input type="text" id="name" class="form-input-modern" required>
+                                        <div class="form-hint">Ваше отображаемое имя в системе</div>
+                                    </div>
+
+                                    <div class="form-group-modern">
+                                        <label for="email" class="form-label-modern">
+                                            <i class="fas fa-envelope"></i>
+                                            Email
+                                        </label>
+                                        <input type="email" id="email" class="form-input-modern" required>
+                                        <div class="form-hint">Используется для входа и уведомлений</div>
+                                    </div>
+
+                                    <div class="form-group-modern">
+                                        <label for="phone" class="form-label-modern">
+                                            <i class="fas fa-phone"></i>
+                                            Телефон
+                                        </label>
+                                        <input type="tel" id="phone" class="form-input-modern">
+                                        <div class="form-hint">Необязательно для заполнения</div>
+                                    </div>
+
+                                    <div class="form-group-modern">
+                                        <label for="country" class="form-label-modern">
+                                            <i class="fas fa-globe"></i>
+                                            Страна
+                                        </label>
+                                        <select id="country" class="form-select-modern" required>
+                                            <option value="ru">Россия</option>
+                                            <option value="us">США</option>
+                                            <option value="eu">Европа</option>
+                                            <option value="other">Другая</option>
+                                        </select>
+                                        <div class="form-hint">Ваше местоположение</div>
                                     </div>
                                 </div>
-                                <button class="btn btn-outline-modern">
-                                    <i class="fas fa-cog"></i>
-                                    Настроить
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Вкладка проектов -->
-                    <div id="projects-tab" class="profile-tab-modern">
-                        <div class="tab-header-modern">
-                            <div class="tab-title-section">
-                                <h1 class="tab-title-modern">
-                                    <i class="fas fa-project-diagram"></i>
-                                    Мои проекты
-                                </h1>
-                                <p class="tab-subtitle">Создавайте и управляйте вашими проектами</p>
-                            </div>
-                            <div class="tab-actions">
-                                <button class="btn btn-primary" id="create-project-main-btn">
-                                    <i class="fas fa-plus"></i>
-                                    Новый проект
-                                </button>
-                            </div>
+                            </form>
                         </div>
 
-                        <div class="projects-grid-modern" id="projects-container">
-                            <!-- Проекты будут загружаться динамически -->
-                            <div class="projects-loading">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                <span>Загрузка проектов...</span>
+                        <!-- Вкладка безопасности -->
+                        <div id="security-tab" class="profile-tab-modern">
+                            <div class="tab-header-modern">
+                                <div class="tab-title-section">
+                                    <h1 class="tab-title-modern">
+                                        <i class="fas fa-shield-alt"></i>
+                                        Безопасность
+                                    </h1>
+                                    <p class="tab-subtitle">Управление безопасностью вашего аккаунта</p>
+                                </div>
+                            </div>
+
+                            <div class="security-sections-modern">
+                                <!-- Смена пароля -->
+                                <div class="security-section-modern">
+                                    <div class="section-header-modern">
+                                        <div class="section-icon">
+                                            <i class="fas fa-key"></i>
+                                        </div>
+                                        <div class="section-content">
+                                            <h3>Смена пароля</h3>
+                                            <p>Обновите ваш пароль для повышения безопасности</p>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline-modern" id="change-password-btn">
+                                        <i class="fas fa-edit"></i>
+                                        Изменить пароль
+                                    </button>
+                                </div>
+
+                                <!-- Активные сессии -->
+                                <div class="security-section-modern">
+                                    <div class="section-header-modern">
+                                        <div class="section-icon">
+                                            <i class="fas fa-laptop"></i>
+                                        </div>
+                                        <div class="section-content">
+                                            <h3>Активные сессии</h3>
+                                            <p>Управление устройствами, с которых выполнен вход</p>
+                                        </div>
+                                    </div>
+                                    <div class="sessions-container-modern">
+                                        <div class="session-item-modern current">
+                                            <div class="session-info">
+                                                <div class="session-device">
+                                                    <i class="fas fa-desktop"></i>
+                                                    Chrome, Windows
+                                                </div>
+                                                <div class="session-location">Москва, Россия (текущая)</div>
+                                                <div class="session-time">Только что</div>
+                                            </div>
+                                            <div class="session-status">Активна</div>
+                                        </div>
+                                        <div class="session-item-modern">
+                                            <div class="session-info">
+                                                <div class="session-device">
+                                                    <i class="fas fa-mobile-alt"></i>
+                                                    Safari, iPhone
+                                                </div>
+                                                <div class="session-location">Санкт-Петербург, Россия</div>
+                                                <div class="session-time">2 дня назад</div>
+                                            </div>
+                                            <button class="btn btn-outline-modern danger session-action" onclick="terminateSession(this)">
+                                                Завершить
+                                            </button>
+                                        </div>
+                                        <div class="session-item-modern">
+                                            <div class="session-info">
+                                                <div class="session-device">
+                                                    <i class="fas fa-laptop"></i>
+                                                    Firefox, MacOS
+                                                </div>
+                                                <div class="session-location">Нью-Йорк, США</div>
+                                                <div class="session-time">1 неделю назад</div>
+                                            </div>
+                                            <button class="btn btn-outline-modern danger session-action" onclick="terminateSession(this)">
+                                                Завершить
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Двухфакторная аутентификация -->
+                                <div class="security-section-modern">
+                                    <div class="section-header-modern">
+                                        <div class="section-icon">
+                                            <i class="fas fa-mobile-alt"></i>
+                                        </div>
+                                        <div class="section-content">
+                                            <h3>Двухфакторная аутентификация</h3>
+                                            <p>Добавьте дополнительный уровень безопасности к вашему аккаунту</p>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline-modern">
+                                        <i class="fas fa-cog"></i>
+                                        Настроить
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </main>
+
+                        <!-- Вкладка проектов -->
+                        <div id="projects-tab" class="profile-tab-modern">
+                            <div class="tab-header-modern">
+                                <div class="tab-title-section">
+                                    <h1 class="tab-title-modern">
+                                        <i class="fas fa-project-diagram"></i>
+                                        Мои проекты
+                                    </h1>
+                                    <p class="tab-subtitle">Создавайте и управляйте вашими проектами</p>
+                                </div>
+                                <div class="tab-actions">
+                                    <button class="btn btn-primary" id="create-project-main-btn">
+                                        <i class="fas fa-plus"></i>
+                                        Новый проект
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="projects-grid-modern" id="projects-container">
+                                <!-- Проекты будут загружаться динамически -->
+                                <div class="projects-loading">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span>Загрузка проектов...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
             </div>
         </div>
     </div>

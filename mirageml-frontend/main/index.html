@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MirageML - Визуальный редактор сайтов</title>
+    <title>MirageML - Визуальный редактор сайтов без программирования</title>
+    <meta name="description" content="Создавайте профессиональные сайты без написания кода. Визуальный редактор с экспортом в чистый HTML/CSS. Быстро, просто, эффективно.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../main/style.css">
     <link type="image/x-icon" href="../logo/logo3.svg" rel="shortcut icon">
@@ -25,17 +26,27 @@
         </div>
     </div>
 
-    <!-- Новый хедер с стеклянным эффектом -->
+    <!-- Обновленный хедер для мобильной версии -->
     <header class="glass-header">
         <div class="container">
             <div class="header-content">
-                <div class="logo">
-                    <div class="logo-wrapper">
-                        <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
-                        <span class="logo-text">MirageML</span>
+                <div class="header-left">
+                    <button class="mobile-menu-btn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="logo">
+                        <div class="logo-wrapper">
+                            <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
+                            <span class="logo-text">MirageML</span>
+                        </div>
                     </div>
                 </div>
+                
                 <nav class="main-nav">
+                    <a href="#product" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-cube"></i></span>
+                        <span class="nav-text">Продукт</span>
+                    </a>
                     <a href="#features" class="nav-link">
                         <span class="nav-icon"><i class="fas fa-star"></i></span>
                         <span class="nav-text">Возможности</span>
@@ -43,6 +54,10 @@
                     <a href="#advantages" class="nav-link">
                         <span class="nav-icon"><i class="fas fa-bolt"></i></span>
                         <span class="nav-text">Преимущества</span>
+                    </a>
+                    <a href="#how-it-works" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-play-circle"></i></span>
+                        <span class="nav-text">Инструкция</span>
                     </a>
                     <a href="#reviews" class="nav-link">
                         <span class="nav-icon"><i class="fas fa-comment"></i></span>
@@ -63,21 +78,64 @@
         </div>
     </header>
 
-    <!-- Обновленная герой секция -->
+    <!-- Мобильное меню -->
+    <div class="mobile-menu-container">
+        <button class="mobile-menu-close">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="mobile-logo">
+            <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
+            <span class="logo-text">MirageML</span>
+        </div>
+        <div class="mobile-menu-content">
+            <nav class="mobile-nav">
+                <a href="#product" class="nav-link">
+                    <span class="nav-icon"><i class="fas fa-cube"></i></span>
+                    <span class="nav-text">Продукт</span>
+                </a>
+                <a href="#features" class="nav-link">
+                    <span class="nav-icon"><i class="fas fa-star"></i></span>
+                    <span class="nav-text">Возможности</span>
+                </a>
+                <a href="#advantages" class="nav-link">
+                    <span class="nav-icon"><i class="fas fa-bolt"></i></span>
+                    <span class="nav-text">Преимущества</span>
+                </a>
+                <a href="#how-it-works" class="nav-link">
+                    <span class="nav-icon"><i class="fas fa-play-circle"></i></span>
+                    <span class="nav-text">Инструкция</span>
+                </a>
+                <a href="#reviews" class="nav-link">
+                    <span class="nav-icon"><i class="fas fa-comment"></i></span>
+                    <span class="nav-text">Отзывы</span>
+                </a>
+            </nav>
+            <div class="mobile-auth-buttons">
+                <button class="btn btn-ghost" id="mobile-login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Войти</span>
+                </button>
+                <button class="btn btn-primary" id="mobile-register-btn">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Регистрация</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <section class="hero-modern">
         <div class="container">
             <div class="hero-content">
                 <div class="hero-badge">
                     <i class="fas fa-rocket"></i>
-                    <span>Новый визуальный редактор</span>
+                    <span>Визуальный конструктор нового поколения</span>
                 </div>
                 <h1 class="hero-title">
-                    <span class="title-line">Создавайте сайты</span>
-                    <span class="title-line">без написания</span>
-                    <span class="title-gradient">кода</span>
+                    <span class="title-line">Создание сайтов без</span>
+                    <span class="title-gradient">программирования</span>
                 </h1>
                 <p class="hero-subtitle">
-                    Профессиональные веб-страницы за минуты. Интуитивный интерфейс, чистый код на выходе.
+                    MirageML — это мощный визуальный редактор, который позволяет создавать профессиональные веб-страницы за минуты. Перетаскивайте элементы, настраивайте дизайн и получайте чистый HTML/CSS код.
                 </p>
                 <div class="hero-actions">
                     <button class="cta-button primary" id="create-project-btn">
@@ -87,15 +145,15 @@
                         </span>
                         <div class="btn-shine"></div>
                     </button>
-                    <button class="cta-button secondary">
+                    <button class="cta-button secondary" id="demo-btn">
                         <i class="fas fa-play-circle"></i>
-                        Смотреть демо
+                        Посмотреть демо
                     </button>
                 </div>
                 <div class="hero-stats">
                     <div class="stat-item">
                         <div class="stat-number">10K+</div>
-                        <div class="stat-label">проектов создано</div>
+                        <div class="stat-label">созданных проектов</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">99%</div>
@@ -109,6 +167,7 @@
             </div>
             <div class="hero-visual">
                 <div class="visual-container">
+                    <!-- Упрощенный редактор для мобильной версии -->
                     <div class="editor-preview">
                         <div class="editor-header">
                             <div class="window-controls">
@@ -116,20 +175,8 @@
                                 <div class="control minimize"></div>
                                 <div class="control maximize"></div>
                             </div>
-                            <div class="editor-tabs">
-                                <div class="tab active">index.html</div>
-                                <div class="tab">style.css</div>
-                                <div class="tab">script.js</div>
-                            </div>
                         </div>
                         <div class="editor-content">
-                            <div class="code-lines">
-                                <div class="code-line"></div>
-                                <div class="code-line"></div>
-                                <div class="code-line"></div>
-                                <div class="code-line"></div>
-                                <div class="code-line"></div>
-                            </div>
                             <div class="preview-elements">
                                 <div class="preview-element header"></div>
                                 <div class="preview-element hero"></div>
@@ -143,7 +190,186 @@
         </div>
     </section>
 
-    <!-- Обновленная секция преимуществ -->
+    <!-- Новая секция: Что такое MirageML? -->
+    <section class="product-section" id="product">
+        <div class="container">
+            <div class="section-header-modern">
+                <div class="section-badge">О продукте</div>
+                <h2>Что такое MirageML?</h2>
+                <p class="section-subtitle">Мощный инструмент для создания веб-страниц без навыков программирования</p>
+            </div>
+            <div class="product-grid">
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-mouse-pointer"></i>
+                    </div>
+                    <h3>Визуальный редактор</h3>
+                    <p>Создавайте сайты методом перетаскивания элементов. Не нужно писать код — просто выбирайте и настраивайте блоки.</p>
+                </div>
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Чистый код на выходе</h3>
+                    <p>Получайте оптимизированный HTML/CSS код, который можно использовать где угодно. Без лишних тегов и зависимостей.</p>
+                </div>
+                <div class="product-card">
+                    <div class="product-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Адаптивный дизайн</h3>
+                    <p>Автоматическая адаптация под все устройства. Ваш сайт будет идеально выглядеть на компьютерах, планшетах и смартфонах.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Новая секция: Для кого подходит? -->
+    <section class="audience-section">
+        <div class="container">
+            <div class="section-header-modern">
+                <div class="section-badge">Аудитория</div>
+                <h2>Для кого создан MirageML?</h2>
+                <p class="section-subtitle">Идеальный инструмент для различных задач и специалистов</p>
+            </div>
+            <div class="audience-grid">
+                <div class="audience-card">
+                    <div class="audience-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3>Бизнесмены</h3>
+                    <p>Создавайте лендинги для продуктов, сервисов и мероприятий без найма разработчиков.</p>
+                    <ul class="audience-list">
+                        <li><i class="fas fa-check"></i> Быстрый запуск</li>
+                        <li><i class="fas fa-check"></i> Экономия бюджета</li>
+                        <li><i class="fas fa-check"></i> Полный контроль</li>
+                    </ul>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-avatar">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h3>Дизайнеры</h3>
+                    <p>Воплощайте свои дизайн-макеты в рабочие прототипы без помощи программистов.</p>
+                    <ul class="audience-list">
+                        <li><i class="fas fa-check"></i> Визуальное редактирование</li>
+                        <li><i class="fas fa-check"></i> Точная реализация</li>
+                        <li><i class="fas fa-check"></i> Экспорт в код</li>
+                    </ul>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-avatar">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Начинающие</h3>
+                    <p>Изучайте веб-разработку на практике, видя как ваши действия превращаются в код.</p>
+                    <ul class="audience-list">
+                        <li><i class="fas fa-check"></i> Обучение на практике</li>
+                        <li><i class="fas fa-check"></i> Мгновенный результат</li>
+                        <li><i class="fas fa-check"></i> Понимание структуры</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Новая секция: Как это работает -->
+    <section class="workflow-section" id="how-it-works">
+        <div class="container">
+            <div class="section-header-modern">
+                <div class="section-badge">Процесс работы</div>
+                <h2>Как создавать сайты в MirageML</h2>
+                <p class="section-subtitle">Всего 4 простых шага от идеи до готового сайта</p>
+            </div>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-number">01</div>
+                    <div class="step-content">
+                        <h3>Выберите шаблон или начните с нуля</h3>
+                        <p>Начните с готового шаблона или создайте уникальный дизайн с чистого листа. Библиотека шаблонов регулярно пополняется.</p>
+                    </div>
+                    <div class="step-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">02</div>
+                    <div class="step-content">
+                        <h3>Настройте дизайн в визуальном редакторе</h3>
+                        <p>Перетаскивайте блоки, меняйте цвета, шрифты и отступы. Редактор в реальном времени показывает все изменения.</p>
+                    </div>
+                    <div class="step-icon">
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">03</div>
+                    <div class="step-content">
+                        <h3>Добавьте контент и медиа</h3>
+                        <p>Загрузите изображения, добавьте текст, видео и другие медиа-элементы. Все оптимизируется автоматически.</p>
+                    </div>
+                    <div class="step-icon">
+                        <i class="fas fa-image"></i>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-number">04</div>
+                    <div class="step-content">
+                        <h3>Экспортируйте готовый сайт</h3>
+                        <p>Скачайте проект в виде HTML/CSS файлов или ZIP-архива. Код готов к размещению на любом хостинге.</p>
+                    </div>
+                    <div class="step-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Новая секция: Примеры блоков -->
+    <section class="blocks-section">
+        <div class="container">
+            <div class="section-header-modern">
+                <div class="section-badge">Элементы</div>
+                <h2>Что можно создать в редакторе</h2>
+                <p class="section-subtitle">Богатая библиотека готовых блоков и элементов</p>
+            </div>
+            <div class="blocks-grid">
+                <div class="block-card">
+                    <div class="block-preview header-block"></div>
+                    <h3>Шапки сайта</h3>
+                    <p>Навигационные меню, логотипы, кнопки действий</p>
+                </div>
+                <div class="block-card">
+                    <div class="block-preview hero-block"></div>
+                    <h3>Герой-секции</h3>
+                    <p>Заголовки, подзаголовки, CTA-кнопки, фон</p>
+                </div>
+                <div class="block-card">
+                    <div class="block-preview features-block"></div>
+                    <h3>Блоки преимуществ</h3>
+                    <p>Иконки, описания, сетка элементов</p>
+                </div>
+                <div class="block-card">
+                    <div class="block-preview gallery-block"></div>
+                    <h3>Галереи и портфолио</h3>
+                    <p>Сетки изображений, слайдеры, фильтры</p>
+                </div>
+                <div class="block-card">
+                    <div class="block-preview form-block"></div>
+                    <h3>Формы обратной связи</h3>
+                    <p>Поля ввода, кнопки отправки, валидация</p>
+                </div>
+                <div class="block-card">
+                    <div class="block-preview footer-block"></div>
+                    <h3>Подвалы сайта</h3>
+                    <p>Контакты, соцсети, карты, копирайт</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Обновленная секция преимуществ с 3 блоками в ряд -->
     <section class="advantages-modern" id="advantages">
         <div class="container">
             <div class="section-header-modern">
@@ -187,23 +413,11 @@
                     <p>Автоматическая поддержка мобильных устройств — ваш сайт будет идеально выглядеть на любом экране</p>
                     <div class="advantage-decoration"></div>
                 </div>
-
-                <div class="advantage-card-modern">
-                    <div class="advantage-icon-modern">
-                        <div class="icon-wrapper">
-                            <i class="fas fa-bolt"></i>
-                        </div>
-                        <div class="icon-glow"></div>
-                    </div>
-                    <h3>Мгновенный результат</h3>
-                    <p>Создавайте рабочие прототипы за минуты, а не за дни — ускорьте процесс разработки в 5 раз</p>
-                    <div class="advantage-decoration"></div>
-                </div>
             </div>
         </div>
     </section>
 
-    <!-- Обновленная секция возможностей -->
+    <!-- Обновленная секция возможностей с 3 блоками в ряд -->
     <section class="features-modern" id="features">
         <div class="container">
             <div class="section-header-modern">
@@ -217,18 +431,18 @@
                         <div class="feature-icon-modern">
                             <i class="fas fa-th"></i>
                         </div>
-                        <h3>Блоки</h3>
-                        <p>Добавляйте и настраивайте блоки с содержимым, изменяйте их размеры и расположение</p>
+                        <h3>Drag & Drop</h3>
+                        <p>Перетаскивайте элементы мышью, меняйте их порядок и расположение на странице</p>
                     </div>
                     <div class="feature-hover"></div>
                 </div>
                 <div class="feature-card-modern">
                     <div class="feature-content">
                         <div class="feature-icon-modern">
-                            <i class="fas fa-heading"></i>
+                            <i class="fas fa-palette"></i>
                         </div>
-                        <h3>Текст</h3>
-                        <p>Добавляйте заголовки и текстовые блоки с возможностью полного форматирования</p>
+                        <h3>Визуальное редактирование</h3>
+                        <p>Меняйте цвета, шрифты, отступы в реальном времени без перезагрузки</p>
                     </div>
                     <div class="feature-hover"></div>
                 </div>
@@ -237,8 +451,8 @@
                         <div class="feature-icon-modern">
                             <i class="fas fa-image"></i>
                         </div>
-                        <h3>Изображения</h3>
-                        <p>Загружайте свои изображения и настраивайте их отображение на странице</p>
+                        <h3>Медиа библиотека</h3>
+                        <p>Загружайте изображения, оптимизируйте их и используйте в проектах</p>
                     </div>
                     <div class="feature-hover"></div>
                 </div>
@@ -247,7 +461,7 @@
                         <div class="feature-icon-modern">
                             <i class="fas fa-download"></i>
                         </div>
-                        <h3>Экспорт</h3>
+                        <h3>Экспорт кода</h3>
                         <p>Получайте чистый HTML/CSS код или скачивайте готовый проект в ZIP архиве</p>
                     </div>
                     <div class="feature-hover"></div>
@@ -255,10 +469,10 @@
                 <div class="feature-card-modern">
                     <div class="feature-content">
                         <div class="feature-icon-modern">
-                            <i class="fas fa-sliders-h"></i>
+                            <i class="fas fa-magic"></i>
                         </div>
-                        <h3>Настройки</h3>
-                        <p>Гибкие настройки внешнего вида каждого элемента через удобную панель свойств</p>
+                        <h3>Автоматическая верстка</h3>
+                        <p>Система сама создает адаптивную верстку для всех устройств</p>
                     </div>
                     <div class="feature-hover"></div>
                 </div>
@@ -267,10 +481,69 @@
                         <div class="feature-icon-modern">
                             <i class="fas fa-layer-group"></i>
                         </div>
-                        <h3>Слои</h3>
+                        <h3>Система слоев</h3>
                         <p>Управляйте элементами через панель слоев и переименовывайте их</p>
                     </div>
                     <div class="feature-hover"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Новая секция: Цены -->
+    <section class="pricing-section">
+        <div class="container">
+            <div class="section-header-modern">
+                <div class="section-badge">Стоимость</div>
+                <h2>Доступные тарифы</h2>
+                <p class="section-subtitle">Начните бесплатно, платите только за дополнительные функции</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Бесплатно</h3>
+                        <div class="price">0₽<span>/навсегда</span></div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 3 проекта</li>
+                        <li><i class="fas fa-check"></i> Базовые блоки</li>
+                        <li><i class="fas fa-check"></i> Экспорт в код</li>
+                        <li><i class="fas fa-check"></i> Сообщество</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Премиум-шаблоны</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Приоритетная поддержка</li>
+                    </ul>
+                    <button class="btn btn-primary">Начать бесплатно</button>
+                </div>
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Самый популярный</div>
+                    <div class="pricing-header">
+                        <h3>Профессионал</h3>
+                        <div class="price">990₽<span>/месяц</span></div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Неограниченные проекты</li>
+                        <li><i class="fas fa-check"></i> Все блоки и элементы</li>
+                        <li><i class="fas fa-check"></i> Экспорт в код + ZIP</li>
+                        <li><i class="fas fa-check"></i> Премиум-шаблоны</li>
+                        <li><i class="fas fa-check"></i> Приоритетная поддержка</li>
+                        <li><i class="fas fa-check"></i> Ранний доступ к новым функциям</li>
+                    </ul>
+                    <button class="btn btn-primary">Выбрать тариф</button>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Команда</h3>
+                        <div class="price">1990₽<span>/месяц</span></div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Всё из "Профессионала"</li>
+                        <li><i class="fas fa-check"></i> До 5 членов команды</li>
+                        <li><i class="fas fa-check"></i> Совместное редактирование</li>
+                        <li><i class="fas fa-check"></i> Облачное хранилище 10GB</li>
+                        <li><i class="fas fa-check"></i> Расширенная аналитика</li>
+                        <li><i class="fas fa-check"></i> White-label экспорт</li>
+                    </ul>
+                    <button class="btn btn-primary">Для команд</button>
                 </div>
             </div>
         </div>
@@ -286,12 +559,113 @@
             </div>
             <div class="reviews-container-modern">
                 <div class="reviews-grid-modern" id="reviews-container">
-                    <div class="loading-reviews">Загрузка отзывов...</div>
+                    <div class="review-card-modern">
+                        <div class="review-header-modern">
+                            <div class="user-avatar-modern">АК</div>
+                            <div class="user-info">
+                                <div class="user-name">Алексей Ковалев</div>
+                                <div class="review-date">15 января 2024</div>
+                            </div>
+                        </div>
+                        <div class="review-text">"Как владелец малого бизнеса, я долго искал способ создавать лендинги без найма разработчиков. MirageML стал спасением! За полчаса сделал страницу для нового продукта."</div>
+                        <div class="review-rating">★★★★★</div>
+                    </div>
+                    <div class="review-card-modern">
+                        <div class="review-header-modern">
+                            <div class="user-avatar-modern">МС</div>
+                            <div class="user-info">
+                                <div class="user-name">Марина Семенова</div>
+                                <div class="review-date">10 января 2024</div>
+                            </div>
+                        </div>
+                        <div class="review-text">"Я дизайнер, и MirageML позволяет мне быстро показывать клиентам, как будет выглядеть их сайт. Код на выходе чистый, разработчикам легко с ним работать."</div>
+                        <div class="review-rating">★★★★★</div>
+                    </div>
+                    <div class="review-card-modern">
+                        <div class="review-header-modern">
+                            <div class="user-avatar-modern">ДИ</div>
+                            <div class="user-info">
+                                <div class="user-name">Дмитрий Иванов</div>
+                                <div class="review-date">5 января 2024</div>
+                            </div>
+                        </div>
+                        <div class="review-text">"Начинал изучать веб-разработку, и MirageML помог понять основы верстки. Видя, как мои действия в редакторе превращаются в код, стало гораздо проще учиться."</div>
+                        <div class="review-rating">★★★★☆</div>
+                    </div>
                 </div>
                 <div class="reviews-actions">
                     <a href="../reviews/index.html" class="btn btn-outline-modern">
                         <span>Все отзывы</span>
                         <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ секция -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="section-header-modern">
+                <div class="section-badge">Вопросы</div>
+                <h2>Частые вопросы</h2>
+                <p class="section-subtitle">Ответы на популярные вопросы о MirageML</p>
+            </div>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Нужны ли навыки программирования?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Нет, MirageML создан специально для тех, кто не знает программирование. Все действия выполняются визуально, методом перетаскивания элементов.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Можно ли использовать код на других хостингах?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Да, вы получаете чистый HTML/CSS код, который можно разместить на любом хостинге: TimeWeb, Reg.ru, Beget и других.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Есть ли ограничения по количеству страниц?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>В бесплатном тарифе — до 3 проектов. В платных тарифах — без ограничений. Каждый проект может содержать неограниченное количество страниц.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Поддерживаются ли мобильные устройства?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Да, все создаваемые страницы автоматически адаптируются под мобильные устройства. Вы также можете отдельно настроить мобильную версию.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA секция -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Начните создавать сайты уже сегодня</h2>
+                <p>Присоединяйтесь к 10 000+ пользователей, которые создают сайты без программирования</p>
+                <div class="cta-actions">
+                    <button class="cta-button primary" id="cta-create-btn">
+                        <i class="fas fa-magic"></i>
+                        Начать бесплатно
+                    </button>
+                    <a href="#how-it-works" class="cta-button secondary">
+                        <i class="fas fa-play-circle"></i>
+                        Узнать больше
                     </a>
                 </div>
             </div>
@@ -373,7 +747,7 @@
         </div>
     </section>
 
-    <!-- Модальные окна (остаются без изменений по функционалу) -->
+    <!-- Модальные окна -->
     <div class="modal" id="login-modal">
         <div class="modal-content modal-modern">
             <span class="close-btn">&times;</span>
@@ -466,11 +840,22 @@
                     
                     <div class="footer-links">
                         <div class="link-group">
-                            <h4>Навигация</h4>
+                            <h4>Продукт</h4>
                             <ul>
+                                <li><a href="#product">Что такое MirageML?</a></li>
                                 <li><a href="#features">Возможности</a></li>
+                                <li><a href="#how-it-works">Как это работает</a></li>
                                 <li><a href="#advantages">Преимущества</a></li>
-                                <li><a href="#reviews">Отзывы</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="link-group">
+                            <h4>Ресурсы</h4>
+                            <ul>
+                                <li><a href="../docs/">Документация</a></li>
+                                <li><a href="../tutorials/">Обучающие материалы</a></li>
+                                <li><a href="../blog/">Блог</a></li>
+                                <li><a href="../templates/">Шаблоны</a></li>
                             </ul>
                         </div>
                         
@@ -507,6 +892,7 @@
                     <div class="legal-links">
                         <a href="../confidentiality/index.html">Политика конфиденциальности</a>
                         <a href="../conditions/index.html">Условия использования</a>
+                        <a href="../offer/index.html">Публичная оферта</a>
                     </div>
                     <div class="copyright">
                         <p>&copy; 2025 MirageML. Все права защищены.</p>
