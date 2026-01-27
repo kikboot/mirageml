@@ -1,17 +1,91 @@
+// Вспомогательная функция для установки начального состояния элементов
+function setInitialDisplayState() {
+    const isMobile = window.innerWidth <= 768;
+    const mobileContainer = document.querySelector('.mobile-profile-container');
+    const desktopContainer = document.querySelector('.desktop-profile-container');
+    const mobileHeader = document.querySelector('.mobile-header');
+    const glassHeader = document.querySelector('.glass-header');
+    
+    if (isMobile) {
+        if (mobileContainer) mobileContainer.style.display = 'block';
+        if (desktopContainer) desktopContainer.style.display = 'none';
+        if (mobileHeader) mobileHeader.style.display = 'block';
+        if (glassHeader) glassHeader.style.display = 'none';
+    } else {
+        if (mobileContainer) mobileContainer.style.display = 'none';
+        if (desktopContainer) desktopContainer.style.display = 'block';
+        if (mobileHeader) mobileHeader.style.display = 'none';
+        if (glassHeader) glassHeader.style.display = 'block';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
+    // Устанавливаем начальное состояние отображения элементов
+    setInitialDisplayState();
+    
     // Проверяем тип устройства
     const isMobile = window.innerWidth <= 768;
     
     // Инициализируем соответствующую версию
     if (isMobile) {
+        document.body.classList.add('mobile-version');
         initMobileVersion();
     } else {
+        document.body.classList.add('desktop-version');
         initDesktopVersion();
     }
     
     // Общие инициализации
     initCommonFeatures();
+    
+    // Добавляем обработчик изменения размера окна для переключения между мобильной и десктопной версией
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function() {
+            const isCurrentlyMobile = window.innerWidth <= 768;
+            const currentIsMobile = document.body.classList.contains('mobile-version');
+            const currentIsDesktop = document.body.classList.contains('desktop-version');
+            
+            // Если состояние изменилось, переключаем версии
+            if ((isCurrentlyMobile && !currentIsMobile) || (!isCurrentlyMobile && !currentIsDesktop)) {
+                initializeVersionBasedOnScreenSize();
+            }
+        }, 250); // Задержка для предотвращения частых срабатываний
+    });
 });
+
+// Функция для инициализации версии на основе размера экрана
+function initializeVersionBasedOnScreenSize() {
+    const isMobile = window.innerWidth <= 768;
+    
+    // Удаляем классы предыдущей версии
+    document.body.classList.remove('mobile-version', 'desktop-version');
+    
+    // Скрываем все контейнеры
+    const mobileContainer = document.querySelector('.mobile-profile-container');
+    const desktopContainer = document.querySelector('.desktop-profile-container');
+    const mobileHeader = document.querySelector('.mobile-header');
+    const glassHeader = document.querySelector('.glass-header');
+    
+    if (mobileContainer) mobileContainer.style.display = 'none';
+    if (desktopContainer) desktopContainer.style.display = 'none';
+    if (mobileHeader) mobileHeader.style.display = 'none';
+    if (glassHeader) glassHeader.style.display = 'none';
+    
+    // Инициализируем нужную версию
+    if (isMobile) {
+        document.body.classList.add('mobile-version');
+        if (mobileContainer) mobileContainer.style.display = 'block';
+        if (mobileHeader) mobileHeader.style.display = 'block';
+        initMobileVersion();
+    } else {
+        document.body.classList.add('desktop-version');
+        if (desktopContainer) desktopContainer.style.display = 'block';
+        if (glassHeader) glassHeader.style.display = 'block';
+        initDesktopVersion();
+    }
+}
 
 // ============================================
 // МОБИЛЬНАЯ ВЕРСИЯ
@@ -19,6 +93,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function initMobileVersion() {
     console.log('Загружена мобильная версия');
+    
+    // Показываем мобильные элементы и скрываем десктопные
+    const mobileContainer = document.querySelector('.mobile-profile-container');
+    const desktopContainer = document.querySelector('.desktop-profile-container');
+    const mobileHeader = document.querySelector('.mobile-header');
+    const glassHeader = document.querySelector('.glass-header');
+    
+    if (mobileContainer) mobileContainer.style.display = 'block';
+    if (desktopContainer) desktopContainer.style.display = 'none';
+    if (mobileHeader) mobileHeader.style.display = 'block';
+    if (glassHeader) glassHeader.style.display = 'none';
     
     // Загрузка данных профиля
     loadMobileProfile().then(user => {
@@ -365,11 +450,38 @@ function initMobileProjectHandlers() {
 
 // Обработчики мобильных форм
 function initMobileFormHandlers() {
-    // Форма профиля
-    document.getElementById('mobile-profile-form')?.addEventListener('submit', handleMobileProfileSave);
+    // Используем setTimeout для гарантии, что DOM элементы полностью загружены
+    setTimeout(() => {
+        // Форма профиля
+        const mobileProfileForm = document.getElementById('mobile-profile-form');
+        if (mobileProfileForm) {
+            // Удаляем существующий обработчик, если он есть, чтобы избежать дублирования
+            if (mobileProfileForm._originalSubmitHandler) {
+                mobileProfileForm.removeEventListener('submit', mobileProfileForm._originalSubmitHandler);
+            }
+            
+            mobileProfileForm._originalSubmitHandler = function(e) {
+                handleMobileProfileSave(e);
+            };
+            
+            mobileProfileForm.addEventListener('submit', mobileProfileForm._originalSubmitHandler);
+        }
 
-    // Отмена изменений профиля
-    document.getElementById('mobile-cancel-changes')?.addEventListener('click', handleMobileProfileCancel);
+        // Отмена изменений профиля
+        const mobileCancelBtn = document.getElementById('mobile-cancel-changes');
+        if (mobileCancelBtn) {
+            // Удаляем существующий обработчик, если он есть
+            if (mobileCancelBtn._originalClickHandler) {
+                mobileCancelBtn.removeEventListener('click', mobileCancelBtn._originalClickHandler);
+            }
+            
+            mobileCancelBtn._originalClickHandler = function(e) {
+                handleMobileProfileCancel(e);
+            };
+            
+            mobileCancelBtn.addEventListener('click', mobileCancelBtn._originalClickHandler);
+        }
+    }, 0);
 }
 
 async function handleMobileProfileSave(e) {
@@ -665,14 +777,56 @@ function terminateMobileSession(element) {
             showMobileToast('Сессия завершена', 'success');
         }, 300);
     }
-}
-
+    }
+    
+    // Навигация по десктопным табам
+    function initTabNavigation() {
+        // Обработчики для бокового меню (навигационные ссылки)
+        document.querySelectorAll('.nav-item-modern[data-tab]').forEach(item => {
+            item.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetTabId = this.getAttribute('data-tab');
+                if (!targetTabId) return;
+                
+                // Убираем активный класс у всех элементов навигации и вкладок
+                document.querySelectorAll('.nav-item-modern').forEach(navItem => navItem.classList.remove('active'));
+                document.querySelectorAll('.profile-tab-modern').forEach(tab => tab.classList.remove('active'));
+                
+                // Добавляем активный класс текущему элементу навигации
+                this.classList.add('active');
+                
+                // Находим и показываем соответствующую вкладку
+                const targetTab = document.getElementById(targetTabId);
+                if (targetTab) {
+                    targetTab.classList.add('active');
+                    
+                    // Для вкладки проектов загружаем список проектов
+                    if (targetTabId === 'projects-tab') {
+                        renderProjects();
+                    }
+                }
+            });
+        });
+    }
+    
 // ============================================
 // ДЕСКТОПНАЯ ВЕРСИЯ
 // ============================================
 
 function initDesktopVersion() {
     console.log('Загружена десктопная версия');
+    
+    // Показываем десктопные элементы и скрываем мобильные
+    const mobileContainer = document.querySelector('.mobile-profile-container');
+    const desktopContainer = document.querySelector('.desktop-profile-container');
+    const mobileHeader = document.querySelector('.mobile-header');
+    const glassHeader = document.querySelector('.glass-header');
+    
+    if (mobileContainer) mobileContainer.style.display = 'none';
+    if (desktopContainer) desktopContainer.style.display = 'block';
+    if (mobileHeader) mobileHeader.style.display = 'none';
+    if (glassHeader) glassHeader.style.display = 'block';
     
     // Инициализация анимаций
     initProfileAnimations();
@@ -958,24 +1112,99 @@ function initProjectHandlers() {
 
 // Обработчики форм (десктоп)
 function initFormHandlers() {
-    // Форма профиля
-    document.getElementById('profile-form')?.addEventListener('submit', handleProfileSave);
+    // Используем setTimeout для гарантии, что DOM элементы полностью загружены
+    setTimeout(() => {
+        // Форма профиля
+        const profileForm = document.getElementById('profile-form');
+        if (profileForm) {
+            // Удаляем существующий обработчик, если он есть, чтобы избежать дублирования
+            if (profileForm._originalSubmitHandler) {
+                profileForm.removeEventListener('submit', profileForm._originalSubmitHandler);
+            }
+            
+            profileForm._originalSubmitHandler = function(e) {
+                handleProfileSave(e);
+            };
+            
+            profileForm.addEventListener('submit', profileForm._originalSubmitHandler);
+        }
 
-    // Отмена изменений профиля
-    document.getElementById('cancel-changes')?.addEventListener('click', handleProfileCancel);
+        // Отмена изменений профиля
+        const cancelBtn = document.getElementById('cancel-changes');
+        if (cancelBtn) {
+            // Удаляем существующий обработчик, если он есть
+            if (cancelBtn._originalClickHandler) {
+                cancelBtn.removeEventListener('click', cancelBtn._originalClickHandler);
+            }
+            
+            cancelBtn._originalClickHandler = function(e) {
+                handleProfileCancel(e);
+            };
+            
+            cancelBtn.addEventListener('click', cancelBtn._originalClickHandler);
+        }
+        
+        // Кнопка сохранения изменений (дополнительно привязываем обработчик, если форма не отправляется через submit)
+        const saveBtn = document.getElementById('save-changes');
+        if (saveBtn) {
+            // Удаляем существующий обработчик, если он есть
+            if (saveBtn._originalClickHandler) {
+                saveBtn.removeEventListener('click', saveBtn._originalClickHandler);
+            }
+            saveBtn._originalClickHandler = function(e) {
+                e.preventDefault(); // Предотвращаем стандартное поведение
+                // Находим форму по ID, так как кнопка находится вне формы
+                const form = document.getElementById('profile-form');
+                if (form) {
+                    // Вызываем submit программно
+                    form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                } else {
+                    // Если форма не найдена, напрямую вызываем обработчик
+                    handleProfileSave();
+                }
+            };
+            
+            saveBtn.addEventListener('click', saveBtn._originalClickHandler);
+
+        }
+    }, 0);
 }
 
 async function handleProfileSave(e) {
-    e.preventDefault();
+    // Проверяем, передано ли событие и вызываем preventDefault, если да
+    if (e && typeof e.preventDefault === 'function') {
+        e.preventDefault();
+    }
+    
+    console.log('handleProfileSave вызвана'); // Отладочный вывод
 
     const submitBtn = document.getElementById('save-changes');
+    if (!submitBtn) {
+        console.error('Кнопка сохранения не найдена');
+        return;
+    }
+    
     const originalText = submitBtn.innerHTML;
     
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...';
 
     try {
+        // Получаем элементы формы
+        const nameElement = document.getElementById('name');
+        const emailElement = document.getElementById('email');
+        const phoneElement = document.getElementById('phone');
+        const countryElement = document.getElementById('country');
+        
+        if (!nameElement || !emailElement || !countryElement) {
+            throw new Error('Один или несколько элементов формы не найдены');
+        }
+        
         const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Токен авторизации не найден');
+        }
+        
         const response = await fetch('http://localhost:3001/api/profile', {
             method: 'PUT',
             headers: {
@@ -983,10 +1212,10 @@ async function handleProfileSave(e) {
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                country: document.getElementById('country').value
+                name: nameElement.value,
+                email: emailElement.value,
+                phone: phoneElement?.value || '',
+                country: countryElement.value
             })
         });
 
@@ -998,17 +1227,30 @@ async function handleProfileSave(e) {
         const result = await response.json();
         
         // Обновляем данные в сайдбаре
-        document.getElementById('user-name').textContent = document.getElementById('name').value;
-        document.getElementById('user-avatar').querySelector('.avatar-content').textContent = 
-            document.getElementById('name').value.substring(0, 2).toUpperCase();
+        const userNameElement = document.getElementById('user-name');
+        const avatarElement = document.getElementById('user-avatar');
+        
+        if (userNameElement) {
+            userNameElement.textContent = nameElement.value;
+        }
+        
+        if (avatarElement) {
+            const avatarContent = avatarElement.querySelector('.avatar-content');
+            if (avatarContent) {
+                avatarContent.textContent = nameElement.value.substring(0, 2).toUpperCase();
+            }
+        }
         
         showToast(result.message || 'Изменения сохранены!', 'success');
         
     } catch (error) {
+        console.error('Ошибка при сохранении профиля:', error);
         showToast(error.message, 'error');
     } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
     }
 }
 
