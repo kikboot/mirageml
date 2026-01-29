@@ -209,10 +209,18 @@ app.get('/api/sessions', authenticateToken, (req, res) => {
 app.get('/api/profile', authenticateToken, (req, res) => {
     const users = getUsers();
     const user = users.find(u => u.id === req.user.userId);
+    const projects = getProjects();
+    const sessions = getSessions();
 
     if (!user) {
         return res.status(404).json({ error: 'Пользователь не найден' });
     }
+
+    // Подсчет проектов пользователя
+    const userProjectCount = projects.filter(p => p.userId === req.user.userId).length;
+    
+    // Подсчет активных сессий пользователя
+    const userSessionCount = sessions.filter(s => s.userId === req.user.userId).length;
 
     res.json({
         id: user.id,
@@ -222,8 +230,38 @@ app.get('/api/profile', authenticateToken, (req, res) => {
         country: user.country || 'ru',
         theme: user.theme || 'dark', // Добавляем тему по умолчанию
         avatar: user.avatar || user.name.substring(0, 2).toUpperCase(),
-        createdAt: user.createdAt
+        createdAt: user.createdAt,
+        projectCount: userProjectCount,
+        sessionCount: userSessionCount
     });
+});
+
+// API: Получение количества проектов пользователя
+app.get('/api/projects/count', authenticateToken, (req, res) => {
+    try {
+        const projects = getProjects();
+        const userProjectCount = projects.filter(p => p.userId === req.user.userId).length;
+        
+        res.json({
+            count: userProjectCount
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка загрузки количества проектов' });
+    }
+});
+
+// API: Получение количества сессий пользователя
+app.get('/api/sessions/count', authenticateToken, (req, res) => {
+    try {
+        const sessions = getSessions();
+        const userSessionCount = sessions.filter(s => s.userId === req.user.userId).length;
+        
+        res.json({
+            count: userSessionCount
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка загрузки количества сессий' });
+    }
 });
 
 // API: Обновление профиля
@@ -441,6 +479,33 @@ app.delete('/api/projects/:id', authenticateToken, (req, res) => {
         res.json({ success: true, message: 'Проект удален' });
     } catch (error) {
         res.status(500).json({ error: 'Ошибка удаления проекта' });
+    }
+});
+
+// API: Завершение конкретной сессии
+app.post('/api/sessions/terminate', authenticateToken, (req, res) => {
+    try {
+        const { sessionToken } = req.body;
+        const token = req.headers['authorization'].split(' ')[1];
+        const sessions = getSessions();
+        
+        // Проверяем, что пользователь пытается завершить свою сессию
+        const sessionToTerminate = sessions.find(s => s.token === sessionToken);
+        if (!sessionToTerminate || sessionToTerminate.userId !== req.user.userId) {
+            return res.status(403).json({ error: 'Нет доступа к этой сессии' });
+        }
+        
+        // Не позволяем завершить текущую сессию через этот эндпоинт
+        if (sessionToken === token) {
+            return res.status(400).json({ error: 'Используйте /api/logout для завершения текущей сессии' });
+        }
+        
+        const updatedSessions = sessions.filter(s => s.token !== sessionToken);
+        saveSessions(updatedSessions);
+
+        res.json({ success: true, message: 'Сессия завершена' });
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка при завершении сессии' });
     }
 });
 

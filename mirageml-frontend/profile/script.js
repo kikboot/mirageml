@@ -19,7 +19,8 @@ function setInitialDisplayState() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+// Функция для инициализации профиля
+function initializeProfile() {
     // Устанавливаем начальное состояние отображения элементов
     setInitialDisplayState();
     
@@ -37,6 +38,10 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // Общие инициализации
     initCommonFeatures();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    initializeProfile();
     
     // Добавляем обработчик изменения размера окна для переключения между мобильной и десктопной версией
     let resizeTimeout;
@@ -54,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 250); // Задержка для предотвращения частых срабатываний
     });
 });
+
 
 // Функция для инициализации версии на основе размера экрана
 function initializeVersionBasedOnScreenSize() {
@@ -108,11 +114,13 @@ function initMobileVersion() {
     // Загрузка данных профиля
     loadMobileProfile().then(user => {
         if (user) {
-            updateMobileStats();
             // Проверяем активную вкладку и загружаем проекты если нужно
             const activeTab = document.querySelector('.mobile-tab.active');
             if (activeTab && activeTab.dataset.tab === 'projects-tab') {
                 renderMobileProjects();
+            }
+            if (activeTab && activeTab.dataset.tab === 'security-tab') {
+                loadMobileActiveSessions();
             }
         }
     });
@@ -175,9 +183,10 @@ async function loadMobileProfile() {
             document.getElementById('mobile-user-email').textContent = user.email;
         }
         if (document.getElementById('mobile-user-avatar')) {
-            document.getElementById('mobile-user-avatar').textContent = 
+            document.getElementById('mobile-user-avatar').textContent =
                 user.name.substring(0, 2).toUpperCase();
         }
+
 
         return user;
     } catch (error) {
@@ -186,45 +195,10 @@ async function loadMobileProfile() {
     }
 }
 
-// Обновление статистики для мобильных
+// Обновление статистики для мобильных - заглушка
 async function updateMobileStats() {
-    try {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
-        const [projectsResponse, sessionsResponse] = await Promise.all([
-            fetch('http://localhost:3001/api/projects/count', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            }),
-            fetch('http://localhost:3001/api/sessions/count', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-        ]);
-
-        if (projectsResponse.ok) {
-            const projectsData = await projectsResponse.json();
-            const count = projectsData.count || 0;
-            
-            // Обновляем все места где отображается количество проектов
-            const projectsCountElement = document.getElementById('mobile-projects-count');
-            const projectsBadgeElement = document.getElementById('mobile-projects-badge');
-            const tabProjectsBadgeElement = document.getElementById('mobile-tab-projects-badge');
-            
-            if (projectsCountElement) projectsCountElement.textContent = count;
-            if (projectsBadgeElement) projectsBadgeElement.textContent = count;
-            if (tabProjectsBadgeElement) tabProjectsBadgeElement.textContent = count;
-        }
-
-        if (sessionsResponse.ok) {
-            const sessionsData = await sessionsResponse.json();
-            const sessionsCountElement = document.getElementById('mobile-sessions-count');
-            if (sessionsCountElement) {
-                sessionsCountElement.textContent = sessionsData.count || 1;
-            }
-        }
-    } catch (error) {
-        console.error('Ошибка загрузки статистики:', error);
-    }
+    // Функция оставлена для совместимости, но не обновляет счетчики, так как они были удалены
+    return;
 }
 
 // Навигация по мобильным табам
@@ -254,6 +228,11 @@ function initMobileTabNavigation() {
                 // Загружаем проекты при переключении на вкладку проектов
                 if (targetTabId === 'projects-tab') {
                     renderMobileProjects();
+                }
+                
+                // Загружаем сессии при переключении на вкладку безопасности
+                if (targetTabId === 'security-tab') {
+                    loadMobileActiveSessions();
                 }
             }
         });
@@ -805,6 +784,11 @@ function terminateMobileSession(element) {
                     if (targetTabId === 'projects-tab') {
                         renderProjects();
                     }
+                    
+                    // Для вкладки безопасности загружаем список сессий
+                    if (targetTabId === 'security-tab') {
+                        loadActiveSessions();
+                    }
                 }
             });
         });
@@ -834,9 +818,11 @@ function initDesktopVersion() {
     // Загрузка данных профиля с сервера
     loadProfile().then(user => {
         if (user) {
-            updateUserStats();
             if (document.querySelector('#projects-tab')?.classList.contains('active')) {
                 renderProjects();
+            }
+            if (document.querySelector('#security-tab')?.classList.contains('active')) {
+                loadActiveSessions();
             }
         }
     });
@@ -868,8 +854,10 @@ async function loadProfile() {
 
         const response = await fetch('http://localhost:3001/api/profile', {
             headers: {
-                'Authorization': `Bearer ${token}`
-            }
+                'Authorization': `Bearer ${token}`,
+                'Cache-Control': 'no-cache'
+            },
+            cache: 'no-store'
         });
 
         if (!response.ok) {
@@ -891,8 +879,9 @@ async function loadProfile() {
         // Обновляем информацию в сайдбаре
         document.getElementById('user-name').textContent = user.name;
         document.getElementById('user-email').textContent = user.email;
-        document.getElementById('user-avatar').querySelector('.avatar-content').textContent = 
+        document.getElementById('user-avatar').querySelector('.avatar-content').textContent =
             user.name.substring(0, 2).toUpperCase();
+
 
         return user;
     } catch (error) {
@@ -901,40 +890,10 @@ async function loadProfile() {
     }
 }
 
-// Обновление статистики пользователя (десктоп)
+// Обновление статистики пользователя (десктоп) - заглушка
 async function updateUserStats() {
-    try {
-        const token = localStorage.getItem('token');
-        const [projectsResponse, sessionsResponse] = await Promise.all([
-            fetch('http://localhost:3001/api/projects/count', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            }),
-            fetch('http://localhost:3001/api/sessions/count', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-        ]);
-
-        if (projectsResponse.ok) {
-            const projectsData = await projectsResponse.json();
-            const count = projectsData.count || 0;
-            
-            const projectsCountElement = document.getElementById('projects-count');
-            const projectsBadgeElement = document.getElementById('projects-badge');
-            
-            if (projectsCountElement) projectsCountElement.textContent = count;
-            if (projectsBadgeElement) projectsBadgeElement.textContent = count;
-        }
-
-        if (sessionsResponse.ok) {
-            const sessionsData = await sessionsResponse.json();
-            const sessionsCountElement = document.getElementById('sessions-count');
-            if (sessionsCountElement) {
-                sessionsCountElement.textContent = sessionsData.count || 1;
-            }
-        }
-    } catch (error) {
-        console.error('Ошибка загрузки статистики:', error);
-    }
+    // Функция оставлена для совместимости, но не обновляет счетчики, так как они были удалены
+    return;
 }
 
 // Загрузка и отображение проектов (десктоп)
@@ -1705,17 +1664,300 @@ function showToast(message, type = 'success') {
     }, 4000);
 }
 
-// Глобальная функция для завершения сессии
-function terminateSession(element) {
-    if (confirm('Завершить эту сессию?')) {
-        const sessionItem = element.closest('.session-item-modern');
-        sessionItem.style.opacity = '0';
-        sessionItem.style.transform = 'translateX(-20px)';
+// Функция для загрузки и отображения активных сессий (десктоп)
+async function loadActiveSessions() {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const response = await fetch('http://localhost:3001/api/sessions', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Ошибка загрузки сессий');
+        }
+
+        const sessions = await response.json();
+        const sessionsContainer = document.getElementById('sessions-container');
         
-        setTimeout(() => {
-            sessionItem.remove();
+        if (!sessionsContainer) return;
+
+        if (sessions.length === 0) {
+            sessionsContainer.innerHTML = `
+                <div class="no-sessions-message">
+                    <i class="fas fa-inbox"></i>
+                    <p>Нет активных сессий</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Сортируем сессии: текущая сессия первой, затем по времени последней активности
+        const sortedSessions = sessions.sort((a, b) => {
+            if (a.isCurrent) return -1;
+            if (b.isCurrent) return 1;
+            return new Date(b.lastActive) - new Date(a.lastActive);
+        });
+
+        sessionsContainer.innerHTML = sortedSessions.map(session => {
+            const sessionDate = new Date(session.createdAt);
+            const timeDiff = Math.floor((Date.now() - sessionDate.getTime()) / 1000);
+            let timeText = 'Только что';
+            
+            if (timeDiff > 60) {
+                const minutes = Math.floor(timeDiff / 60);
+                if (minutes < 60) {
+                    timeText = `${minutes} мин. назад`;
+                } else {
+                    const hours = Math.floor(minutes / 60);
+                    if (hours < 24) {
+                        timeText = `${hours} ч. назад`;
+                    } else {
+                        const days = Math.floor(hours / 24);
+                        timeText = `${days} дн. назад`;
+                    }
+                }
+            }
+
+            const isCurrent = session.isCurrent;
+            const statusClass = isCurrent ? 'current' : '';
+            const locationText = isCurrent ? `${session.location} (текущая)` : session.location;
+            
+            return `
+                <div class="session-item-modern ${statusClass}">
+                    <div class="session-info">
+                        <div class="session-device">
+                            <i class="fas ${getDeviceIcon(session.device)}"></i>
+                            ${session.device}
+                        </div>
+                        <div class="session-location">${locationText}</div>
+                        <div class="session-time">${timeText}</div>
+                    </div>
+                    ${isCurrent ?
+                        '<div class="session-status">Активна</div>' :
+                        `<button class="btn btn-outline-modern danger session-action" onclick="terminateSessionByToken('${session.token}', this)">
+                            Завершить
+                        </button>`
+                    }
+                </div>
+            `;
+        }).join('');
+    } catch (error) {
+        console.error('Ошибка загрузки сессий:', error);
+        const sessionsContainer = document.getElementById('sessions-container');
+        if (sessionsContainer) {
+            sessionsContainer.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Ошибка загрузки сессий</p>
+                </div>
+            `;
+        }
+    }
+}
+
+// Функция для загрузки и отображения активных сессий (мобильная версия)
+async function loadMobileActiveSessions() {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const response = await fetch('http://localhost:3001/api/sessions', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Ошибка загрузки сессий');
+        }
+
+        const sessions = await response.json();
+        const sessionsContainer = document.getElementById('mobile-sessions-list');
+        
+        if (!sessionsContainer) return;
+
+        if (sessions.length === 0) {
+            sessionsContainer.innerHTML = `
+                <div class="mobile-no-sessions-message">
+                    <i class="fas fa-inbox"></i>
+                    <p>Нет активных сессий</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Сортируем сессии: текущая сессия первой, затем по времени последней активности
+        const sortedSessions = sessions.sort((a, b) => {
+            if (a.isCurrent) return -1;
+            if (b.isCurrent) return 1;
+            return new Date(b.lastActive) - new Date(a.lastActive);
+        });
+
+        sessionsContainer.innerHTML = sortedSessions.map(session => {
+            const sessionDate = new Date(session.createdAt);
+            const timeDiff = Math.floor((Date.now() - sessionDate.getTime()) / 1000);
+            let timeText = 'Только что';
+            
+            if (timeDiff > 60) {
+                const minutes = Math.floor(timeDiff / 60);
+                if (minutes < 60) {
+                    timeText = `${minutes} мин. назад`;
+                } else {
+                    const hours = Math.floor(minutes / 60);
+                    if (hours < 24) {
+                        timeText = `${hours} ч. назад`;
+                    } else {
+                        const days = Math.floor(hours / 24);
+                        timeText = `${days} дн. назад`;
+                    }
+                }
+            }
+
+            const isCurrent = session.isCurrent;
+            const statusClass = isCurrent ? 'current' : '';
+            const locationText = isCurrent ? 'Текущая сессия' : session.location;
+            
+            return `
+                <div class="mobile-session-item ${statusClass}">
+                    <div class="mobile-session-info">
+                        <div class="mobile-session-device">
+                            <i class="fas ${getDeviceIcon(session.device)}"></i>
+                            ${session.device}
+                        </div>
+                        <div class="mobile-session-location">${locationText}</div>
+                        <div class="mobile-session-time">${timeText}</div>
+                    </div>
+                    ${isCurrent ?
+                        '<div class="mobile-session-status">Активна</div>' :
+                        `<button class="mobile-session-action" onclick="terminateSessionByToken('${session.token}', this)">
+                            <i class="fas fa-times"></i>
+                        </button>`
+                    }
+                </div>
+            `;
+        }).join('');
+    } catch (error) {
+        console.error('Ошибка загрузки сессий:', error);
+        const sessionsContainer = document.getElementById('mobile-sessions-list');
+        if (sessionsContainer) {
+            sessionsContainer.innerHTML = `
+                <div class="mobile-error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Ошибка загрузки сессий</p>
+                </div>
+            `;
+        }
+    }
+}
+
+// Вспомогательная функция для получения иконки устройства
+function getDeviceIcon(deviceInfo) {
+    const device = deviceInfo.toLowerCase();
+    
+    if (device.includes('mobile') || device.includes('iphone') || device.includes('android')) {
+        return 'fa-mobile-alt';
+    } else if (device.includes('tablet')) {
+        return 'fa-tablet-alt';
+    } else if (device.includes('macos') || device.includes('mac')) {
+        return 'fa-apple';
+    } else if (device.includes('windows')) {
+        return 'fa-windows';
+    } else if (device.includes('linux')) {
+        return 'fa-linux';
+    } else if (device.includes('chrome')) {
+        return 'fa-chrome';
+    } else if (device.includes('firefox')) {
+        return 'fa-firefox';
+    } else if (device.includes('safari')) {
+        return 'fa-safari';
+    } else if (device.includes('edge')) {
+        return 'fa-edge';
+    } else {
+        return 'fa-desktop';
+    }
+}
+
+// Реальная функция для завершения сессии по токену
+async function terminateSessionByToken(sessionToken, element) {
+    if (!confirm('Завершить эту сессию?')) {
+        return;
+    }
+
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '../main/index.html';
+            return;
+        }
+
+        // Если завершаем текущую сессию, нужно выполнить logout
+        const currentToken = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if (sessionToken === currentToken) {
+            await fetch('http://localhost:3001/api/logout', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            localStorage.removeItem('token');
+            sessionStorage.removeItem('token');
+            window.location.href = '../main/index.html';
+            return;
+        }
+
+        // Для других сессий - отправляем запрос на сервер для завершения конкретной сессии
+        const response = await fetch('http://localhost:3001/api/sessions/terminate', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ sessionToken: sessionToken })
+        });
+
+        if (response.ok) {
+            await loadActiveSessions(); // Reload desktop sessions
+            await loadMobileActiveSessions(); // Reload mobile sessions
             showToast('Сессия завершена', 'success');
-        }, 300);
+        } else {
+            const errorData = await response.json();
+            showToast(errorData.error || 'Ошибка завершения сессии', 'error');
+        }
+    } catch (error) {
+        console.error('Ошибка завершения сессии:', error);
+        showToast('Ошибка завершения сессии', 'error');
+    }
+}
+
+// Глобальная функция для завершения сессии (совместимость)
+function terminateSession(element) {
+    // Для совместимости вызываем функцию с правильной логикой
+    const sessionItem = element.closest('.session-item-modern');
+    const token = sessionItem?.dataset.token;
+    if (token) {
+        terminateSessionByToken(token, element);
+    } else {
+        // Если токен недоступен, просто перезагружаем список
+        loadActiveSessions();
+    }
+}
+
+// Глобальная функция для завершения сессии на мобильных (совместимость)
+function terminateMobileSession(element) {
+    // Для совместимости вызываем функцию с правильной логикой
+    const sessionItem = element.closest('.mobile-session-item');
+    const token = sessionItem?.dataset.token;
+    if (token) {
+        terminateSessionByToken(token, element);
+    } else {
+        // Если токен недоступен, просто перезагружаем список
+        loadMobileActiveSessions();
     }
 }
 

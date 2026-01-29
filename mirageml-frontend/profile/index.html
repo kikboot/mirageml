@@ -64,14 +64,6 @@
         </div>
         
         <div class="mobile-menu-stats">
-            <div class="mobile-stat-item">
-                <div class="mobile-stat-number" id="mobile-projects-count">0</div>
-                <div class="mobile-stat-label">Проектов</div>
-            </div>
-            <div class="mobile-stat-item">
-                <div class="mobile-stat-number" id="mobile-sessions-count">1</div>
-                <div class="mobile-stat-label">Сессий</div>
-            </div>
         </div>
         
         <nav class="mobile-profile-nav">
@@ -86,7 +78,6 @@
             <a href="#" class="mobile-nav-item" data-tab="projects-tab">
                 <i class="fas fa-project-diagram"></i>
                 <span>Мои проекты</span>
-                <span class="mobile-nav-badge" id="mobile-projects-badge">0</span>
             </a>
             <a href="#" class="mobile-nav-item mobile-nav-danger" id="mobile-delete-account">
                 <i class="fas fa-trash"></i>
@@ -123,7 +114,6 @@
                     <button class="mobile-tab" data-tab="projects-tab">
                         <i class="fas fa-project-diagram"></i>
                         <span>Проекты</span>
-                        <span class="mobile-tab-badge" id="mobile-tab-projects-badge">0</span>
                     </button>
                 </div>
             </div>
@@ -222,31 +212,8 @@
                                 <p>Управление устройствами</p>
                             </div>
                         </div>
-                        <div class="mobile-sessions-list">
-                            <div class="mobile-session-item current">
-                                <div class="mobile-session-info">
-                                    <div class="mobile-session-device">
-                                        <i class="fas fa-desktop"></i>
-                                        Chrome, Windows
-                                    </div>
-                                    <div class="mobile-session-location">Текущая сессия</div>
-                                    <div class="mobile-session-time">Только что</div>
-                                </div>
-                                <div class="mobile-session-status">Активна</div>
-                            </div>
-                            <div class="mobile-session-item">
-                                <div class="mobile-session-info">
-                                    <div class="mobile-session-device">
-                                        <i class="fas fa-mobile-alt"></i>
-                                        Safari, iPhone
-                                    </div>
-                                    <div class="mobile-session-location">Санкт-Петербург</div>
-                                    <div class="mobile-session-time">2 дня назад</div>
-                                </div>
-                                <button class="mobile-session-action" onclick="terminateMobileSession(this)">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
+                        <div class="mobile-sessions-list" id="mobile-sessions-list">
+                            <!-- Сессии будут загружены динамически -->
                         </div>
                     </div>
                 </div>
@@ -322,14 +289,6 @@
                                 <p class="user-email-modern" id="user-email">user@example.com</p>
                             </div>
                             <div class="user-stats-modern">
-                                <div class="stat-item-modern">
-                                    <div class="stat-number" id="projects-count">0</div>
-                                    <div class="stat-label">Проектов</div>
-                                </div>
-                                <div class="stat-item-modern">
-                                    <div class="stat-number" id="sessions-count">1</div>
-                                    <div class="stat-label">Сессий</div>
-                                </div>
                             </div>
                         </div>
 
@@ -353,7 +312,6 @@
                                     <i class="fas fa-project-diagram"></i>
                                 </div>
                                 <span class="nav-text">Мои проекты</span>
-                                <div class="nav-badge" id="projects-badge">0</div>
                                 <div class="nav-indicator"></div>
                             </a>
                             <a href="#" class="nav-item-modern danger" id="delete-account-link">
@@ -477,44 +435,8 @@
                                             <p>Управление устройствами, с которых выполнен вход</p>
                                         </div>
                                     </div>
-                                    <div class="sessions-container-modern">
-                                        <div class="session-item-modern current">
-                                            <div class="session-info">
-                                                <div class="session-device">
-                                                    <i class="fas fa-desktop"></i>
-                                                    Chrome, Windows
-                                                </div>
-                                                <div class="session-location">Москва, Россия (текущая)</div>
-                                                <div class="session-time">Только что</div>
-                                            </div>
-                                            <div class="session-status">Активна</div>
-                                        </div>
-                                        <div class="session-item-modern">
-                                            <div class="session-info">
-                                                <div class="session-device">
-                                                    <i class="fas fa-mobile-alt"></i>
-                                                    Safari, iPhone
-                                                </div>
-                                                <div class="session-location">Санкт-Петербург, Россия</div>
-                                                <div class="session-time">2 дня назад</div>
-                                            </div>
-                                            <button class="btn btn-outline-modern danger session-action" onclick="terminateSession(this)">
-                                                Завершить
-                                            </button>
-                                        </div>
-                                        <div class="session-item-modern">
-                                            <div class="session-info">
-                                                <div class="session-device">
-                                                    <i class="fas fa-laptop"></i>
-                                                    Firefox, MacOS
-                                                </div>
-                                                <div class="session-location">Нью-Йорк, США</div>
-                                                <div class="session-time">1 неделю назад</div>
-                                            </div>
-                                            <button class="btn btn-outline-modern danger session-action" onclick="terminateSession(this)">
-                                                Завершить
-                                            </button>
-                                        </div>
+                                    <div class="sessions-container-modern" id="sessions-container">
+                                        <!-- Сессии будут загружены динамически -->
                                     </div>
                                 </div>
 
