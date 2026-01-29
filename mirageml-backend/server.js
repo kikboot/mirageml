@@ -132,6 +132,7 @@ app.post('/api/register', async (req, res) => {
             name,
             email,
             password: hashedPassword,
+            theme: 'dark', // Устанавливаем тему по умолчанию
             createdAt: new Date().toISOString(),
             sessions: []
         };
@@ -219,6 +220,7 @@ app.get('/api/profile', authenticateToken, (req, res) => {
         email: user.email,
         phone: user.phone || '',
         country: user.country || 'ru',
+        theme: user.theme || 'dark', // Добавляем тему по умолчанию
         avatar: user.avatar || user.name.substring(0, 2).toUpperCase(),
         createdAt: user.createdAt
     });
@@ -227,7 +229,7 @@ app.get('/api/profile', authenticateToken, (req, res) => {
 // API: Обновление профиля
 app.put('/api/profile', authenticateToken, async (req, res) => {
     try {
-        const { name, email, phone, country } = req.body;
+        const { name, email, phone, country, theme } = req.body;
         const users = getUsers();
         const userIndex = users.findIndex(u => u.id === req.user.userId);
 
@@ -247,7 +249,8 @@ app.put('/api/profile', authenticateToken, async (req, res) => {
             name: name || users[userIndex].name,
             email: email || users[userIndex].email,
             phone: phone || users[userIndex].phone,
-            country: country || users[userIndex].country
+            country: country || users[userIndex].country,
+            theme: theme || users[userIndex].theme // Добавляем обновление темы
         };
 
         saveUsers(users);

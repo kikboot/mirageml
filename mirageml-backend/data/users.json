@@ -1,10 +1,35 @@
 [
   {
-    "id": "1755533775801",
-    "name": "Вербило Кирилл",
-    "email": "kirill082@mail.ru",
-    "password": "$2b$10$4QFSQ1shUb8esjO3K5QVZuOyf4dx0LqG3u4PE/i09FpZBoLg5ZJOu",
-    "createdAt": "2025-08-18T16:16:15.801Z",
+    "id": "1769523699882",
+    "name": "Главный разработчик - Вербило Кирилл",
+    "email": "4@mail.ru",
+    "password": "$2b$10$RSjiQVKWbBw7ZZtAgrXyTe2MUePflR0X8zb5dXSoI0pA7iYxzYSy2",
+    "createdAt": "2026-01-27T14:21:39.882Z",
+    "sessions": [],
+    "country": "ru"
+  },
+  {
+    "id": "1769529447095",
+    "name": "Елена Тыквенко",
+    "email": "5@mail.ru",
+    "password": "$2b$10$3WSq/6ylBjIsJLXzZGIGbOOiaAv3DZN.KPincxwJewUrS/3FQLH7.",
+    "createdAt": "2026-01-27T15:57:27.095Z",
+    "sessions": []
+  },
+  {
+    "id": "1769614775474",
+    "name": "вап",
+    "email": "2@mail.ru",
+    "password": "$2b$10$OgfTk9qg99yGlo6y3OL4NuFwsa2pLPj6NZ3k9elpP968aE95zBu/q",
+    "createdAt": "2026-01-28T15:39:35.483Z",
+    "sessions": []
+  },
+  {
+    "id": "1769616068808",
+    "name": "Тиньков",
+    "email": "1@mail.ru",
+    "password": "$2b$10$ZKKnlj.f39X4WYFLZ7sve.w6qm8K45v03VgtNJ5Kn7D3tYEjoWTj6",
+    "createdAt": "2026-01-28T16:01:08.829Z",
     "sessions": []
   }
 ]

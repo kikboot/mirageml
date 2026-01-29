@@ -29,6 +29,29 @@
     --glass-bg: rgba(255, 255, 255, 0.08);
     --glass-border: rgba(255, 255, 255, 0.12);
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    
+    /* Темные значения по умолчанию */
+    --bg-primary: var(--darker);
+    --bg-secondary: var(--dark);
+    --text-primary: var(--light);
+    --text-secondary: var(--gray-light);
+    --border-color: var(--gray);
+    --card-bg: rgba(30, 41, 59, 0.6);
+    --glass-bg-custom: rgba(255, 255, 255, 0.08);
+    --glass-border-custom: rgba(255, 255, 255, 0.12);
+}
+
+/* Светлая тема */
+:root.light-theme,
+.light-theme {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #f1f5f9;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #cbd5e1;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --glass-bg-custom: rgba(255, 255, 255, 0.7);
+    --glass-border-custom: rgba(0, 0, 0, 0.1);
 }
 
 * {
@@ -39,8 +62,8 @@
 }
 
 body {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    color: var(--light);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    color: var(--text-primary);
     line-height: 1.6;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
@@ -163,9 +186,9 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    background: var(--glass-bg);
+    background: var(--glass-bg-custom);
     backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border-custom);
     z-index: 1000;
     padding: 16px 0;
 }
@@ -1811,6 +1834,25 @@ body {
     margin-top: 32px;
 }
 
+.form-group-checkbox {
+    margin: 16px 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--gray-light);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
 .switch-form {
     text-align: center;
     margin-top: 24px;
@@ -3283,4 +3325,5 @@ html {
         top: 15px;
         right: 15px;
     }
-}
+} 
+

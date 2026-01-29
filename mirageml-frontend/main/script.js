@@ -21,6 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Проверка авторизации при загрузке
     checkAuthStatus();
     
+    // Pre-fill email if remembered
+    const rememberedEmail = localStorage.getItem('rememberedEmail');
+    if (rememberedEmail) {
+        document.getElementById('login-email').value = rememberedEmail;
+        document.getElementById('remember-me').checked = true;
+    }
+    
     // Инициализация мобильного меню
     initMobileMenu();
 
@@ -822,29 +829,78 @@ async function handleLogin(e) {
         submitBtn.innerHTML = '<span class="spinner"></span> Вход...';
         submitBtn.disabled = true;
         
-        const response = await fetch('/api/login', {
+        const response = await fetch('http://localhost:3001/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
 
-        const data = await response.json();
+        // Проверяем, содержит ли ответ данные
+        let data = {};
+        if (response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')) {
+            if(response.ok) { // Успешный ответ
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    // Если успешный ответ, но не JSON - используем пустой объект
+                    data = { success: false, error: 'Ответ сервера не в формате JSON' };
+                }
+            } else { // Ошибка
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    // Если сервер вернул ошибку не в JSON формате, используем текст
+                    data = { error: await response.text() || 'Неизвестная ошибка сервера' };
+                }
+            }
+        } else {
+            // Если ответ не в JSON формате
+            if(response.ok) {
+                // Даже если не JSON, но успешный статус
+                data = { success: false, error: 'Ответ сервера не в формате JSON' };
+            } else {
+                // Если не JSON и ошибка
+                data = { error: await response.text() || 'Ответ сервера не в формате JSON' };
+            }
+        }
         
         // Восстанавливаем кнопку
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
         
-        if (data.success) {
-            localStorage.setItem('token', data.token);
+        if (response.ok && data.success) {
+            // Check if "Remember Me" is checked
+            const rememberMe = document.getElementById('remember-me').checked;
+            
+            if (rememberMe) {
+                // Store token in localStorage (which persists)
+                localStorage.setItem('token', data.token);
+                // Optionally store email for pre-filling the form
+                localStorage.setItem('rememberedEmail', email);
+            } else {
+                // Store token in sessionStorage (cleared when browser closes)
+                sessionStorage.setItem('token', data.token);
+                // Remove remembered email if "Remember Me" is not checked
+                localStorage.removeItem('rememberedEmail');
+            }
+            
             updateAuthUI(data.user);
             document.querySelectorAll('.modal').forEach(m => hideModal(m));
             showSuccessMessage('Вход выполнен успешно!');
             setTimeout(() => window.location.reload(), 1000);
         } else {
-            handleLoginError(response.status, data.error);
+            handleLoginError(response.status, data.error || 'Неизвестная ошибка');
         }
     } catch (error) {
-        showNotification('login-notification', 'Ошибка соединения с сервером');
+        // Логируем ошибку для отладки
+        console.error('Ошибка при входе:', error);
+        
+        // Проверяем тип ошибки
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+            showNotification('login-notification', 'Не удается подключиться к серверу. Проверьте, что сервер запущен на порту 3001.');
+        } else {
+            showNotification('login-notification', `Ошибка соединения с сервером: ${error.message}`);
+        }
         
         // Восстанавливаем кнопку при ошибке
         const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -892,31 +948,66 @@ async function handleRegister(e) {
         submitBtn.innerHTML = '<span class="spinner"></span> Регистрация...';
         submitBtn.disabled = true;
         
-        const response = await fetch('/api/register', {
+        const response = await fetch('http://localhost:3001/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, password })
         });
 
-        const data = await response.json();
+        // Проверяем, содержит ли ответ данные
+        let data = {};
+        if (response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')) {
+            if(response.ok) { // Успешный статус (200-299)
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    // Если успешный ответ, но не JSON - используем пустой объект
+                    data = { success: true };
+                }
+            } else { // Ошибка (400, 500, и т.д.)
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    // Если ошибка и не JSON - используем текст
+                    data = { error: await response.text() || 'Ошибка сервера' };
+                }
+            }
+        } else {
+            // Если ответ не в JSON формате
+            if(response.ok) {
+                // Даже если не JSON, но успешный статус
+                data = { success: true };
+            } else {
+                // Если не JSON и ошибка
+                data = { error: await response.text() || 'Ответ сервера не в формате JSON' };
+            }
+        }
         
         // Восстанавливаем кнопку
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
         
-        if (data.success) {
+        if (response.ok && (data.success || response.status === 201)) {
             showNotification('register-notification', 'Регистрация успешна! Теперь войдите в систему.', 'success');
-            registerForm.reset();
+            document.getElementById('register-form').reset();
             
             setTimeout(() => {
                 hideNotification('register-notification');
                 switchModals(registerModal, loginModal);
             }, 2000);
         } else {
-            handleRegisterError(response.status, data.error);
+            handleRegisterError(response.status, data.error || 'Неизвестная ошибка');
         }
     } catch (error) {
-        showNotification('register-notification', 'Ошибка соединения с сервером');
+        // Логируем ошибку для отладки
+        console.error('Ошибка при регистрации:', error);
+        
+        // Проверяем тип ошибки
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+            showNotification('register-notification', 'Не удается подключиться к серверу. Проверьте, что сервер запущен на порту 3001.');
+        } else {
+            showNotification('register-notification', `Ошибка соединения с сервером: ${error.message}`);
+        }
         
         // Восстанавливаем кнопку при ошибке
         const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -958,12 +1049,17 @@ function handleRegisterError(status, error) {
 
 // Управление авторизацией
 async function checkAuthStatus() {
-    const token = localStorage.getItem('token');
+    // Check both localStorage and sessionStorage for token
+    let token = localStorage.getItem('token');
+    if (!token) {
+        token = sessionStorage.getItem('token');
+    }
+    
     if (!token) return;
 
     try {
-        const response = await fetch('/api/profile', {
-            headers: { 
+        const response = await fetch('http://localhost:3001/api/profile', {
+            headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
@@ -974,10 +1070,12 @@ async function checkAuthStatus() {
             updateAuthUI(user);
         } else {
             localStorage.removeItem('token');
+            sessionStorage.removeItem('token');
         }
     } catch (error) {
         console.error('Ошибка проверки авторизации:', error);
         localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
     }
 }
 
@@ -1172,9 +1270,9 @@ async function logout() {
     if (!token) return;
 
     try {
-        await fetch('/api/logout', {
+        await fetch('http://localhost:3001/api/logout', {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
@@ -1184,6 +1282,7 @@ async function logout() {
     }
 
     localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     showSuccessMessage('Вы успешно вышли из системы');
     setTimeout(() => window.location.reload(), 1000);
 }
@@ -1209,8 +1308,16 @@ async function loadReviews() {
     `).join('');
 
     try {
-        const response = await fetch('/api/reviews');
-        const reviews = await response.json();
+        const response = await fetch('http://localhost:3001/api/reviews');
+        
+        let reviews = [];
+        if (response.headers.get('content-type') && response.headers.get('content-type').includes('application/json')) {
+            reviews = await response.json();
+        } else {
+            // Если ответ не в JSON формате, пробуем получить текст и обработать как пустой массив
+            console.error('Отзывы не в JSON формате:', await response.text());
+            reviews = [];
+        }
         
         if (reviews.length === 0) {
             container.innerHTML = '<div class="no-reviews">Пока нет отзывов. Будьте первым!</div>';
@@ -1238,6 +1345,7 @@ async function loadReviews() {
         // Анимация появления отзывов
         animateReviews();
     } catch (error) {
+        console.error('Ошибка при загрузке отзывов:', error);
         container.innerHTML = '<div class="error-loading">Не удалось загрузить отзывы</div>';
     }
 }
