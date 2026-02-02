@@ -47,7 +47,8 @@ document.addEventListener('DOMContentLoaded', function () {
             imageHeight: document.getElementById('image-height'),
             canvasSizeSelect: document.getElementById('canvas-size-select'),
             canvasWidth: document.getElementById('canvas-width'),
-            canvasHeight: document.getElementById('canvas-height')
+            canvasHeight: document.getElementById('canvas-height'),
+            gridToggle: document.getElementById('grid-toggle')
         },
         outputs: {
             html: document.getElementById('export-html'),
@@ -126,6 +127,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Адаптация для 1366x768
         adaptForSmallScreens();
+        
+        // Инициализация переключателя сетки
+        initializeGridToggle();
 
         console.log('MirageML Editor initialized');
     }
@@ -147,6 +151,34 @@ document.addEventListener('DOMContentLoaded', function () {
             setTimeout(() => {
                 showToast('Режим адаптации для вашего разрешения экрана', 'info');
             }, 1000);
+        }
+    }
+    
+    function initializeGridToggle() {
+        if (DOM.inputs.gridToggle) {
+            // Устанавливаем начальное состояние
+            updateGridVisibility(DOM.inputs.gridToggle.checked);
+            
+            // Добавляем обработчик события
+            DOM.inputs.gridToggle.addEventListener('change', function() {
+                updateGridVisibility(this.checked);
+            });
+        }
+    }
+    
+    function updateGridVisibility(showGrid) {
+        if (showGrid) {
+            // Возвращаем стили сетки
+            DOM.canvasGrid.style.background = '#f0f0f0';
+            DOM.canvasGrid.style.backgroundImage =
+                'linear-gradient(#cccccc 1px, transparent 1px), ' +
+                'linear-gradient(90deg, #cccccc 1px, transparent 1px)';
+            DOM.canvasGrid.style.backgroundSize = '20px 20px';
+            DOM.canvasGrid.style.backgroundPosition = '-1px -1px';
+        } else {
+            // Убираем сетку, оставляя только светлый фон
+            DOM.canvasGrid.style.background = '#f0f0f0';
+            DOM.canvasGrid.style.backgroundImage = 'none';
         }
     }
 
@@ -236,9 +268,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function setCanvasSize(width, height) {
         state.canvasSize = { width, height };
+        
+        // Обновляем размеры холста
         DOM.canvasGrid.style.width = `${width}px`;
         DOM.canvasGrid.style.height = `${height}px`;
         DOM.canvasSizeDisplay.textContent = `${width}×${height}`;
+        
+        // Добавляем класс размера для правильного отображения
+        DOM.canvasGrid.className = 'canvas-grid-modern'; // сбрасываем классы
+        DOM.canvasGrid.classList.add(`size-${width}x${height}`);
         
         // Обновляем селектор размера
         updateCanvasSizeSelector(width, height);
@@ -897,30 +935,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Автосохранение при изменении
-        setupAutoSave();
     }
-
-    function setupAutoSave() {
-        let saveTimeout;
-        
-        function scheduleSave() {
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => {
-                if (state.currentProjectId && state.elements.length > 0) {
-                    saveProject().catch(console.error);
-                }
-            }, 2000);
-        }
-        
-        // Слушаем изменения элементов
-        const observer = new MutationObserver(scheduleSave);
-        observer.observe(DOM.canvasGrid, {
-            childList: true,
-            attributes: true,
-            subtree: true
-        });
-    }
+    
+    // Функция автосохранения удалена, оставлено только ручное сохранение
 
     function setupHelpSystem() {
         DOM.buttons.showHelp.addEventListener('click', () => {
@@ -943,13 +960,20 @@ document.addEventListener('DOMContentLoaded', function () {
             const canvasRect = DOM.canvasGrid.getBoundingClientRect();
             const elementRect = element.getBoundingClientRect();
             
+            // Вычисляем смещение между глобальными координатами и координатами внутри холста
+            const canvasOffset = DOM.canvasGrid.getBoundingClientRect();
             let boundedLeft = newLeft;
             let boundedTop = newTop;
             
-            if (newLeft < 0) boundedLeft = 0;
-            if (newTop < 0) boundedTop = 0;
-            if (newLeft + elementRect.width > canvasRect.width) boundedLeft = canvasRect.width - elementRect.width;
-            if (newTop + elementRect.height > canvasRect.height) boundedTop = canvasRect.height - elementRect.height;
+            // Ограничиваем перемещение внутри холста (добавим небольшие отступы)
+            const padding = 5; // отступ от краев
+            
+            if (boundedLeft < -padding) boundedLeft = -padding;
+            if (boundedTop < -padding) boundedTop = -padding;
+            if (boundedLeft + elementRect.width > canvasRect.width + padding*2)
+                boundedLeft = canvasRect.width - elementRect.width + padding;
+            if (boundedTop + elementRect.height > canvasRect.height + padding*2)
+                boundedTop = canvasRect.height - elementRect.height + padding;
 
             element.style.left = `${boundedLeft}px`;
             element.style.top = `${boundedTop}px`;
@@ -957,7 +981,10 @@ document.addEventListener('DOMContentLoaded', function () {
             state.selectedElement.x = boundedLeft;
             state.selectedElement.y = boundedTop;
 
-            updatePropertiesForm(state.selectedElement);
+            // Обновляем форму свойств только при значительном изменении
+            if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+                updatePropertiesForm(state.selectedElement);
+            }
         }
         else if (state.dragState.isResizing) {
             let newWidth = state.dragState.startWidth;
@@ -1346,7 +1373,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             htmlCode += `>`;
-
+            
             if (el.type !== 'img') {
                 htmlCode += escapeHtml(element.textContent);
             }
@@ -1407,6 +1434,28 @@ document.addEventListener('DOMContentLoaded', function () {
                 cssCode += `}\n\n`;
             }
         });
+
+        // Добавляем медиа-запросы для мобильной версии
+        cssCode += `\n/* Мобильная версия */\n`;
+        cssCode += `@media (max-width: 768px) {\n`;
+        cssCode += `    .container {\n`;
+        cssCode += `        width: 100% !important;\n`;
+        cssCode += `        height: auto !important;\n`;
+        cssCode += `        min-height: 100vh;\n`;
+        cssCode += `    }\n`;
+        
+        state.elements.forEach(el => {
+            cssCode += `    #${el.element.id} {\n`;
+            cssCode += `        position: relative !important;\n`;
+            cssCode += `        left: 0 !important;\n`;
+            cssCode += `        top: 0 !important;\n`;
+            cssCode += `        width: 90% !important;\n`;
+            cssCode += `        height: auto !important;\n`;
+            cssCode += `        margin: 10px auto;\n`;
+            cssCode += `    }\n`;
+        });
+        
+        cssCode += `}\n`;
 
         DOM.outputs.css.value = cssCode;
     }
@@ -1508,30 +1557,30 @@ document.addEventListener('DOMContentLoaded', function () {
             'position', 'left', 'top', 'width', 'height', 'margin',
             'margin-top', 'margin-left', 'margin-right', 'margin-bottom',
             'z-index', 'cursor', 'user-select', 'pointer-events',
-            'transform', 'transform-origin'
+            'transform', 'transform-origin', 'transition', 'box-sizing'
         ];
 
         let styleStr = '';
 
-        styleStr += `position: absolute !important; `;
-        styleStr += `left: ${element.style.left || '0'} !important; `;
-        styleStr += `top: ${element.style.top || '0'} !important; `;
-        styleStr += `width: ${element.style.width || 'auto'} !important; `;
-        styleStr += `height: ${element.style.height || 'auto'} !important; `;
-
-        styleStr += `opacity: 1 !important; `;
-        styleStr += `visibility: visible !important; `;
-        styleStr += `display: block !important; `;
+        styleStr += `position: absolute; `;
+        styleStr += `left: ${element.style.left || '0'}; `;
+        styleStr += `top: ${element.style.top || '0'}; `;
+        styleStr += `width: ${element.style.width || 'auto'}; `;
+        styleStr += `height: ${element.style.height || 'auto'}; `;
 
         for (let i = 0; i < style.length; i++) {
             const prop = style[i];
 
             if (!ignoreProps.includes(prop) &&
                 !prop.startsWith('-webkit') &&
-                !prop.startsWith('moz')) {
+                !prop.startsWith('moz') &&
+                !prop.startsWith('-ms')) {
                 const value = style.getPropertyValue(prop);
-                if (value && !value.includes('canvas-element')) {
-                    styleStr += `${prop}: ${value} !important; `;
+                if (value && value !== 'initial' && value !== 'normal' &&
+                    !value.includes('canvas-element') &&
+                    !value.includes('resize-handle') &&
+                    !value.includes('rotate-handle')) {
+                    styleStr += `${prop}: ${value}; `;
                 }
             }
         }

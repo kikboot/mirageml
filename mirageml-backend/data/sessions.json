@@ -674,5 +674,25 @@
     "location": "Москва, Россия",
     "createdAt": "2026-01-29T14:05:43.887Z",
     "lastActive": "2026-01-29T14:05:43.887Z"
+  },
+  {
+    "id": "1770034688802",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJpYXQiOjE3NzAwMzQ2ODgsImV4cCI6MTc3MDAzODI4OH0.DgPZlsBr7ktP83gOMxJDvxbM_03vhrTqA3SD2zrsDyQ",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-02T12:18:08.807Z",
+    "lastActive": "2026-02-02T12:18:08.815Z"
+  },
+  {
+    "id": "1770038603586",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJpYXQiOjE3NzAwMzg2MDMsImV4cCI6MTc3MDA0MjIwM30.gTLyClLMtpvz9QAiNcbHguGAKUelZMHRQE2h3LJf5Pk",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-02T13:23:23.586Z",
+    "lastActive": "2026-02-02T13:23:23.586Z"
   }
 ]

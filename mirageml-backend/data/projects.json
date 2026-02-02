@@ -127,14 +127,14 @@
     "name": "а",
     "userId": "1769523699882",
     "elements": {
-      "element-1769625947072": {
-        "id": "element-1769625947072",
+      "element-1770044390986": {
+        "id": "element-1770044390986",
         "type": "button",
         "name": "button",
-        "x": 0,
-        "y": 0,
-        "width": 76.2890625,
-        "height": 33.984375,
+        "x": 643,
+        "y": 506,
+        "width": 76.28125,
+        "height": 33.96875,
         "rotation": 0,
         "backgroundColor": "rgb(74, 107, 255)",
         "textColor": "white",
@@ -143,14 +143,31 @@
         "border": "none",
         "text": "Кнопка",
         "imageUrl": null
+      },
+      "element-1770044390989": {
+        "id": "element-1770044390989",
+        "type": "div",
+        "name": "div",
+        "x": 176,
+        "y": 73,
+        "width": 697,
+        "height": 580,
+        "rotation": 0,
+        "backgroundColor": "rgb(240, 240, 240)",
+        "textColor": "",
+        "fontSize": "",
+        "padding": "",
+        "border": "",
+        "text": "",
+        "imageUrl": null
       }
     },
     "canvasSize": {
-      "width": 800,
-      "height": 600
+      "width": 1024,
+      "height": 768
     },
     "createdAt": "2026-01-27T14:31:31.286Z",
-    "updatedAt": "2026-01-28T18:46:57.770Z"
+    "updatedAt": "2026-02-02T15:00:59.196Z"
   },
   {
     "id": "1769691535818",
