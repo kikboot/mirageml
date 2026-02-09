@@ -1112,6 +1112,9 @@ function updateAuthUI(user) {
                 <a href="/settings" class="dropdown-item" role="menuitem">
                     <i class="fas fa-cog"></i> Настройки
                 </a>
+                <a href="../support/index.html" class="dropdown-item" role="menuitem">
+                    <i class="fas fa-headset"></i> Тех-поддержка
+                </a>
                 <div class="dropdown-divider"></div>
                 <button id="logout-btn" class="dropdown-item" role="menuitem">
                     <i class="fas fa-sign-out-alt"></i> Выйти
@@ -1145,6 +1148,9 @@ function updateAuthUI(user) {
                     </a>
                     <a href="/settings" class="dropdown-item" role="menuitem">
                         <i class="fas fa-cog"></i> Настройки
+                    </a>
+                    <a href="../support/index.html" class="dropdown-item" role="menuitem">
+                        <i class="fas fa-headset"></i> Тех-поддержка
                     </a>
                     <div class="dropdown-divider"></div>
                     <button id="mobile-logout-btn" class="dropdown-item" role="menuitem">

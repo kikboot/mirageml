@@ -192,5 +192,35 @@
     },
     "createdAt": "2026-01-29T14:13:55.889Z",
     "updatedAt": "2026-01-29T14:13:55.889Z"
+  },
+  {
+    "id": "1770123412166",
+    "name": "cxvx",
+    "userId": "1769523699882",
+    "elements": {
+      "element-1770127390912": {
+        "id": "element-1770127390912",
+        "type": "div",
+        "name": "div",
+        "x": -5,
+        "y": -5,
+        "width": 1925,
+        "height": 1065,
+        "rotation": 0,
+        "backgroundColor": "rgb(240, 240, 240)",
+        "textColor": "",
+        "fontSize": "",
+        "padding": "",
+        "border": "",
+        "text": "",
+        "imageUrl": null
+      }
+    },
+    "canvasSize": {
+      "width": 1920,
+      "height": 1080
+    },
+    "createdAt": "2026-02-03T12:56:52.166Z",
+    "updatedAt": "2026-02-03T14:07:13.594Z"
   }
 ]

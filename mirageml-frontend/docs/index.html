@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документация - MirageML</title>
+    <meta name="description" content="Официальная документация по использованию визуального редактора MirageML">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../docs/style.css">
+    <link type="image/x-icon" href="../logo/logo3.svg" rel="shortcut icon">
+</head>
+
+<body>
+    <div class="background-container">
+        <div class="animated-grid">
+            <div class="grid-orbit"></div>
+            <div class="grid-orbit"></div>
+            <div class="grid-orbit"></div>
+        </div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+    </div>
+
+    <!-- Обновленный хедер для мобильной версии -->
+    <header class="glass-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <button class="mobile-menu-btn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="logo">
+                        <div class="logo-wrapper">
+                            <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
+                            <span class="logo-text">MirageML</span>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="main-nav">
+                </nav>
+                <div class="auth-buttons">
+                    <!-- Кнопки для неаутентифицированных пользователей -->
+                    <div id="guest-buttons" style="display: flex; gap: 12px; align-items: center;">
+                        <button class="btn btn-ghost" id="login-btn">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Войти</span>
+                        </button>
+                        <button class="btn btn-primary" id="register-btn">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Регистрация</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Меню пользователя для аутентифицированных пользователей -->
+                    <div id="user-menu" style="display: none;" class="user-menu">
+                        <button class="user-avatar" id="user-avatar-btn" aria-label="Меню пользователя" aria-haspopup="true" aria-expanded="false">
+                            <span id="user-initials">JD</span>
+                            <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        </button>
+                        <div class="dropdown-content" role="menu" id="user-dropdown">
+                            <div class="dropdown-header">
+                                <div class="dropdown-avatar"><span id="dropdown-initials">JD</span></div>
+                                <div class="dropdown-user-info">
+                                    <div class="dropdown-user-name" id="dropdown-user-name">Загрузка...</div>
+                                    <div class="dropdown-user-email" id="dropdown-user-email">user@example.com</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="../profile/index.html" class="dropdown-item" role="menuitem">
+                                <i class="fas fa-user"></i> Профиль
+                            </a>
+                            <a href="../support/index.html" class="dropdown-item" role="menuitem">
+                                <i class="fas fa-headset"></i> Тех-поддержка
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button id="logout-btn-header" class="dropdown-item" role="menuitem">
+                                <i class="fas fa-sign-out-alt"></i> Выйти
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Мобильное меню -->
+    <div class="mobile-menu-container">
+        <button class="mobile-menu-close">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="mobile-logo">
+            <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
+            <span class="logo-text">MirageML</span>
+        </div>
+        <div class="mobile-menu-content">
+            <nav class="mobile-nav">
+            </nav>
+            <!-- Кнопки для неаутентифицированных пользователей -->
+            <div id="mobile-guest-buttons" style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="btn btn-ghost" id="mobile-login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Войти</span>
+                </button>
+                <button class="btn btn-primary" id="mobile-register-btn">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Регистрация</span>
+                </button>
+            </div>
+            
+            <!-- Меню пользователя для аутентифицированных пользователей -->
+            <div id="mobile-user-menu" style="display: none;" class="mobile-user-menu">
+                <div class="mobile-user-info">
+                    <div class="mobile-user-avatar"><span id="mobile-user-initials">JD</span></div>
+                    <div class="mobile-user-details">
+                        <div class="mobile-user-name" id="mobile-user-name">Загрузка...</div>
+                        <div class="mobile-user-email" id="mobile-user-email">user@example.com</div>
+                    </div>
+                </div>
+                <div class="mobile-user-actions">
+                    <a href="../profile/index.html" class="mobile-dropdown-item">
+                        <i class="fas fa-user"></i> Профиль
+                    </a>
+                    <a href="../support/index.html" class="mobile-dropdown-item">
+                        <i class="fas fa-headset"></i> Тех-поддержка
+                    </a>
+                    <button id="mobile-logout-btn" class="mobile-dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i> Выйти
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="docs-hero">
+        <div class="container">
+            <div class="docs-content">
+                <div class="docs-badge">
+                    <i class="fas fa-book"></i>
+                    <span>Официальная документация</span>
+                </div>
+                <h1 class="docs-title">
+                    <span class="title-line">Документация</span>
+                    <span class="title-gradient">MirageML</span>
+                </h1>
+                <p class="docs-subtitle">
+                    Изучите возможности визуального редактора, узнайте, как создавать веб-страницы без программирования
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="docs-navigation">
+        <div class="container">
+            <div class="section-header-modern">
+                <div class="section-badge">Навигация</div>
+                <h2>Разделы документации</h2>
+                <p class="section-subtitle">Найдите нужную информацию быстро и легко</p>
+            </div>
+            <div class="docs-grid">
+                <a href="#getting-started" class="docs-card">
+                    <div class="docs-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Начало работы</h3>
+                    <p>Первые шаги с MirageML, создание первого проекта</p>
+                </a>
+                <a href="#editor-guide" class="docs-card">
+                    <div class="docs-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <h3>Руководство по редактору</h3>
+                    <p>Подробное описание всех функций визуального редактора</p>
+                </a>
+                <a href="#elements" class="docs-card">
+                    <div class="docs-icon">
+                        <i class="fas fa-th-large"></i>
+                    </div>
+                    <h3>Элементы и компоненты</h3>
+                    <p>Все доступные элементы и как их использовать</p>
+                </a>
+                <a href="#export" class="docs-card">
+                    <div class="docs-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h3>Экспорт проектов</h3>
+                    <p>Как экспортировать проекты в HTML/CSS и использовать их</p>
+                </a>
+                <a href="#troubleshooting" class="docs-card">
+                    <div class="docs-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>Устранение неполадок</h3>
+                    <p>Решение распространенных проблем</p>
+                </a>
+                <a href="#faq" class="docs-card">
+                    <div class="docs-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h3>Частые вопросы</h3>
+                    <p>Ответы на самые популярные вопросы</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="docs-content-section" id="getting-started">
+        <div class="container">
+            <div class="section-header-modern">
+                <h2><i class="fas fa-rocket"></i> Начало работы</h2>
+                <p class="section-subtitle">Первые шаги с MirageML</p>
+            </div>
+            <div class="docs-article">
+                <h3>Создание первого проекта</h3>
+                <p>После регистрации в системе вы можете создать свой первый проект:</p>
+                <ol>
+                    <li>Нажмите кнопку "Создать проект" в личном кабинете</li>
+                    <li>Введите название проекта</li>
+                    <li>Выберите размер холста (по умолчанию 1024×768)</li>
+                    <li>Начните добавлять элементы на холст</li>
+                </ol>
+                
+                <h3>Интерфейс редактора</h3>
+                <p>Интерфейс редактора состоит из нескольких основных частей:</p>
+                <ul>
+                    <li><strong>Панель элементов</strong> - слева, содержит все доступные элементы</li>
+                    <li><strong>Рабочая область</strong> - центральная часть, где создается проект</li>
+                    <li><strong>Панель свойств</strong> - справа, позволяет настраивать выбранный элемент</li>
+                    <li><strong>Панель слоев</strong> - вкладка справа, позволяет управлять элементами</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="docs-content-section" id="editor-guide">
+        <div class="container">
+            <div class="section-header-modern">
+                <h2><i class="fas fa-edit"></i> Руководство по редактору</h2>
+                <p class="section-subtitle">Подробное описание всех функций</p>
+            </div>
+            <div class="docs-article">
+                <h3>Добавление элементов</h3>
+                <p>Существует два способа добавления элементов на холст:</p>
+                <ul>
+                    <li><strong>Клик по элементу</strong> - элемент добавляется в центр холста</li>
+                    <li><strong>Перетаскивание</strong> - элемент можно разместить в нужном месте</li>
+                </ul>
+                
+                <h3>Редактирование элементов</h3>
+                <p>Для редактирования элемента:</p>
+                <ul>
+                    <li>Кликните по элементу для выделения</li>
+                    <li>Используйте панель свойств для изменения параметров</li>
+                    <li>Перетаскивайте элемент для изменения позиции</li>
+                    <li>Используйте маркеры для изменения размера</li>
+                </ul>
+                
+                <h3>Работа с текстом</h3>
+                <p>Для редактирования текста дважды кликните по текстовому элементу. Вы можете изменить содержимое, шрифт, размер и цвет.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="docs-content-section" id="elements">
+        <div class="container">
+            <div class="section-header-modern">
+                <h2><i class="fas fa-th-large"></i> Элементы и компоненты</h2>
+                <p class="section-subtitle">Все доступные элементы редактора</p>
+            </div>
+            <div class="docs-article">
+                <h3>Доступные элементы</h3>
+                <div class="elements-grid">
+                    <div class="element-info">
+                        <h4><i class="fas fa-square"></i> Блок (div)</h4>
+                        <p>Универсальный контейнер для размещения других элементов</p>
+                    </div>
+                    <div class="element-info">
+                        <h4><i class="fas fa-square"></i> Кнопка</h4>
+                        <p>Интерактивный элемент для действий пользователя</p>
+                    </div>
+                    <div class="element-info">
+                        <h4><i class="fas fa-paragraph"></i> Текст (p)</h4>
+                        <p>Элемент для отображения текстового контента</p>
+                    </div>
+                    <div class="element-info">
+                        <h4><i class="fas fa-minus"></i> Линия</h4>
+                        <p>Декоративный элемент для разделения секций</p>
+                    </div>
+                    <div class="element-info">
+                        <h4><i class="fas fa-circle"></i> Круг</h4>
+                        <p>Графический элемент для декорации</p>
+                    </div>
+                    <div class="element-info">
+                        <h4><i class="fas fa-image"></i> Изображение</h4>
+                        <p>Для добавления графических материалов</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="docs-content-section" id="export">
+        <div class="container">
+            <div class="section-header-modern">
+                <h2><i class="fas fa-download"></i> Экспорт проектов</h2>
+                <p class="section-subtitle">Как экспортировать и использовать проекты</p>
+            </div>
+            <div class="docs-article">
+                <h3>Форматы экспорта</h3>
+                <p>Вы можете экспортировать проект в следующих форматах:</p>
+                <ul>
+                    <li><strong>HTML код</strong> - готовый HTML-файл для веб-сайта</li>
+                    <li><strong>CSS стили</strong> - отдельный файл со стилями</li>
+                    <li><strong>ZIP архив</strong> - полный проект с изображениями и файлами</li>
+                </ul>
+                
+                <h3>Процесс экспорта</h3>
+                <ol>
+                    <li>Завершите создание проекта в редакторе</li>
+                    <li>Нажмите кнопку "Экспорт" в верхней панели</li>
+                    <li>Выберите нужный формат экспорта</li>
+                    <li>Скачайте файлы на ваш компьютер</li>
+                    <li>Используйте файлы на вашем сайте или передайте разработчику</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <section class="docs-content-section" id="troubleshooting">
+        <div class="container">
+            <div class="section-header-modern">
+                <h2><i class="fas fa-tools"></i> Устранение неполадок</h2>
+                <p class="section-subtitle">Решение распространенных проблем</p>
+            </div>
+            <div class="docs-article">
+                <h3>Часто встречающиеся проблемы</h3>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Элементы не сохраняются</h4>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Убедитесь, что вы нажали кнопку "Сохранить" в редакторе. Проекты также автоматически сохраняются при закрытии вкладки.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Экспорт не работает</h4>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Проверьте, подключен ли интернет и не блокирует ли ваш браузер всплывающие окна. Некоторые браузеры могут блокировать скачивание файлов.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Медленная работа редактора</h4>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Попробуйте обновить страницу или использовать более производительное устройство. Большое количество элементов может замедлять работу.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="docs-content-section" id="faq">
+        <div class="container">
+            <div class="section-header-modern">
+                <h2><i class="fas fa-question-circle"></i> Частые вопросы</h2>
+                <p class="section-subtitle">Ответы на популярные вопросы</p>
+            </div>
+            <div class="docs-article">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Могу ли я использовать MirageML бесплатно?</h4>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Да, MirageML предлагает бесплатный тариф с базовыми возможностями. Для дополнительных функций и проектов доступны платные тарифы.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Нужно ли знать HTML/CSS для использования редактора?</h4>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Нет, MirageML создан для пользователей без навыков программирования. Всё делается визуально через интерфейс.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Могу ли я использовать созданные проекты на своем сайте?</h4>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Да, вы можете экспортировать проекты в формате HTML/CSS и использовать их на любом сайте или передать разработчику для интеграции.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Как восстановить доступ к аккаунту?</h4>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Используйте функцию "Забыли пароль" на странице входа. Ссылка для восстановления будет отправлена на вашу электронную почту.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Модальные окна -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content modal-modern">
+            <span class="close-btn">&times;</span>
+            <h2>Вход в аккаунт</h2>
+            <div class="notification error" id="login-notification"></div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required placeholder="Введите ваш email">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Пароль</label>
+                    <input type="password" id="login-password" required placeholder="Введите пароль">
+                </div>
+                <div class="form-group-checkbox">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="remember-me"> Запомнить меня
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost" id="cancel-login">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Войти</button>
+                </div>
+            </form>
+            <div class="switch-form">
+                Нет аккаунта? <a id="switch-to-register">Зарегистрироваться</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="register-modal">
+        <div class="modal-content modal-modern">
+            <span class="close-btn">&times;</span>
+            <h2>Регистрация</h2>
+            <div class="notification error" id="register-notification"></div>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="register-name">Имя</label>
+                    <input type="text" id="register-name" required placeholder="Как вас зовут?">
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" required placeholder="Введите ваш email">
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Пароль</label>
+                    <input type="password" id="register-password" required placeholder="Придумайте пароль">
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm">Подтвердите пароль</label>
+                    <input type="password" id="register-confirm" required placeholder="Повторите пароль">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost" id="cancel-register">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                </div>
+            </form>
+            <div class="switch-form">
+                Уже есть аккаунт? <a id="switch-to-login">Войти</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Обновленный подвал -->
+    <footer class="footer-modern">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-main">
+                    <div class="footer-brand">
+                        <div class="logo">
+                            <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
+                            <span class="logo-text">MirageML</span>
+                        </div>
+                        <p class="footer-description">
+                            Визуальный редактор для быстрого создания веб-страниц без написания кода
+                        </p>
+                        <div class="social-links-modern">
+                            <a href="#" class="social-link" aria-label="VKontakte">
+                                <i class="fab fa-vk"></i>
+                            </a>
+                            <a href="https://t.me/MirageML_Official" class="social-link" aria-label="Telegram">
+                                <i class="fab fa-telegram"></i>
+                            </a>
+                            <a href="#" class="social-link" aria-label="Discord">
+                                <i class="fab fa-discord"></i>
+                            </a>
+                            <a href="#" class="social-link" aria-label="YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a href="#" class="social-link" aria-label="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="footer-links">
+                        <div class="link-group">
+                            <h4>Продукт</h4>
+                            <ul>
+                                <li><a href="../main/index.html#product">Что такое MirageML?</a></li>
+                                <li><a href="../main/index.html#features">Возможности</a></li>
+                                <li><a href="../main/index.html#how-it-works">Как это работает</a></li>
+                                <li><a href="../main/index.html#advantages">Преимущества</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="link-group">
+                            <h4>Ресурсы</h4>
+                            <ul>
+                                <li><a href="../docs/">Документация</a></li>
+                                <li><a href="../tutorials/">Обучающие материалы</a></li>
+                                <li><a href="../blog/">Блог</a></li>
+                                <li><a href="../templates/">Шаблоны</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="link-group">
+                            <h4>Поддержка</h4>
+                            <ul>
+                                <li><a href="../support/index.html">Тех-поддержка</a></li>
+                                <li><a href="../faq/index.html">Частые вопросы</a></li>
+                                <li><a href="../contact/index.html">Контакты</a></li>
+                                <li><a href="../help/index.html">Помощь</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="link-group">
+                            <h4>Контакты</h4>
+                            <ul class="contact-list">
+                                <li>
+                                    <i class="fas fa-envelope"></i>
+                                    support@mirage-ml.com
+                                </li>
+                                <li>
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Россия, Москва
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <div class="legal-links">
+                        <a href="../confidentiality/index.html">Политика конфиденциальности</a>
+                        <a href="../conditions/index.html">Условия использования</a>
+                        <a href="../offer/index.html">Публичная оферта</a>
+                    </div>
+                    <div class="copyright">
+                        <p>&copy; 2025 MirageML. Все права защищены.</p>
+                        <p class="made-with-love">
+                            Сделано с <i class="fas fa-heart"></i> в России
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../docs/script.js"></script>
+</body>
+
+</html>
