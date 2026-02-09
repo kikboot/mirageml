@@ -1,0 +1,2134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MirageML Админ-панель</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Roboto Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+      padding-top: 56px; /* Высота навбара */
+    }
+
+    .metric-card {
+      border: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+      background-color: white;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+
+    .metric-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    .chart-card {
+      border: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      background-color: white;
+    }
+
+    .table-card {
+      border: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      background-color: white;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 56px; /* Под навбаром */
+      left: 0;
+      bottom: 0;
+      z-index: 100; /* Ниже чем навбар */
+      padding-top: 20px;
+      width: 250px; /* Фиксированная ширина */
+      overflow-y: auto;
+      background-color: #f8f9fa;
+      height: calc(100vh - 56px); /* Высота за вычетом навбара */
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar.hidden {
+      transform: translateX(-100%);
+    }
+
+    .sidebar .nav-link {
+      margin: 5px 15px;
+      padding: 10px 15px;
+      border-radius: 5px;
+      color: #333;
+      transition: all 0.3s;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      color: #007bff !important;
+    }
+
+    .navbar-nav .nav-link {
+      color: #333 !important;
+    }
+
+    .card-header {
+      background-color: white;
+      font-weight: bold;
+      border-bottom: 1px solid #eee;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #007bff, #0056b3);
+      z-index: -1;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .btn-primary:hover::before {
+      opacity: 1;
+    }
+
+    .btn-outline-primary {
+      color: #007bff;
+      border-color: #007bff;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .btn-outline-primary:hover {
+      background-color: #007bff;
+      border-color: #007bff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn-outline-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(0, 123, 255, 0.1));
+      z-index: -1;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .btn-outline-primary:hover::before {
+      opacity: 1;
+    }
+
+    /* Additional styling for better appearance */
+    .admin-dashboard {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+
+    .main-content {
+      padding: 20px;
+      min-height: calc(100vh - 56px); /* Высота за вычетом навбара */
+    }
+
+    .stat-card {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .stat-card .card-body {
+      padding: 20px;
+    }
+
+    .stat-card .card-title {
+      font-size: 0.9rem;
+      color: #6c757d;
+      margin-bottom: 5px;
+    }
+
+    .stat-card .card-text {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #495057;
+    }
+
+    .chart-container {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .table-card {
+      border: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      background-color: white;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .notification-badge {
+      position: relative;
+    }
+
+    .notification-dot {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 10px;
+      height: 10px;
+      background-color: #dc3545;
+      border-radius: 50%;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #007bff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    /* Logo styling */
+    .logo-img {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+    }
+
+
+    /* Better card header styling */
+    .card-header {
+      background-color: white;
+      font-weight: bold;
+      border-bottom: 1px solid rgba(0,0,0,.05);
+      padding: 15px 20px;
+    }
+
+    /* Improved table styling */
+    .table th {
+      border-top: none;
+      font-weight: 600;
+      color: #495057;
+    }
+
+    /* Better form controls */
+    .form-control:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+
+    /* Better dropdown styling */
+    .dropdown-menu {
+      border: none;
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    /* Improved metric cards */
+    .metric-card {
+      transition: all 0.3s ease;
+      border-radius: 10px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    }
+
+    .metric-card .card-body {
+      padding: 25px;
+    }
+
+    /* Better chart containers */
+    .chart-container {
+      transition: all 0.3s ease;
+    }
+
+    .chart-container:hover {
+      transform: translateY(-3px);
+    }
+
+    /* Improved table container */
+    .table-container {
+      transition: all 0.3s ease;
+    }
+
+    .table-container:hover {
+      transform: translateY(-3px);
+    }
+
+    /* Profile page styling */
+    .profile-card {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .profile-header {
+      text-align: center;
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: #007bff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 0 auto 15px;
+    }
+
+    .profile-form .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .security-settings .form-check {
+      padding-left: 0;
+    }
+
+    .security-settings .form-check-input {
+      float: left;
+      margin-left: 0;
+    }
+
+    .security-settings .form-check-label {
+      margin-left: 25px;
+    }
+
+    /* Users management styling */
+    .users-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .user-status {
+      display: inline-block;
+      padding: 0.25em 0.5em;
+      font-size: 0.75em;
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: 0.25rem;
+    }
+
+    .user-status.active {
+      background-color: #28a745;
+    }
+
+    .user-status.inactive {
+      background-color: #dc3545;
+    }
+
+    /* Projects management styling */
+    .project-card {
+      transition: all 0.3s ease;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .project-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    .project-status {
+      display: inline-block;
+      padding: 0.25em 0.5em;
+      font-size: 0.75em;
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: 0.25rem;
+    }
+
+    .project-status.active {
+      background-color: #28a745;
+    }
+
+    .project-status.pending {
+      background-color: #ffc107;
+    }
+
+    .project-status.completed {
+      background-color: #6c757d;
+    }
+
+    /* Reviews management styling */
+    .review-rating {
+      color: #ffc107;
+    }
+
+    .review-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Analytics styling */
+    .analytics-filters {
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .analytics-card {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .analytics-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .analytics-export-btn {
+      margin-top: 20px;
+    }
+
+    /* Settings styling */
+    .setting-group {
+      border: 1px solid #dee2e6;
+      border-radius: 0.375rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .setting-group h5 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .backup-section {
+      background-color: #f8f9fa;
+      border-radius: 0.375rem;
+      padding: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    /* Mobile-specific styles */
+    @media (max-width: 992px) {
+      .col-md-3.mb-4, .col-md-4.mb-4, .col-md-6.mb-4, .col-md-8.mb-4 {
+        width: 100%;
+        flex: 0 0 100%;
+      }
+
+      .chart-container {
+        padding: 10px;
+      }
+
+      .table-responsive {
+        font-size: 0.8rem;
+      }
+
+      .metric-number {
+        font-size: 1.5rem;
+      }
+
+      .stat-card .card-body {
+        padding: 15px;
+      }
+
+      .users-actions {
+        flex-direction: column;
+      }
+
+      .users-actions .ms-auto {
+        margin-left: 0;
+        margin-top: 10px;
+      }
+
+      .analytics-filters .col-md-3 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .analytics-export-btn .btn {
+        margin-bottom: 10px;
+      }
+    }
+
+
+    /* Better responsive design */
+    @media (max-width: 768px) {
+      .main-content {
+        padding: 10px;
+      }
+
+      .sidebar {
+        width: 80%;
+        max-width: 280px;
+      }
+
+      .table th, .table td {
+        padding: 0.5rem;
+      }
+
+      .card-body {
+        padding: 1rem;
+      }
+
+      .form-label {
+        margin-bottom: 0.25rem;
+      }
+
+      .btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+      }
+    }
+  </style>
+  <!-- Подключаем библиотеку SheetJS для экспорта в Excel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- Подключаем библиотеку ExcelJS для работы с изображениями в Excel -->
+  <script src="https://unpkg.com/exceljs@4.3.0/dist/exceljs.min.js"></script>
+</head>
+<body>
+  <div class="admin-dashboard">
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+          <img src="logo-admin.svg" alt="Logo" class="logo-img">
+          <span class="fw-bold">MirageML</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="#" onclick="showSection('dashboard')">Панель управления</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="showSection('users')">Пользователи</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="showSection('projects')">Проекты</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="showSection('reviews')">Отзывы</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="showSection('analytics')">Аналитика</a>
+            </li>
+          </ul>
+          <div class="d-flex align-items-center">
+            <form class="d-flex me-3">
+              <input class="form-control me-2" type="search" placeholder="Поиск..." aria-label="Поиск">
+              <button class="btn btn-outline-primary" type="submit">Поиск</button>
+            </form>
+            <div class="notification-badge me-3">
+              <a href="#" class="text-decoration-none text-dark">
+                <i class="material-icons">notifications</i>
+                <span class="notification-dot"></span>
+              </a>
+            </div>
+            <div class="dropdown">
+              <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" id="navbarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="user-avatar">АД</div>
+                <span>Администратор</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="#" onclick="showSection('profile')">Профиль</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSection('settings')">Настройки</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">Выйти</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Main Content -->
+        <div class="col-12 main-content" id="mainContent">
+          <div id="dashboard-section" class="section-content">
+            <div class="row mb-4">
+              <div class="col-12">
+                <h2 class="mb-4">Панель управления</h2>
+              </div>
+            </div>
+            
+            <div class="row mb-4">
+              <!-- Metric Cards -->
+              <div class="col-md-3 mb-4">
+                <div class="card stat-card text-center metric-card">
+                  <div class="card-body">
+                    <h6 class="card-title">Всего пользователей</h6>
+                    <p class="card-text metric-number" id="total-users">1 234</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-4">
+                <div class="card stat-card text-center metric-card">
+                  <div class="card-body">
+                    <h6 class="card-title">Активных проектов</h6>
+                    <p class="card-text metric-number" id="active-projects">56</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-4">
+                <div class="card stat-card text-center metric-card">
+                  <div class="card-body">
+                    <h6 class="card-title">Всего запросов</h6>
+                    <p class="card-text metric-number" id="total-requests">7 890</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-4">
+                <div class="card stat-card text-center metric-card">
+                  <div class="card-body">
+                    <h6 class="card-title">Количество токенов</h6>
+                    <p class="card-text metric-number" id="token-count">12 345</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <!-- Charts -->
+              <div class="col-md-8 mb-4">
+                <div class="chart-container">
+                  <h5 class="mb-3">Обзор запросов</h5>
+                  <canvas id="requests-chart" height="250"></canvas>
+                </div>
+              </div>
+              <div class="col-md-4 mb-4">
+                <div class="chart-container">
+                  <h5 class="mb-3">Распределение пользователей</h5>
+                  <canvas id="user-distribution-chart" height="250"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- Recent Activity Table -->
+              <div class="col-md-12">
+                <div class="table-container">
+                  <h5 class="mb-3">Недавняя активность</h5>
+                  <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="activity-table">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Пользователь</th>
+                          <th>Действие</th>
+                          <th>Время</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>1</td>
+                          <td>Иван Петров</td>
+                          <td>Создал новый проект</td>
+                          <td>2 часа назад</td>
+                        </tr>
+                        <tr>
+                          <td>2</td>
+                          <td>Мария Сидорова</td>
+                          <td>Обновила профиль</td>
+                          <td>4 часа назад</td>
+                        </tr>
+                        <tr>
+                          <td>3</td>
+                          <td>Алексей Козлов</td>
+                          <td>Оставил отзыв</td>
+                          <td>6 часов назад</td>
+                        </tr>
+                        <tr>
+                          <td>4</td>
+                          <td>Елена Волкова</td>
+                          <td>Удалила проект</td>
+                          <td>1 день назад</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile Section -->
+          <div id="profile-section" class="section-content" style="display:none;">
+            <div class="row">
+              <div class="col-12">
+                <h2 class="mb-4">Профиль</h2>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="card profile-card">
+                  <div class="card-header profile-header">
+                    <div class="profile-avatar">АД</div>
+                    <h4>Администратор</h4>
+                    <p class="text-muted">admin@example.com</p>
+                  </div>
+                  <div class="card-body">
+                    <form id="profile-form">
+                      <div class="form-group">
+                        <label for="profile-name" class="form-label">Имя</label>
+                        <input type="text" class="form-control" id="profile-name" value="Администратор">
+                      </div>
+                      <div class="form-group">
+                        <label for="profile-email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="profile-email" value="admin@example.com">
+                      </div>
+                      <div class="form-group">
+                        <label for="profile-phone" class="form-label">Телефон</label>
+                        <input type="tel" class="form-control" id="profile-phone" value="+7 (XXX) XXX-XX-XX">
+                      </div>
+                      <div class="form-group">
+                        <label for="profile-position" class="form-label">Должность</label>
+                        <input type="text" class="form-control" id="profile-position" value="Администратор системы">
+                      </div>
+                      <div class="form-group">
+                        <label for="profile-description" class="form-label">Описание</label>
+                        <textarea class="form-control" id="profile-description" rows="3">Администратор системы MirageML</textarea>
+                      </div>
+                      <button type="submit" class="btn btn-primary w-100">Сохранить изменения</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-4">
+              <div class="col-12">
+                <div class="card profile-card">
+                  <div class="card-header">
+                    <h5>Настройки безопасности</h5>
+                  </div>
+                  <div class="card-body security-settings">
+                    <form id="security-form">
+                      <div class="form-group mb-3">
+                        <label for="current-password" class="form-label">Текущий пароль</label>
+                        <input type="password" class="form-control" id="current-password">
+                      </div>
+                      <div class="form-group mb-3">
+                        <label for="new-password" class="form-label">Новый пароль</label>
+                        <input type="password" class="form-control" id="new-password">
+                      </div>
+                      <div class="form-group mb-3">
+                        <label for="confirm-password" class="form-label">Подтвердите новый пароль</label>
+                        <input type="password" class="form-control" id="confirm-password">
+                      </div>
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="two-factor">
+                        <label class="form-check-label" for="two-factor">
+                          Двухфакторная аутентификация
+                        </label>
+                      </div>
+                      <button type="submit" class="btn btn-primary w-100">Изменить пароль</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Users Management Section -->
+          <div id="users-section" class="section-content" style="display:none;">
+            <div class="row">
+              <div class="col-12">
+                <h2 class="mb-4">Управление пользователями</h2>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="users-actions">
+                  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                    <i class="material-icons me-1">person_add</i>Добавить пользователя
+                  </button>
+                  <button class="btn btn-outline-secondary">
+                    <i class="material-icons me-1">refresh</i>Обновить
+                  </button>
+                  <div class="ms-auto">
+                    <input type="text" class="form-control" placeholder="Поиск пользователей...">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-12">
+                <div class="table-container">
+                  <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                      <thead>
+                        <tr>
+                          <th>Имя</th>
+                          <th>Email</th>
+                          <th>Роль</th>
+                          <th>Дата регистрации</th>
+                          <th>Статус</th>
+                          <th>Действия</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Иван Петров</td>
+                          <td>ivan@example.com</td>
+                          <td>Администратор</td>
+                          <td>2023-01-15</td>
+                          <td><span class="user-status active">Активен</span></td>
+                          <td>
+                            <div class="review-actions">
+                              <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">
+                                <i class="material-icons">edit</i>
+                              </button>
+                              <button class="btn btn-sm btn-outline-danger">
+                                <i class="material-icons">delete</i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Мария Сидорова</td>
+                          <td>maria@example.com</td>
+                          <td>Редактор</td>
+                          <td>2023-02-20</td>
+                          <td><span class="user-status active">Активен</span></td>
+                          <td>
+                            <div class="review-actions">
+                              <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">
+                                <i class="material-icons">edit</i>
+                              </button>
+                              <button class="btn btn-sm btn-outline-danger">
+                                <i class="material-icons">delete</i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Алексей Козлов</td>
+                          <td>alexey@example.com</td>
+                          <td>Просмотрщик</td>
+                          <td>2023-03-10</td>
+                          <td><span class="user-status inactive">Неактивен</span></td>
+                          <td>
+                            <div class="review-actions">
+                              <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">
+                                <i class="material-icons">edit</i>
+                              </button>
+                              <button class="btn btn-sm btn-outline-danger">
+                                <i class="material-icons">delete</i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Елена Волкова</td>
+                          <td>elena@example.com</td>
+                          <td>Редактор</td>
+                          <td>2023-04-05</td>
+                          <td><span class="user-status active">Активен</span></td>
+                          <td>
+                            <div class="review-actions">
+                              <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">
+                                <i class="material-icons">edit</i>
+                              </button>
+                              <button class="btn btn-sm btn-outline-danger">
+                                <i class="material-icons">delete</i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Projects Section -->
+          <div id="projects-section" class="section-content" style="display:none;">
+            <div class="row">
+              <div class="col-12">
+                <h2 class="mb-4">Проекты</h2>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="users-actions">
+                  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProjectModal">
+                    <i class="material-icons me-1">add</i>Создать проект
+                  </button>
+                  <button class="btn btn-outline-secondary">
+                    <i class="material-icons me-1">refresh</i>Обновить
+                  </button>
+                  <div class="ms-auto">
+                    <select class="form-select">
+                      <option>Все статусы</option>
+                      <option>Активные</option>
+                      <option>Завершенные</option>
+                      <option>В ожидании</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-12">
+                <div class="row">
+                  <div class="col-md-4 mb-4">
+                    <div class="card project-card">
+                      <div class="card-body">
+                        <h5 class="card-title">Проект Alpha</h5>
+                        <p class="card-text">Описание проекта Alpha...</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <small class="text-muted">Владелец: Иван Петров</small>
+                          <span class="project-status active">Активен</span>
+                        </div>
+                      </div>
+                      <div class="card-footer bg-transparent">
+                        <div class="d-flex justify-content-between">
+                          <small class="text-muted">Создан: 2023-01-15</small>
+                          <div>
+                            <button class="btn btn-sm btn-outline-primary">
+                              <i class="material-icons">edit</i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger">
+                              <i class="material-icons">delete</i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mb-4">
+                    <div class="card project-card">
+                      <div class="card-body">
+                        <h5 class="card-title">Проект Beta</h5>
+                        <p class="card-text">Описание проекта Beta...</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <small class="text-muted">Владелец: Мария Сидорова</small>
+                          <span class="project-status pending">В ожидании</span>
+                        </div>
+                      </div>
+                      <div class="card-footer bg-transparent">
+                        <div class="d-flex justify-content-between">
+                          <small class="text-muted">Создан: 2023-02-20</small>
+                          <div>
+                            <button class="btn btn-sm btn-outline-primary">
+                              <i class="material-icons">edit</i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger">
+                              <i class="material-icons">delete</i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mb-4">
+                    <div class="card project-card">
+                      <div class="card-body">
+                        <h5 class="card-title">Проект Gamma</h5>
+                        <p class="card-text">Описание проекта Gamma...</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <small class="text-muted">Владелец: Алексей Козлов</small>
+                          <span class="project-status completed">Завершен</span>
+                        </div>
+                      </div>
+                      <div class="card-footer bg-transparent">
+                        <div class="d-flex justify-content-between">
+                          <small class="text-muted">Создан: 2023-03-10</small>
+                          <div>
+                            <button class="btn btn-sm btn-outline-primary">
+                              <i class="material-icons">edit</i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger">
+                              <i class="material-icons">delete</i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reviews Section -->
+          <div id="reviews-section" class="section-content" style="display:none;">
+            <div class="row">
+              <div class="col-12">
+                <h2 class="mb-4">Отзывы</h2>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="users-actions">
+                  <button class="btn btn-outline-secondary" onclick="refreshReviews()">
+                    <i class="material-icons me-1">refresh</i>Обновить
+                  </button>
+                  <div class="ms-auto">
+                    <select class="form-select" onchange="filterReviews(this.value)">
+                      <option value="all">Все статусы</option>
+                      <option value="approved">Одобренные</option>
+                      <option value="pending">На модерации</option>
+                      <option value="rejected">Отклоненные</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-12">
+                <div class="table-container">
+                  <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="reviews-table">
+                      <thead>
+                        <tr>
+                          <th>Пользователь</th>
+                          <th>Отзыв</th>
+                          <th>Рейтинг</th>
+                          <th>Дата</th>
+                          <th>Статус</th>
+                          <th>Действия</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr id="review-1">
+                          <td>Иван Петров</td>
+                          <td>Отличная система! Очень удобно использовать.</td>
+                          <td>
+                            <div class="review-rating">
+                              <i class="material-icons">star</i>
+                              <i class="material-icons">star</i>
+                              <i class="material-icons">star</i>
+                              <i class="material-icons">star</i>
+                              <i class="material-icons">star</i>
+                            </div>
+                          </td>
+                          <td>2023-05-10</td>
+                          <td><span class="user-status active" id="status-1">Одобрен</span></td>
+                          <td>
+                            <div class="review-actions">
+                              <button class="btn btn-sm btn-outline-success" onclick="approveReview(1)">
+                                <i class="material-icons">check</i>
+                              </button>
+                              <button class="btn btn-sm btn-outline-danger" onclick="rejectReview(1)">
+                                <i class="material-icons">close</i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr id="review-2">
+                          <td>Мария Сидорова</td>
+                          <td>Хорошая функциональность, но интерфейс можно улучшить.</td>
+                          <td>
+                            <div class="review-rating">
+                              <i class="material-icons">star</i>
+                              <i class="material-icons">star</i>
+                              <i class="material-icons">star</i>
+                              <i class="material-icons">star</i>
+                              <i class="material-icons">star_half</i>
+                            </div>
+                          </td>
+                          <td>2023-05-12</td>
+                          <td><span class="user-status inactive" id="status-2">На модерации</span></td>
+                          <td>
+                            <div class="review-actions">
+                              <button class="btn btn-sm btn-outline-success" onclick="approveReview(2)">
+                                <i class="material-icons">check</i>
+                              </button>
+                              <button class="btn btn-sm btn-outline-danger" onclick="rejectReview(2)">
+                                <i class="material-icons">close</i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr id="review-3">
+                          <td>Алексей Козлов</td>
+                          <td>Не смог разобраться с некоторыми функциями.</td>
+                          <td>
+                            <div class="review-rating">
+                              <i class="material-icons">star</i>
+                              <i class="material-icons">star</i>
+                              <i class="material-icons">star</i>
+                              <i class="material-icons">star_border</i>
+                              <i class="material-icons">star_border</i>
+                            </div>
+                          </td>
+                          <td>2023-05-15</td>
+                          <td><span class="user-status inactive" id="status-3">На модерации</span></td>
+                          <td>
+                            <div class="review-actions">
+                              <button class="btn btn-sm btn-outline-success" onclick="approveReview(3)">
+                                <i class="material-icons">check</i>
+                              </button>
+                              <button class="btn btn-sm btn-outline-danger" onclick="rejectReview(3)">
+                                <i class="material-icons">close</i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analytics Section -->
+          <div id="analytics-section" class="section-content" style="display:none;">
+            <div class="row">
+              <div class="col-12">
+                <h2 class="mb-4">Аналитика</h2>
+              </div>
+            </div>
+            <div class="row analytics-filters">
+              <div class="col-md-3">
+                <label class="form-label">Дата начала</label>
+                <input type="date" class="form-control" id="start-date" value="2023-01-01">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Дата окончания</label>
+                <input type="date" class="form-control" id="end-date" value="2023-12-31">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Период</label>
+                <select class="form-select" id="period">
+                  <option value="day">День</option>
+                  <option value="week">Неделя</option>
+                  <option value="month" selected>Месяц</option>
+                  <option value="year">Год</option>
+                </select>
+              </div>
+              <div class="col-md-3 d-flex align-items-end">
+                <button class="btn btn-primary w-100 me-2" onclick="applyAnalyticsFilters()">
+                  <i class="material-icons me-1">show_chart</i>Применить
+                </button>
+                <button class="btn btn-outline-primary w-100" onclick="exportAnalytics()">
+                  <i class="material-icons me-1">download</i>Экспорт
+                </button>
+              </div>
+            </div>
+            <div class="row mb-4">
+              <!-- Analytics Cards -->
+              <div class="col-md-3 mb-4">
+                <div class="card analytics-card text-center metric-card">
+                  <div class="card-body">
+                    <h6 class="card-title">Всего пользователей</h6>
+                    <p class="card-text metric-number" id="analytics-total-users">1 234</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-4">
+                <div class="card analytics-card text-center metric-card">
+                  <div class="card-body">
+                    <h6 class="card-title">Активных сегодня</h6>
+                    <p class="card-text metric-number" id="analytics-active-today">126</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-4">
+                <div class="card analytics-card text-center metric-card">
+                  <div class="card-body">
+                    <h6 class="card-title">Всего запросов</h6>
+                    <p class="card-text metric-number" id="analytics-total-requests">7 890</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-4">
+                <div class="card analytics-card text-center metric-card">
+                  <div class="card-body">
+                    <h6 class="card-title">Количество токенов</h6>
+                    <p class="card-text metric-number" id="analytics-token-count">12 345</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-4">
+              <!-- Charts -->
+              <div class="col-md-8 mb-4">
+                <div class="chart-container">
+                  <h5 class="mb-3">Активность пользователей</h5>
+                  <canvas id="user-activity-chart" height="250"></canvas>
+                </div>
+              </div>
+              <div class="col-md-4 mb-4">
+                <div class="chart-container">
+                  <h5 class="mb-3">Распределение по ролям</h5>
+                  <canvas id="role-distribution-chart" height="250"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <div class="chart-container">
+                  <h5 class="mb-3">Использование токенов</h5>
+                  <canvas id="token-usage-chart" height="250"></canvas>
+                </div>
+              </div>
+              <div class="col-md-6 mb-4">
+                <div class="chart-container">
+                  <h5 class="mb-3">Запросы по проектам</h5>
+                  <canvas id="project-requests-chart" height="250"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="row analytics-export-btn">
+              <div class="col-12">
+                <div class="d-flex justify-content-between flex-wrap">
+                  <button class="btn btn-outline-primary m-1" onclick="generateReport('daily')">
+                    <i class="material-icons me-1">description</i>Ежедневный отчет
+                  </button>
+                  <button class="btn btn-outline-primary m-1" onclick="generateReport('weekly')">
+                    <i class="material-icons me-1">description</i>Еженедельный отчет
+                  </button>
+                  <button class="btn btn-outline-primary m-1" onclick="generateReport('monthly')">
+                    <i class="material-icons me-1">description</i>Ежемесячный отчет
+                  </button>
+                  <button class="btn btn-outline-primary m-1" onclick="generateReport('custom')">
+                    <i class="material-icons me-1">description</i>Пользовательский отчет
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings Section -->
+          <div id="settings-section" class="section-content" style="display:none;">
+            <div class="row">
+              <div class="col-12">
+                <h2 class="mb-4">Системные настройки</h2>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="setting-group">
+                  <h5>Общие настройки</h5>
+                  <form id="general-settings-form">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group mb-3">
+                          <label for="site-name" class="form-label">Название сайта</label>
+                          <input type="text" class="form-control" id="site-name" value="MirageML">
+                        </div>
+                        <div class="form-group mb-3">
+                          <label for="site-description" class="form-label">Описание сайта</label>
+                          <textarea class="form-control" id="site-description" rows="3">Платформа для машинного обучения</textarea>
+                        </div>
+                        <div class="form-group mb-3">
+                          <label for="contact-email" class="form-label">Контактный email</label>
+                          <input type="email" class="form-control" id="contact-email" value="info@mirageml.com">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group mb-3">
+                          <label for="timezone" class="form-label">Часовой пояс</label>
+                          <select class="form-select" id="timezone">
+                            <option>GMT+0</option>
+                            <option>GMT+1</option>
+                            <option>GMT+2</option>
+                            <option>GMT+3</option>
+                            <option selected>GMT+3 (Москва)</option>
+                            <option>GMT+4</option>
+                            <option>GMT+5</option>
+                          </select>
+                        </div>
+                        <div class="form-group mb-3">
+                          <label for="language" class="form-label">Язык интерфейса</label>
+                          <select class="form-select" id="language">
+                            <option>Русский</option>
+                            <option>English</option>
+                            <option>Deutsch</option>
+                          </select>
+                        </div>
+                        <div class="form-group mb-3">
+                          <label for="date-format" class="form-label">Формат даты</label>
+                          <select class="form-select" id="date-format">
+                            <option>DD/MM/YYYY</option>
+                            <option selected>DD.MM.YYYY</option>
+                            <option>MM/DD/YYYY</option>
+                            <option>YYYY-MM-DD</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                  </form>
+                </div>
+                
+                <div class="setting-group">
+                  <h5>Настройки безопасности</h5>
+                  <form id="security-settings-form">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-check mb-3">
+                          <input class="form-check-input" type="checkbox" id="require-login">
+                          <label class="form-check-label" for="require-login">
+                            Требовать вход для доступа к системе
+                          </label>
+                        </div>
+                        <div class="form-check mb-3">
+                          <input class="form-check-input" type="checkbox" id="enable-2fa" checked>
+                          <label class="form-check-label" for="enable-2fa">
+                            Включить двухфакторную аутентификацию
+                          </label>
+                        </div>
+                        <div class="form-check mb-3">
+                          <input class="form-check-input" type="checkbox" id="session-timeout">
+                          <label class="form-check-label" for="session-timeout">
+                            Ограничивать время сессии
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group mb-3">
+                          <label for="session-duration" class="form-label">Длительность сессии (часы)</label>
+                          <input type="number" class="form-control" id="session-duration" value="8">
+                        </div>
+                        <div class="form-group mb-3">
+                          <label for="failed-attempts" class="form-label">Количество неудачных попыток входа до блокировки</label>
+                          <input type="number" class="form-control" id="failed-attempts" value="5">
+                        </div>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                  </form>
+                </div>
+                
+                <div class="setting-group">
+                  <h5>Настройки уведомлений</h5>
+                  <form id="notification-settings-form">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-check mb-3">
+                          <input class="form-check-input" type="checkbox" id="email-notifications" checked>
+                          <label class="form-check-label" for="email-notifications">
+                            Отправлять уведомления по email
+                          </label>
+                        </div>
+                        <div class="form-check mb-3">
+                          <input class="form-check-input" type="checkbox" id="push-notifications">
+                          <label class="form-check-label" for="push-notifications">
+                            Отправлять push-уведомления
+                          </label>
+                        </div>
+                        <div class="form-check mb-3">
+                          <input class="form-check-input" type="checkbox" id="sms-notifications">
+                          <label class="form-check-label" for="sms-notifications">
+                            Отправлять SMS-уведомления
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group mb-3">
+                          <label for="notification-template" class="form-label">Шаблон уведомлений</label>
+                          <select class="form-select" id="notification-template">
+                            <option>По умолчанию</option>
+                            <option>Кастомный</option>
+                          </select>
+                        </div>
+                        <div class="form-group mb-3">
+                          <label for="notification-schedule" class="form-label">Расписание уведомлений</label>
+                          <input type="time" class="form-control" id="notification-schedule" value="09:00">
+                        </div>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                  </form>
+                </div>
+                
+                <div class="setting-group">
+                  <h5>Резервное копирование</h5>
+                  <div class="backup-section">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group mb-3">
+                          <label for="backup-frequency" class="form-label">Частота резервного копирования</label>
+                          <select class="form-select" id="backup-frequency">
+                            <option>Ежедневно</option>
+                            <option>Еженедельно</option>
+                            <option>Ежемесячно</option>
+                          </select>
+                        </div>
+                        <div class="form-group mb-3">
+                          <label for="backup-location" class="form-label">Место хранения резервных копий</label>
+                          <input type="text" class="form-control" id="backup-location" value="/backups">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group mb-3">
+                          <label for="retention-period" class="form-label">Период хранения резервных копий (дни)</label>
+                          <input type="number" class="form-control" id="retention-period" value="30">
+                        </div>
+                        <div class="form-check mb-3">
+                          <input class="form-check-input" type="checkbox" id="auto-cleanup" checked>
+                          <label class="form-check-label" for="auto-cleanup">
+                            Автоматическая очистка старых резервных копий
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="d-flex justify-content-between flex-wrap">
+                      <button class="btn btn-outline-primary m-1" onclick="createBackup()">
+                        <i class="material-icons me-1">backup</i>Создать резервную копию
+                      </button>
+                      <button class="btn btn-outline-success m-1" onclick="restoreBackup()">
+                        <i class="material-icons me-1">restore</i>Восстановить из резервной копии
+                      </button>
+                      <button class="btn btn-outline-info m-1" onclick="viewBackupHistory()">
+                        <i class="material-icons me-1">history</i>История резервных копий
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="setting-group">
+                  <h5>Интеграции</h5>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="integration-slack" checked>
+                        <label class="form-check-label" for="integration-slack">
+                          Интеграция с Slack
+                        </label>
+                      </div>
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="integration-email">
+                        <label class="form-check-label" for="integration-email">
+                          Интеграция с Email-сервером
+                        </label>
+                      </div>
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="integration-sms">
+                        <label class="form-check-label" for="integration-sms">
+                          Интеграция с SMS-шлюзом
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group mb-3">
+                        <label for="api-key" class="form-label">API ключ</label>
+                        <div class="input-group">
+                          <input type="password" class="form-control" id="api-key" value="abc123def456">
+                          <button class="btn btn-outline-secondary" type="button" onclick="toggleApiKeyVisibility()">
+                            <i class="material-icons">visibility</i>
+                          </button>
+                        </div>
+                      </div>
+                      <button class="btn btn-outline-primary w-100" onclick="regenerateApiKey()">
+                        <i class="material-icons me-1">autorenew</i>Сгенерировать новый API ключ
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Modals -->
+    <!-- Add User Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addUserModalLabel">Добавить пользователя</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="add-user-form">
+              <div class="form-group mb-3">
+                <label for="new-user-name" class="form-label">Имя</label>
+                <input type="text" class="form-control" id="new-user-name" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="new-user-email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="new-user-email" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="new-user-role" class="form-label">Роль</label>
+                <select class="form-select" id="new-user-role" required>
+                  <option value="admin">Администратор</option>
+                  <option value="editor">Редактор</option>
+                  <option value="viewer">Просмотрщик</option>
+                </select>
+              </div>
+              <div class="form-group mb-3">
+                <label for="new-user-password" class="form-label">Пароль</label>
+                <input type="password" class="form-control" id="new-user-password" required>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+            <button type="button" class="btn btn-primary" onclick="addUser()">Создать пользователя</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editUserModalLabel">Редактировать пользователя</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="edit-user-form">
+              <div class="form-group mb-3">
+                <label for="edit-user-name" class="form-label">Имя</label>
+                <input type="text" class="form-control" id="edit-user-name" value="Иван Петров" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="edit-user-email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="edit-user-email" value="ivan@example.com" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="edit-user-role" class="form-label">Роль</label>
+                <select class="form-select" id="edit-user-role" required>
+                  <option value="admin" selected>Администратор</option>
+                  <option value="editor">Редактор</option>
+                  <option value="viewer">Просмотрщик</option>
+                </select>
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="edit-user-status" checked>
+                <label class="form-check-label" for="edit-user-status">
+                  Активен
+                </label>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+            <button type="button" class="btn btn-primary" onclick="updateUser()">Сохранить изменения</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Project Modal -->
+    <div class="modal fade" id="addProjectModal" tabindex="-1" aria-labelledby="addProjectModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addProjectModalLabel">Создать проект</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="add-project-form">
+              <div class="form-group mb-3">
+                <label for="new-project-name" class="form-label">Название проекта</label>
+                <input type="text" class="form-control" id="new-project-name" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="new-project-description" class="form-label">Описание</label>
+                <textarea class="form-control" id="new-project-description" rows="3" required></textarea>
+              </div>
+              <div class="form-group mb-3">
+                <label for="new-project-owner" class="form-label">Владелец</label>
+                <select class="form-select" id="new-project-owner" required>
+                  <option value="">Выберите владельца</option>
+                  <option value="1">Иван Петров</option>
+                  <option value="2">Мария Сидорова</option>
+                  <option value="3">Алексей Козлов</option>
+                </select>
+              </div>
+              <div class="form-group mb-3">
+                <label for="new-project-status" class="form-label">Статус</label>
+                <select class="form-select" id="new-project-status" required>
+                  <option value="active">Активен</option>
+                  <option value="pending">В ожидании</option>
+                  <option value="completed">Завершен</option>
+                </select>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+            <button type="button" class="btn btn-primary" onclick="addProject()">Создать проект</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Initialize charts when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      // Requests chart
+      const requestsCtx = document.getElementById('requests-chart').getContext('2d');
+      new Chart(requestsCtx, {
+        type: 'line',
+        data: {
+          labels: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн'],
+          datasets: [{
+            label: 'Запросы',
+            data: [30, 45, 60, 50, 70, 85],
+            borderColor: '#007bff',
+            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+            tension: 0.3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      // User distribution chart
+      const userDistributionCtx = document.getElementById('user-distribution-chart').getContext('2d');
+      new Chart(userDistributionCtx, {
+        type: 'pie',
+        data: {
+          labels: ['Администратор', 'Редактор', 'Просмотрщик'],
+          datasets: [{
+            data: [10, 20, 70],
+            backgroundColor: ['#007bff', '#28a745', '#ffc107']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+
+      // Initialize analytics charts
+      // User activity chart
+      const userActivityCtx = document.getElementById('user-activity-chart').getContext('2d');
+      new Chart(userActivityCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+          datasets: [{
+            label: 'Активные пользователи',
+            data: [120, 190, 150, 180, 210, 90, 100],
+            backgroundColor: 'rgba(0, 123, 255, 0.5)'
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      // Role distribution chart
+      const roleDistributionCtx = document.getElementById('role-distribution-chart').getContext('2d');
+      new Chart(roleDistributionCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Администраторы', 'Редакторы', 'Просмотрщики'],
+          datasets: [{
+            data: [10, 20, 70],
+            backgroundColor: ['#007bff', '#28a745', '#ffc107']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+
+      // Token usage chart
+      const tokenUsageCtx = document.getElementById('token-usage-chart').getContext('2d');
+      new Chart(tokenUsageCtx, {
+        type: 'line',
+        data: {
+          labels: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн'],
+          datasets: [{
+            label: 'Использование токенов',
+            data: [2000, 2500, 3000, 2800, 3200, 3500],
+            borderColor: '#28a745',
+            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+            tension: 0.3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      // Project requests chart
+      const projectRequestsCtx = document.getElementById('project-requests-chart').getContext('2d');
+      new Chart(projectRequestsCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Проект Alpha', 'Проект Beta', 'Проект Gamma', 'Проект Delta'],
+          datasets: [{
+            label: 'Количество запросов',
+            data: [1200, 800, 1500, 900],
+            backgroundColor: 'rgba(255, 193, 7, 0.5)'
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    });
+
+    // Function to show selected section
+    function showSection(sectionName) {
+      // Hide all sections
+      const sections = document.querySelectorAll('.section-content');
+      sections.forEach(section => {
+        section.style.display = 'none';
+      });
+
+      // Show selected section
+      document.getElementById(sectionName + '-section').style.display = 'block';
+
+      // Update active nav link in header only
+      const headerNavLinks = document.querySelectorAll('#navbarNav .nav-link');
+      headerNavLinks.forEach(link => {
+        link.classList.remove('active');
+      });
+
+      // Find and activate the clicked link in header
+      const allMatchingLinks = document.querySelectorAll(`[onclick="showSection('${sectionName}')"]`);
+      allMatchingLinks.forEach(link => {
+        if (link.closest('#navbarNav')) {
+          link.classList.add('active');
+        }
+      });
+    }
+
+    // Profile form submission
+    document.getElementById('profile-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Информация профиля сохранена!');
+    });
+
+    // Security form submission
+    document.getElementById('security-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Параметры безопасности обновлены!');
+    });
+
+    // General settings form submission
+    document.getElementById('general-settings-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Общие настройки сохранены!');
+    });
+
+    // Security settings form submission
+    document.getElementById('security-settings-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Настройки безопасности сохранены!');
+    });
+
+    // Notification settings form submission
+    document.getElementById('notification-settings-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Настройки уведомлений сохранены!');
+    });
+
+    // Functions for user management
+    function addUser() {
+      // Close modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+      modal.hide();
+      
+      // Show success message
+      alert('Пользователь успешно добавлен!');
+      
+      // Reset form
+      document.getElementById('add-user-form').reset();
+    }
+
+    function updateUser() {
+      // Close modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+      modal.hide();
+      
+      // Show success message
+      alert('Информация о пользователе обновлена!');
+    }
+
+    // Function for project management
+    function addProject() {
+      // Close modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('addProjectModal'));
+      modal.hide();
+      
+      // Show success message
+      alert('Проект успешно создан!');
+      
+      // Reset form
+      document.getElementById('add-project-form').reset();
+    }
+
+    // Functions for review management
+    function approveReview(reviewId) {
+      document.getElementById('status-' + reviewId).textContent = 'Одобрен';
+      document.getElementById('status-' + reviewId).className = 'user-status active';
+      document.querySelector(`#review-${reviewId} .review-actions`).innerHTML = `
+        <button class="btn btn-sm btn-outline-warning" onclick="rejectReview(${reviewId})">
+          <i class="material-icons">undo</i>
+        </button>
+      `;
+      alert('Отзыв одобрен!');
+    }
+
+    function rejectReview(reviewId) {
+      document.getElementById('status-' + reviewId).textContent = 'Отклонен';
+      document.getElementById('status-' + reviewId).className = 'user-status inactive';
+      document.querySelector(`#review-${reviewId} .review-actions`).innerHTML = `
+        <button class="btn btn-sm btn-outline-warning" onclick="restoreReview(${reviewId})">
+          <i class="material-icons">undo</i>
+        </button>
+      `;
+      alert('Отзыв отклонен!');
+    }
+
+    function restoreReview(reviewId) {
+      document.getElementById('status-' + reviewId).textContent = 'На модерации';
+      document.getElementById('status-' + reviewId).className = 'user-status inactive';
+      document.querySelector(`#review-${reviewId} .review-actions`).innerHTML = `
+        <button class="btn btn-sm btn-outline-success" onclick="approveReview(${reviewId})">
+          <i class="material-icons">check</i>
+        </button>
+        <button class="btn btn-sm btn-outline-danger" onclick="rejectReview(${reviewId})">
+          <i class="material-icons">close</i>
+        </button>
+      `;
+      alert('Отзыв возвращен на модерацию!');
+    }
+
+    function refreshReviews() {
+      alert('Список отзывов обновлен!');
+    }
+
+    function filterReviews(status) {
+      alert('Фильтр применен: ' + status);
+    }
+
+    // Functions for analytics
+    function applyAnalyticsFilters() {
+      const startDate = document.getElementById('start-date').value;
+      const endDate = document.getElementById('end-date').value;
+      const period = document.getElementById('period').value;
+      alert(`Фильтры применены:\nНачальная дата: ${startDate}\nКонечная дата: ${endDate}\nПериод: ${period}`);
+    }
+
+    async function exportAnalytics() {
+      // Создаем новую рабочую книгу с помощью ExcelJS
+      const workbook = new ExcelJS.Workbook();
+      
+      // Добавляем лист с основной аналитикой
+      const analyticsSheet = workbook.addWorksheet('Основная аналитика');
+      
+      // Добавляем заголовки
+      analyticsSheet.addRow(['Метрика', 'Значение']);
+      
+      // Добавляем данные
+      const totalUsers = document.getElementById('analytics-total-users').innerText.replace(/\s+/g, '');
+      const activeToday = document.getElementById('analytics-active-today').innerText.replace(/\s+/g, '');
+      const totalRequests = document.getElementById('analytics-total-requests').innerText.replace(/\s+/g, '');
+      const tokenCount = document.getElementById('analytics-token-count').innerText.replace(/\s+/g, '');
+      
+      analyticsSheet.addRow(['Всего пользователей', totalUsers]);
+      analyticsSheet.addRow(['Активных сегодня', activeToday]);
+      analyticsSheet.addRow(['Всего запросов', totalRequests]);
+      analyticsSheet.addRow(['Количество токенов', tokenCount]);
+      
+      // Добавляем лист с фильтрами
+      const filtersSheet = workbook.addWorksheet('Фильтры');
+      filtersSheet.addRow(['Фильтры', 'Значение']);
+      filtersSheet.addRow(['Дата начала', document.getElementById('start-date').value]);
+      filtersSheet.addRow(['Дата окончания', document.getElementById('end-date').value]);
+      filtersSheet.addRow(['Период', document.getElementById('period').value]);
+      
+      // Добавляем листы с данными из графиков
+      try {
+        const userActivityChart = Chart.getChart('user-activity-chart');
+        if (userActivityChart) {
+          const userActivitySheet = workbook.addWorksheet('Активность пользователей');
+          userActivitySheet.addRow(['День недели', 'Количество активных пользователей']);
+          
+          const labels = userActivityChart.data.labels || [];
+          const dataset = userActivityChart.data.datasets[0];
+          if (dataset && labels.length > 0) {
+            for (let i = 0; i < labels.length; i++) {
+              userActivitySheet.addRow([labels[i], dataset.data[i]]);
+            }
+          }
+        }
+        
+        const roleDistributionChart = Chart.getChart('role-distribution-chart');
+        if (roleDistributionChart) {
+          const roleDistributionSheet = workbook.addWorksheet('Распределение по ролям');
+          roleDistributionSheet.addRow(['Роль', 'Количество']);
+          
+          const labels = roleDistributionChart.data.labels || [];
+          const dataset = roleDistributionChart.data.datasets[0];
+          if (dataset && labels.length > 0) {
+            for (let i = 0; i < labels.length; i++) {
+              roleDistributionSheet.addRow([labels[i], dataset.data[i]]);
+            }
+          }
+        }
+        
+        const tokenUsageChart = Chart.getChart('token-usage-chart');
+        if (tokenUsageChart) {
+          const tokenUsageSheet = workbook.addWorksheet('Использование токенов');
+          tokenUsageSheet.addRow(['Месяц', 'Количество токенов']);
+          
+          const labels = tokenUsageChart.data.labels || [];
+          const dataset = tokenUsageChart.data.datasets[0];
+          if (dataset && labels.length > 0) {
+            for (let i = 0; i < labels.length; i++) {
+              tokenUsageSheet.addRow([labels[i], dataset.data[i]]);
+            }
+          }
+        }
+        
+        const projectRequestsChart = Chart.getChart('project-requests-chart');
+        if (projectRequestsChart) {
+          const projectRequestsSheet = workbook.addWorksheet('Запросы по проектам');
+          projectRequestsSheet.addRow(['Проект', 'Количество запросов']);
+          
+          const labels = projectRequestsChart.data.labels || [];
+          const dataset = projectRequestsChart.data.datasets[0];
+          if (dataset && labels.length > 0) {
+            for (let i = 0; i < labels.length; i++) {
+              projectRequestsSheet.addRow([labels[i], dataset.data[i]]);
+            }
+          }
+        }
+      } catch (e) {
+        console.log('Не удалось получить данные из графиков:', e);
+      }
+      
+      // Добавляем изображения графиков в отдельные листы
+      await addChartImages(workbook);
+      
+      // Сохраняем файл
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Аналитика_' + new Date().toISOString().slice(0, 10) + '.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Функция для добавления изображений графиков в Excel
+    async function addChartImages(workbook) {
+      try {
+        // Добавляем изображение графика активности пользователей
+        const userActivityCanvas = document.getElementById('user-activity-chart');
+        if (userActivityCanvas) {
+          const userActivityImage = userActivityCanvas.toDataURL('image/png');
+          const userActivityImgId = workbook.addImage({
+            base64: userActivityImage,
+            extension: 'png',
+          });
+          
+          const userActivitySheet = workbook.getWorksheet('Активность пользователей');
+          if (userActivitySheet) {
+            userActivitySheet.addImage(userActivityImgId, {
+              tl: { col: 5, row: 1 },
+              ext: { width: 600, height: 400 }
+            });
+          }
+        }
+        
+        // Добавляем изображение графика распределения по ролям
+        const roleDistributionCanvas = document.getElementById('role-distribution-chart');
+        if (roleDistributionCanvas) {
+          const roleDistributionImage = roleDistributionCanvas.toDataURL('image/png');
+          const roleDistributionImgId = workbook.addImage({
+            base64: roleDistributionImage,
+            extension: 'png',
+          });
+          
+          const roleDistributionSheet = workbook.getWorksheet('Распределение по ролям');
+          if (roleDistributionSheet) {
+            roleDistributionSheet.addImage(roleDistributionImgId, {
+              tl: { col: 5, row: 1 },
+              ext: { width: 600, height: 400 }
+            });
+          }
+        }
+        
+        // Добавляем изображение графика использования токенов
+        const tokenUsageCanvas = document.getElementById('token-usage-chart');
+        if (tokenUsageCanvas) {
+          const tokenUsageImage = tokenUsageCanvas.toDataURL('image/png');
+          const tokenUsageImgId = workbook.addImage({
+            base64: tokenUsageImage,
+            extension: 'png',
+          });
+          
+          const tokenUsageSheet = workbook.getWorksheet('Использование токенов');
+          if (tokenUsageSheet) {
+            tokenUsageSheet.addImage(tokenUsageImgId, {
+              tl: { col: 5, row: 1 },
+              ext: { width: 600, height: 400 }
+            });
+          }
+        }
+        
+        // Добавляем изображение графика запросов по проектам
+        const projectRequestsCanvas = document.getElementById('project-requests-chart');
+        if (projectRequestsCanvas) {
+          const projectRequestsImage = projectRequestsCanvas.toDataURL('image/png');
+          const projectRequestsImgId = workbook.addImage({
+            base64: projectRequestsImage,
+            extension: 'png',
+          });
+          
+          const projectRequestsSheet = workbook.getWorksheet('Запросы по проектам');
+          if (projectRequestsSheet) {
+            projectRequestsSheet.addImage(projectRequestsImgId, {
+              tl: { col: 5, row: 1 },
+              ext: { width: 600, height: 400 }
+            });
+          }
+        }
+      } catch (e) {
+        console.error('Ошибка при добавлении изображений графиков:', e);
+      }
+    }
+
+    function generateReport(type) {
+      alert(`Генерируется ${type} отчет...`);
+    }
+
+    // Functions for system settings
+    function createBackup() {
+      alert('Создание резервной копии...');
+    }
+
+    function restoreBackup() {
+      alert('Восстановление из резервной копии...');
+    }
+
+    function viewBackupHistory() {
+      alert('Просмотр истории резервных копий...');
+    }
+
+    function toggleApiKeyVisibility() {
+      const apiKeyField = document.getElementById('api-key');
+      if (apiKeyField.type === 'password') {
+        apiKeyField.type = 'text';
+      } else {
+        apiKeyField.type = 'password';
+      }
+    }
+
+    function regenerateApiKey() {
+      if (confirm('Вы уверены, что хотите сгенерировать новый API ключ? Это действие нельзя отменить.')) {
+        alert('Новый API ключ сгенерирован!');
+      }
+    }
+  </script>
+</body>
+</html>
