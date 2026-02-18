@@ -1,35 +1,33 @@
 [
   {
-    "id": "1769523699882",
-    "name": "Главный разработчик - Вербило Кирилл",
-    "email": "4@mail.ru",
-    "password": "$2b$10$RSjiQVKWbBw7ZZtAgrXyTe2MUePflR0X8zb5dXSoI0pA7iYxzYSy2",
-    "createdAt": "2026-01-27T14:21:39.882Z",
-    "sessions": [],
-    "country": "ru"
-  },
-  {
-    "id": "1769529447095",
-    "name": "Елена Тыквенко",
-    "email": "5@mail.ru",
-    "password": "$2b$10$3WSq/6ylBjIsJLXzZGIGbOOiaAv3DZN.KPincxwJewUrS/3FQLH7.",
-    "createdAt": "2026-01-27T15:57:27.095Z",
+    "id": "1771434070361",
+    "name": "Администратор",
+    "email": "admin@mirageml.com",
+    "password": "$2b$10$J2UqG3.pQxtwWkXC6s32tuqjT/socAXRrRrlUcAwj58AFnGgpaL4i",
+    "role": "admin",
+    "theme": "dark",
+    "country": "ru",
+    "createdAt": "2026-02-18T17:01:10.361Z",
     "sessions": []
   },
   {
-    "id": "1769614775474",
-    "name": "вап",
-    "email": "2@mail.ru",
-    "password": "$2b$10$OgfTk9qg99yGlo6y3OL4NuFwsa2pLPj6NZ3k9elpP968aE95zBu/q",
-    "createdAt": "2026-01-28T15:39:35.483Z",
+    "id": "1771434100000",
+    "name": "Главный разработчик",
+    "email": "dev@mirageml.com",
+    "password": "$2b$10$vqppqsQg7/Z8m5CRj7G9pO0DDjeCPt/bf/DOYg.jl5ocBJKuKKNFG",
+    "role": "admin",
+    "theme": "dark",
+    "country": "ru",
+    "createdAt": "2026-02-18T17:01:40.000Z",
     "sessions": []
   },
   {
-    "id": "1769616068808",
-    "name": "Тиньков",
-    "email": "1@mail.ru",
-    "password": "$2b$10$ZKKnlj.f39X4WYFLZ7sve.w6qm8K45v03VgtNJ5Kn7D3tYEjoWTj6",
-    "createdAt": "2026-01-28T16:01:08.829Z",
+    "id": "1771435514680",
+    "name": "Тест Админ-панели",
+    "email": "7@mail.ru",
+    "password": "$2b$10$aUv5KmJ5g0JztTH34rhdgONH1khWMSvSgFsb2cEannEnC8wxi2.HC",
+    "theme": "dark",
+    "createdAt": "2026-02-18T17:25:14.680Z",
     "sessions": []
   }
 ]

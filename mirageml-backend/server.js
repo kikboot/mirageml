@@ -5,14 +5,47 @@ const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const session = require('express-session');
 
 const app = express();
 const PORT = 3001;
 const JWT_SECRET = '8ddfda05949bcc8057da59d2b7e62b4f3e12f00d6af892704d87530ae6731cab';
 
-// Middleware
+// Настройка EJS
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Middleware для парсинга cookies
+app.use((req, res, next) => {
+    const cookieHeader = req.headers.cookie;
+    req.cookies = {};
+    
+    if (cookieHeader) {
+        const cookies = cookieHeader.split(';');
+        cookies.forEach(cookie => {
+            const [name, value] = cookie.trim().split('=');
+            req.cookies[name] = value;
+        });
+    }
+    
+    next();
+});
+
+// Инициализация сессии
+app.use(session({
+    secret: JWT_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false, // В production установить true и настроить HTTPS
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000 // 24 часа
+    }
+}));
+
 app.use(cors());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../mirageml-frontend')));
 
 // Пути к файлам данных
@@ -66,6 +99,19 @@ function saveSessions(sessions) {
     fs.writeFileSync(SESSIONS_FILE, JSON.stringify(sessions, null, 2));
 }
 
+// Вспомогательные функции для работы с JSON
+function readJSON(filePath) {
+    if (!fs.existsSync(filePath)) {
+        fs.writeFileSync(filePath, '[]');
+        return [];
+    }
+    return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+}
+
+function writeJSON(filePath, data) {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+}
+
 // Функции для определения устройства и местоположения
 const getDeviceInfo = (userAgent) => {
     const isMobile = /Mobile|Android|iPhone/i.test(userAgent);
@@ -96,8 +142,15 @@ const getLocationByIP = (ip) => {
 
 // Middleware для проверки JWT
 function authenticateToken(req, res, next) {
+    // Проверяем токен в заголовке Authorization
+    let token = null;
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    if (authHeader) {
+        token = authHeader && authHeader.split(' ')[1];
+    } else {
+        // Если нет в заголовке, проверяем в cookie
+        token = req.cookies['authToken'];
+    }
 
     if (!token) return res.sendStatus(401);
 
@@ -160,7 +213,7 @@ app.post('/api/login', async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ error: 'Неверный email или пароль' });
 
-    const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user.id, email: user.email, role: user.role || 'user' }, JWT_SECRET, { expiresIn: '1h' });
 
     // Определяем устройство и местоположение
     const device = getDeviceInfo(req.headers['user-agent']);
@@ -182,13 +235,22 @@ app.post('/api/login', async (req, res) => {
     sessions.push(newSession);
     saveSessions(sessions);
 
+    // Устанавливаем токен в cookie
+    res.cookie('authToken', token, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000, // 24 часа
+        secure: process.env.NODE_ENV === 'production', // использовать HTTPS в продакшене
+        sameSite: 'strict'
+    });
+    
     res.json({
         success: true,
-        token,
+        token, // по-прежнему возвращаем токен для клиентского кода
         user: {
             id: user.id,
             name: user.name,
             email: user.email,
+            role: user.role || 'user', // Добавляем роль пользователя
             avatar: user.avatar || user.name.substring(0, 2).toUpperCase()
         }
     });
@@ -577,7 +639,391 @@ app.get('/reviews', (req, res) => {
     res.sendFile(path.join(__dirname, '../mirageml-frontend/reviews/index.html'));
 });
 
+// ==========================================
+// Админ-панель
+// ==========================================
+
+// Создаём админ-пользователя если не существует
+async function ensureAdminUser() {
+    const users = getUsers();
+    const adminExists = users.some(u => u.email === 'admin@mirageml.com');
+    
+    if (!adminExists) {
+        const hashedPassword = await bcrypt.hash('admin123', 10);
+        const newAdmin = {
+            id: Date.now().toString(),
+            name: 'Администратор',
+            email: 'admin@mirageml.com',
+            password: hashedPassword,
+            role: 'admin',
+            roleDisplay: 'Администратор',
+            theme: 'dark',
+            country: 'ru',
+            createdAt: new Date().toISOString(),
+            sessions: []
+        };
+        users.push(newAdmin);
+        saveUsers(users);
+        console.log('Создан админ-пользователь: admin@mirageml.com / admin123');
+    } else {
+        console.log('Админ-пользователь уже существует');
+    }
+}
+ensureAdminUser();
+
+// Middleware для проверки авторизации администратора
+function requireAdminAuth(req, res, next) {
+    if (req.session && req.session.adminId && req.session.adminRole === 'admin') {
+        return next();
+    }
+    res.redirect('/admin/login');
+}
+
+// Страница входа
+app.get('/admin/login', (req, res) => {
+    if (req.session && req.session.adminId) {
+        return res.redirect('/admin');
+    }
+    res.render('admin-login', { error: null });
+});
+
+app.post('/admin/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        console.log('[Admin Login] Попытка входа:', email);
+        
+        const users = getUsers();
+        const user = users.find(u => u.email === email);
+
+        if (!user) {
+            console.log('[Admin Login] Пользователь не найден:', email);
+            return res.render('admin-login', { error: 'Неверный email или пароль' });
+        }
+
+        console.log('[Admin Login] Пользователь найден, роль:', user.role);
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+            console.log('[Admin Login] Неверный пароль');
+            return res.render('admin-login', { error: 'Неверный email или пароль' });
+        }
+
+        if (user.role !== 'admin') {
+            console.log('[Admin Login] Недостаточно прав, роль:', user.role);
+            return res.render('admin-login', { error: 'Доступ только для администраторов' });
+        }
+
+        req.session.adminId = user.id;
+        req.session.adminEmail = user.email;
+        req.session.adminRole = user.role;
+        req.session.adminName = user.name;
+        
+        console.log('[Admin Login] Успешный вход, session ID:', req.sessionID);
+
+        res.redirect('/admin');
+    } catch (error) {
+        console.error('[Admin Login] Ошибка:', error);
+        res.render('admin-login', { error: 'Ошибка при входе' });
+    }
+});
+
+// Выход
+app.get('/admin/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/admin/login');
+});
+
+// Главная страница админ-панели
+app.get('/admin', requireAdminAuth, (req, res) => {
+    const users = getUsers();
+    const projects = getProjects();
+    const sessions = getSessions();
+    const reviews = readJSON(REVIEWS_FILE);
+
+    const stats = {
+        totalUsers: users.length,
+        totalProjects: projects.length,
+        totalSessions: sessions.length,
+        totalReviews: reviews.length,
+        adminCount: users.filter(u => u.role === 'admin').length,
+        userCount: users.filter(u => u.role === 'user').length,
+        approvedReviews: reviews.filter(r => r.approved).length,
+        pendingReviews: reviews.filter(r => !r.approved).length
+    };
+
+    const body = res.render('admin-dashboard', { stats, port: PORT }, { async: false });
+    res.render('admin-layout', {
+        title: 'Главная',
+        currentPage: 'dashboard',
+        body: body
+    });
+});
+
+// Пользователи
+app.get('/admin/users', requireAdminAuth, (req, res) => {
+    const users = getUsers();
+    const usersWithoutPassword = users.map(u => {
+        const { password, ...rest } = u;
+        return rest;
+    });
+
+    // Функция для отображения роли
+    function getRoleDisplay(role, roleDisplay) {
+        if (roleDisplay) return roleDisplay;
+        if (role === 'admin') return 'Администратор';
+        return 'Пользователь';
+    }
+
+    const body = `
+        <div class="card">
+            <h3><i class="fas fa-users"></i> Пользователи (${users.length})</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Имя</th>
+                        <th>Email</th>
+                        <th>Роль</th>
+                        <th>Дата регистрации</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${usersWithoutPassword.map(u => `
+                        <tr>
+                            <td>${u.id}</td>
+                            <td>${u.name}</td>
+                            <td>${u.email}</td>
+                            <td><span class="badge ${u.role === 'admin' ? 'badge-admin' : 'badge-user'}">${getRoleDisplay(u.role, u.roleDisplay)}</span></td>
+                            <td>${new Date(u.createdAt).toLocaleDateString('ru-RU')}</td>
+                            <td>
+                                <a href="/admin/users/edit/${u.id}" class="btn btn-primary"><i class="fas fa-edit"></i></a>
+                                <a href="/admin/users/delete/${u.id}" class="btn btn-danger" onclick="return confirm('Удалить пользователя?')"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+
+    res.render('admin-layout', {
+        title: 'Пользователи',
+        currentPage: 'users',
+        body: body
+    });
+});
+
+// Удаление пользователя
+app.get('/admin/users/delete/:id', requireAdminAuth, (req, res) => {
+    const userId = req.params.id;
+    let users = getUsers();
+    
+    // Удаляем проекты пользователя
+    let projects = getProjects();
+    projects = projects.filter(p => p.userId !== userId);
+    saveProjects(projects);
+    
+    // Удаляем сессии пользователя
+    let sessions = getSessions();
+    sessions = sessions.filter(s => s.userId !== userId);
+    saveSessions(sessions);
+    
+    // Удаляем пользователя
+    users = users.filter(u => u.id !== userId);
+    saveUsers(users);
+    
+    res.redirect('/admin/users');
+});
+
+// Проекты
+app.get('/admin/projects', requireAdminAuth, (req, res) => {
+    const projects = getProjects();
+    const users = getUsers();
+
+    const body = `
+        <div class="card">
+            <h3><i class="fas fa-folder"></i> Проекты (${projects.length})</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Владелец</th>
+                        <th>Дата создания</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${projects.map(p => {
+                        const owner = users.find(u => u.id === p.userId);
+                        return `
+                            <tr>
+                                <td>${p.id}</td>
+                                <td>${p.name}</td>
+                                <td>${owner ? owner.name : 'Неизвестно'}</td>
+                                <td>${new Date(p.createdAt).toLocaleDateString('ru-RU')}</td>
+                                <td>
+                                    <a href="/admin/projects/delete/${p.id}" class="btn btn-danger" onclick="return confirm('Удалить проект?')"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+
+    res.render('admin-layout', {
+        title: 'Проекты',
+        currentPage: 'projects',
+        body: body
+    });
+});
+
+app.get('/admin/projects/delete/:id', requireAdminAuth, (req, res) => {
+    const projectId = req.params.id;
+    let projects = getProjects();
+    projects = projects.filter(p => p.id !== projectId);
+    saveProjects(projects);
+    res.redirect('/admin/projects');
+});
+
+// Сессии
+app.get('/admin/sessions', requireAdminAuth, (req, res) => {
+    const sessions = getSessions();
+    const users = getUsers();
+
+    const body = `
+        <div class="card">
+            <h3><i class="fas fa-clock"></i> Сессии (${sessions.length})</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Пользователь</th>
+                        <th>Устройство</th>
+                        <th>IP</th>
+                        <th>Локация</th>
+                        <th>Дата входа</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${sessions.map(s => {
+                        const user = users.find(u => u.id === s.userId);
+                        return `
+                            <tr>
+                                <td>${s.id}</td>
+                                <td>${user ? user.name : 'Неизвестно'}</td>
+                                <td>${s.device}</td>
+                                <td>${s.ip}</td>
+                                <td>${s.location}</td>
+                                <td>${new Date(s.createdAt).toLocaleDateString('ru-RU')}</td>
+                                <td>
+                                    <a href="/admin/sessions/delete/${s.id}" class="btn btn-danger" onclick="return confirm('Завершить сессию?')"><i class="fas fa-stop"></i></a>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+
+    res.render('admin-layout', {
+        title: 'Сессии',
+        currentPage: 'sessions',
+        body: body
+    });
+});
+
+app.get('/admin/sessions/delete/:id', requireAdminAuth, (req, res) => {
+    const sessionId = req.params.id;
+    let sessions = getSessions();
+    sessions = sessions.filter(s => s.id !== sessionId);
+    saveSessions(sessions);
+    res.redirect('/admin/sessions');
+});
+
+// Отзывы
+app.get('/admin/reviews', requireAdminAuth, (req, res) => {
+    const reviews = readJSON(REVIEWS_FILE);
+
+    const body = `
+        <div class="card">
+            <h3><i class="fas fa-comments"></i> Отзывы (${reviews.length})</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Имя</th>
+                        <th>Рейтинг</th>
+                        <th>Комментарий</th>
+                        <th>Статус</th>
+                        <th>Дата</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${reviews.map(r => `
+                        <tr>
+                            <td>${r.id}</td>
+                            <td>${r.name}</td>
+                            <td>${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</td>
+                            <td>${r.comment}</td>
+                            <td><span class="badge ${r.approved ? 'badge-success' : 'badge-warning'}">${r.approved ? 'Одобрен' : 'На модерации'}</span></td>
+                            <td>${new Date(r.createdAt).toLocaleDateString('ru-RU')}</td>
+                            <td>
+                                ${r.approved 
+                                    ? `<a href="/admin/reviews/unapprove/${r.id}" class="btn btn-warning"><i class="fas fa-undo"></i></a>`
+                                    : `<a href="/admin/reviews/approve/${r.id}" class="btn btn-success"><i class="fas fa-check"></i></a>`
+                                }
+                                <a href="/admin/reviews/delete/${r.id}" class="btn btn-danger" onclick="return confirm('Удалить отзыв?')"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+
+    res.render('admin-layout', {
+        title: 'Отзывы',
+        currentPage: 'reviews',
+        body: body
+    });
+});
+
+app.get('/admin/reviews/approve/:id', requireAdminAuth, (req, res) => {
+    const reviews = readJSON(REVIEWS_FILE);
+    const review = reviews.find(r => r.id === req.params.id);
+    if (review) {
+        review.approved = true;
+        writeJSON(REVIEWS_FILE, reviews);
+    }
+    res.redirect('/admin/reviews');
+});
+
+app.get('/admin/reviews/unapprove/:id', requireAdminAuth, (req, res) => {
+    const reviews = readJSON(REVIEWS_FILE);
+    const review = reviews.find(r => r.id === req.params.id);
+    if (review) {
+        review.approved = false;
+        writeJSON(REVIEWS_FILE, reviews);
+    }
+    res.redirect('/admin/reviews');
+});
+
+app.get('/admin/reviews/delete/:id', requireAdminAuth, (req, res) => {
+    let reviews = readJSON(REVIEWS_FILE);
+    reviews = reviews.filter(r => r.id !== req.params.id);
+    writeJSON(REVIEWS_FILE, reviews);
+    res.redirect('/admin/reviews');
+});
+
 // Запуск сервера
 app.listen(PORT, () => {
     console.log(`Сервер запущен на http://localhost:${PORT}`);
+    console.log(`Админ-панель доступна по адресу http://localhost:${PORT}/admin/login`);
+    console.log(`Логин: admin@mirageml.com | Пароль: admin123`);
 });

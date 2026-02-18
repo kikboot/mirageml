@@ -1,0 +1,36 @@
+<div class="stats-grid">
+    <div class="stat-card" style="border-left-color: #3498db;">
+        <h3><i class="fas fa-users"></i> Пользователей</h3>
+        <div class="value"><%= stats.totalUsers %></div>
+    </div>
+    <div class="stat-card" style="border-left-color: #27ae60;">
+        <h3><i class="fas fa-folder"></i> Проектов</h3>
+        <div class="value"><%= stats.totalProjects %></div>
+    </div>
+    <div class="stat-card" style="border-left-color: #f39c12;">
+        <h3><i class="fas fa-clock"></i> Сессий</h3>
+        <div class="value"><%= stats.totalSessions %></div>
+    </div>
+    <div class="stat-card" style="border-left-color: #9b59b6;">
+        <h3><i class="fas fa-comments"></i> Отзывов</h3>
+        <div class="value"><%= stats.totalReviews %></div>
+    </div>
+</div>
+
+<div class="card">
+    <h3><i class="fas fa-chart-bar"></i> Статистика по ролям</h3>
+    <div style="margin-top: 20px;">
+        <p><strong>Администраторы:</strong> <%= stats.adminCount %></p>
+        <p><strong>Пользователи:</strong> <%= stats.userCount %></p>
+        <p><strong>Одобренные отзывы:</strong> <%= stats.approvedReviews %></p>
+        <p><strong>Отзывы на модерации:</strong> <%= stats.pendingReviews %></p>
+    </div>
+</div>
+
+<div class="card">
+    <h3><i class="fas fa-info-circle"></i> Информация</h3>
+    <p style="margin-top: 15px; color: #7f8c8d;">
+        Панель администратора MirageML v1.0.0<br>
+        Сервер запущен на порту <%= port %>
+    </p>
+</div>

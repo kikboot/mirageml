@@ -1,15 +1,5 @@
 [
   {
-    "id": "1753033249763",
-    "userId": "1753031911724",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzUzMDMxOTExNzI0IiwiZW1haWwiOiJraXJpbGwwODJAbWFpbC5ydSIsImlhdCI6MTc1MzAzMzI0OSwiZXhwIjoxNzUzMDM2ODQ5fQ.Zas7dEN487BzStLMiFyusfVnGPPVpOCCUDBNAxrxyY0",
-    "device": "Chrome, Windows",
-    "ip": "::1",
-    "location": "Москва, Россия",
-    "createdAt": "2025-07-20T17:40:49.763Z",
-    "lastActive": "2025-07-20T17:40:49.763Z"
-  },
-  {
     "id": "1753035151962",
     "userId": "1753031911724",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzUzMDMxOTExNzI0IiwiZW1haWwiOiJraXJpbGwwODJAbWFpbC5ydSIsImlhdCI6MTc1MzAzNTE1MSwiZXhwIjoxNzUzMDM4NzUxfQ.Q0Hs-FAD0pIAKvEe0CFiBjjwYvel7DMFv8G8sO7lq24",
@@ -636,16 +626,6 @@
     "lastActive": "2025-10-24T07:11:54.562Z"
   },
   {
-    "id": "1769529447165",
-    "userId": "1769529447095",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTI5NDQ3MDk1IiwiZW1haWwiOiI1QG1haWwucnUiLCJpYXQiOjE3Njk1Mjk0NDcsImV4cCI6MTc2OTUzMzA0N30.fbQr7e8-8b2nfOZWmlaklFIObgVQhYlShqnyUCL7Dvs",
-    "device": "Chrome, Windows",
-    "ip": "::1",
-    "location": "Москва, Россия",
-    "createdAt": "2026-01-27T15:57:27.165Z",
-    "lastActive": "2026-01-27T15:57:27.165Z"
-  },
-  {
     "id": "1769613215026",
     "userId": "1769613201710",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NjEzMjAxNzEwIiwiZW1haWwiOiI0QG1haWwucnUiLCJpYXQiOjE3Njk2MTMyMTUsImV4cCI6MTc2OTYxNjgxNX0.Yu_wvGOzmu3G0UMR1rZanJ6hQAZcgNy2veAoS6l5-LI",
@@ -696,16 +676,6 @@
     "lastActive": "2026-02-02T13:23:23.586Z"
   },
   {
-    "id": "1770629884721",
-    "userId": "1769616068808",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NjE2MDY4ODA4IiwiZW1haWwiOiIxQG1haWwucnUiLCJpYXQiOjE3NzA2Mjk4ODQsImV4cCI6MTc3MDYzMzQ4NH0.OoK_o6Sq2r7IOQYPQpzIvo8kSH3AZDlTdYI0uie8WRs",
-    "device": "Chrome, Windows",
-    "ip": "::1",
-    "location": "Москва, Россия",
-    "createdAt": "2026-02-09T09:38:04.721Z",
-    "lastActive": "2026-02-09T09:38:04.721Z"
-  },
-  {
     "id": "1770629951580",
     "userId": "1769523699882",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJpYXQiOjE3NzA2Mjk5NTEsImV4cCI6MTc3MDYzMzU1MX0.jmf0hSSGAbj1XMWEh-SP_tmAhSRLQjAa3_XG3m2Styo",
@@ -716,23 +686,213 @@
     "lastActive": "2026-02-09T09:39:11.580Z"
   },
   {
-    "id": "1770630104857",
-    "userId": "1769616068808",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NjE2MDY4ODA4IiwiZW1haWwiOiIxQG1haWwucnUiLCJpYXQiOjE3NzA2MzAxMDQsImV4cCI6MTc3MDYzMzcwNH0.kJhc5Po9geMtyCOuVIySN3QVJlhrgfMVpbWAkM7HEOg",
+    "id": "1770992723234",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJpYXQiOjE3NzA5OTI3MjMsImV4cCI6MTc3MDk5NjMyM30.gjXkbwaUoaxjNgzkihV2TNdF7kWhQHn6f1GlE8sTJ_I",
     "device": "Chrome, Windows",
     "ip": "::1",
     "location": "Москва, Россия",
-    "createdAt": "2026-02-09T09:41:44.857Z",
-    "lastActive": "2026-02-09T09:41:44.857Z"
+    "createdAt": "2026-02-13T14:25:23.234Z",
+    "lastActive": "2026-02-13T14:25:23.234Z"
   },
   {
-    "id": "1770644091780",
-    "userId": "1769616068808",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NjE2MDY4ODA4IiwiZW1haWwiOiIxQG1haWwucnUiLCJpYXQiOjE3NzA2NDQwOTEsImV4cCI6MTc3MDY0NzY5MX0.d5U_2hMKVgeTnZLlM0uKhJV6wsiFF9vNeyFWIWl8bgk",
+    "id": "1770992724474",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJpYXQiOjE3NzA5OTI3MjQsImV4cCI6MTc3MDk5NjMyNH0._NrpCqYm_Lq0Gd20jXM3034eOR6iBe4KHWnzwA0xMfQ",
     "device": "Chrome, Windows",
     "ip": "::1",
     "location": "Москва, Россия",
-    "createdAt": "2026-02-09T13:34:51.780Z",
-    "lastActive": "2026-02-09T13:34:51.780Z"
+    "createdAt": "2026-02-13T14:25:24.474Z",
+    "lastActive": "2026-02-13T14:25:24.474Z"
+  },
+  {
+    "id": "1770992748838",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJpYXQiOjE3NzA5OTI3NDgsImV4cCI6MTc3MDk5NjM0OH0.xN3ib12GYoo_MouT9kln5hyAZJcpwh1H6gLMxM6avWs",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-13T14:25:48.838Z",
+    "lastActive": "2026-02-13T14:25:48.838Z"
+  },
+  {
+    "id": "1770992909728",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJpYXQiOjE3NzA5OTI5MDksImV4cCI6MTc3MDk5NjUwOX0.cxf2b7oV7LMHum9_UkI1Pww3ZBI8DCGj9Eyy9udLUCQ",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-13T14:28:29.728Z",
+    "lastActive": "2026-02-13T14:28:29.728Z"
+  },
+  {
+    "id": "1770992913720",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJpYXQiOjE3NzA5OTI5MTMsImV4cCI6MTc3MDk5NjUxM30.re9HlyUpGJvSq29CMxcmAGYfwsKNjJREoMbJNk5Zf5g",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-13T14:28:33.720Z",
+    "lastActive": "2026-02-13T14:28:33.720Z"
+  },
+  {
+    "id": "1770992938151",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJpYXQiOjE3NzA5OTI5MzgsImV4cCI6MTc3MDk5NjUzOH0.7xp4THeF9pahZh90gbNPb9e2jyux8qbdGl9QZJInuxE",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-13T14:28:58.151Z",
+    "lastActive": "2026-02-13T14:28:58.151Z"
+  },
+  {
+    "id": "1770992944814",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJpYXQiOjE3NzA5OTI5NDQsImV4cCI6MTc3MDk5NjU0NH0.aIq31-2oQ2VmJ7VpFcIL5BNHjwRqX4_zH2L0H2cXgW4",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-13T14:29:04.814Z",
+    "lastActive": "2026-02-13T14:29:04.814Z"
+  },
+  {
+    "id": "1770993135639",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJpYXQiOjE3NzA5OTMxMzUsImV4cCI6MTc3MDk5NjczNX0.9NpF5N-YZG_6em4qmUGeuOujWtONmtxDuxSreJrtSi0",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-13T14:32:15.639Z",
+    "lastActive": "2026-02-13T14:32:15.639Z"
+  },
+  {
+    "id": "1770993407131",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzA5OTM0MDcsImV4cCI6MTc3MDk5NzAwN30.DPV0xFpaDzoMmXqBscLMWTUl64_jbfzJTkoB1XAH36A",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-13T14:36:47.131Z",
+    "lastActive": "2026-02-13T14:36:47.131Z"
+  },
+  {
+    "id": "1770993696466",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzA5OTM2OTYsImV4cCI6MTc3MDk5NzI5Nn0.gjCdGqeOyCED9-gsc5mR3UKDiMskibPYfrx_-R5O-5o",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-13T14:41:36.466Z",
+    "lastActive": "2026-02-13T14:41:36.466Z"
+  },
+  {
+    "id": "1770993734015",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzA5OTM3MzQsImV4cCI6MTc3MDk5NzMzNH0.bJ5RsJpDqv-us67-uJk9bRCXpK9kJQwl-VNDoN3X-lo",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-13T14:42:14.016Z",
+    "lastActive": "2026-02-13T14:42:14.016Z"
+  },
+  {
+    "id": "1770994083894",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzA5OTQwODMsImV4cCI6MTc3MDk5NzY4M30.uS1PNOIBQIB3lVueMtgEHPtrmVUHwkiyg7RaUce21cs",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-13T14:48:03.894Z",
+    "lastActive": "2026-02-13T14:48:03.894Z"
+  },
+  {
+    "id": "1770994686587",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzA5OTQ2ODYsImV4cCI6MTc3MDk5ODI4Nn0.DJqWq8yWnZFKp3CWI5leUgDW4-S5XW5BQmw0EXrbWbU",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-13T14:58:06.587Z",
+    "lastActive": "2026-02-13T14:58:06.587Z"
+  },
+  {
+    "id": "1770994858111",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzA5OTQ4NTgsImV4cCI6MTc3MDk5ODQ1OH0.osHJsHzpD8IMKRjSPBwjwtECA01zU2mn5TfjeaHe2eQ",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-13T15:00:58.111Z",
+    "lastActive": "2026-02-13T15:00:58.111Z"
+  },
+  {
+    "id": "1770995295175",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzA5OTUyOTUsImV4cCI6MTc3MDk5ODg5NX0.w7mQdTbIVN6QNIhKN17ml5GBJ_UuaFnYSDHkPi6YnTM",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-13T15:08:15.175Z",
+    "lastActive": "2026-02-13T15:08:15.175Z"
+  },
+  {
+    "id": "1771427876035",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzE0Mjc4NzYsImV4cCI6MTc3MTQzMTQ3Nn0.T69VsKFnyZqhiA_phEF81cCEKhvSTMSFIs2irHNahkA",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-18T15:17:56.035Z",
+    "lastActive": "2026-02-18T15:17:56.035Z"
+  },
+  {
+    "id": "1771428690960",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzE0Mjg2OTAsImV4cCI6MTc3MTQzMjI5MH0.v3q7LJwDPMD9skvetA-ddskTTvL9QnIO0qXZGwwgOBo",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-18T15:31:30.960Z",
+    "lastActive": "2026-02-18T15:31:30.960Z"
+  },
+  {
+    "id": "1771428717082",
+    "userId": "1769523699882",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzY5NTIzNjk5ODgyIiwiZW1haWwiOiI0QG1haWwucnUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzE0Mjg3MTcsImV4cCI6MTc3MTQzMjMxN30.K1adPLDRljsTCGiobfhPGbl8761FReYWhePeengnZCU",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-18T15:31:57.082Z",
+    "lastActive": "2026-02-18T15:31:57.082Z"
+  },
+  {
+    "id": "1771428772330",
+    "userId": "1771428751934",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzcxNDI4NzUxOTM0IiwiZW1haWwiOiJhZG1pbkBtaXJhZ2VtbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzE0Mjg3NzIsImV4cCI6MTc3MTQzMjM3Mn0.ckkFTq6PKo-dFM-xBHAcWtOS6Kv2n2_Ze9CEOaNnRAE",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-18T15:32:52.330Z",
+    "lastActive": "2026-02-18T15:32:52.330Z"
+  },
+  {
+    "id": "1771428838880",
+    "userId": "1771428751934",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzcxNDI4NzUxOTM0IiwiZW1haWwiOiJhZG1pbkBtaXJhZ2VtbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzE0Mjg4MzgsImV4cCI6MTc3MTQzMjQzOH0.4X__Fsl7g7BGrGhx9OBH96nkBTIn_8woA8CTGdTI9bE",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-18T15:33:58.880Z",
+    "lastActive": "2026-02-18T15:33:58.880Z"
+  },
+  {
+    "id": "1771435514981",
+    "userId": "1771435514680",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzcxNDM1NTE0NjgwIiwiZW1haWwiOiI3QG1haWwucnUiLCJyb2xlIjoidXNlciIsImlhdCI6MTc3MTQzNTUxNCwiZXhwIjoxNzcxNDM5MTE0fQ.d2ewtYDmFkdcOVD2sPkViwAxossIxFyjAE6Gp4ktzpo",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-18T17:25:14.981Z",
+    "lastActive": "2026-02-18T17:25:14.981Z"
   }
 ]
