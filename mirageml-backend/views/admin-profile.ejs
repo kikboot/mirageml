@@ -1,0 +1,517 @@
+<div class="profile-container">
+    <!-- Карточка профиля -->
+    <div class="card profile-card">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <span><%= adminData.name.substring(0, 2).toUpperCase() %></span>
+            </div>
+            <div class="profile-info">
+                <h2><%= adminData.name %></h2>
+                <p class="profile-email"><%= adminData.email %></p>
+                <span class="badge badge-<%= adminData.role %>">
+                    <i class="fas fa-shield-alt"></i> <%= adminData.roleDisplay %>
+                </span>
+            </div>
+        </div>
+
+        <div class="profile-details">
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-fingerprint"></i>
+                    </div>
+                    <div class="detail-content">
+                        <span class="detail-label">ID пользователя</span>
+                        <span class="detail-value"><%= adminData.id %></span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="detail-content">
+                        <span class="detail-label">Дата регистрации</span>
+                        <span class="detail-value"><%= new Date(adminData.createdAt).toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="detail-content">
+                        <span class="detail-label">Страна</span>
+                        <span class="detail-value"><%= adminData.country === 'ru' ? 'Россия' : adminData.country === 'us' ? 'США' : adminData.country === 'eu' ? 'Европа' : 'Другая' %></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Форма редактирования профиля -->
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fas fa-user-edit"></i> Редактирование профиля</h3>
+        </div>
+        <form id="profile-form" class="profile-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="admin-name">
+                        <i class="fas fa-user"></i> Имя
+                    </label>
+                    <input type="text" id="admin-name" value="<%= adminData.name %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-email">
+                        <i class="fas fa-envelope"></i> Email
+                    </label>
+                    <input type="email" id="admin-email" value="<%= adminData.email %>" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="admin-country">
+                        <i class="fas fa-globe"></i> Страна
+                    </label>
+                    <select id="admin-country">
+                        <option value="ru" <%= adminData.country === 'ru' ? 'selected' : '' %>>Россия</option>
+                        <option value="us" <%= adminData.country === 'us' ? 'selected' : '' %>>США</option>
+                        <option value="eu" <%= adminData.country === 'eu' ? 'selected' : '' %>>Европа</option>
+                        <option value="other" <%= adminData.country === 'other' ? 'selected' : '' %>>Другая</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-ghost" id="cancel-btn">
+                    <i class="fas fa-times"></i> Отмена
+                </button>
+                <button type="submit" class="btn btn-primary" id="save-profile-btn">
+                    <i class="fas fa-save"></i> Сохранить изменения
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Смена пароля -->
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fas fa-key"></i> Смена пароля</h3>
+        </div>
+        <form id="password-form" class="password-form">
+            <div class="form-group">
+                <label for="current-password">
+                    <i class="fas fa-lock"></i> Текущий пароль
+                </label>
+                <input type="password" id="current-password" required placeholder="Введите текущий пароль">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="new-password">
+                        <i class="fas fa-key"></i> Новый пароль
+                    </label>
+                    <input type="password" id="new-password" required placeholder="Минимум 6 символов" minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">
+                        <i class="fas fa-lock"></i> Подтверждение
+                    </label>
+                    <input type="password" id="confirm-password" required placeholder="Повторите новый пароль" minlength="6">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-ghost" id="cancel-password-btn">
+                    <i class="fas fa-times"></i> Отмена
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-key"></i> Изменить пароль
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Уведомления -->
+<div id="notification" class="notification"></div>
+
+<style>
+    .profile-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .profile-card {
+        margin-bottom: 25px;
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        padding-bottom: 25px;
+        border-bottom: 2px solid #ecf0f1;
+        margin-bottom: 25px;
+        justify-content: center;
+        text-align: center;
+        flex-wrap: wrap;
+    }
+
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        font-weight: bold;
+        color: white;
+        flex-shrink: 0;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .profile-info h2 {
+        color: #2c3e50;
+        margin-bottom: 8px;
+        font-size: 24px;
+    }
+
+    .profile-email {
+        color: #7f8c8d;
+        margin-bottom: 12px;
+        font-size: 14px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .badge-developer {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .badge-moderator {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+    }
+
+    .badge-admin {
+        background: #e74c3c;
+        color: white;
+    }
+
+    .card-header {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #ecf0f1;
+        text-align: center;
+    }
+
+    .card-header h3 {
+        color: #2c3e50;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .profile-details {
+        display: grid;
+        gap: 20px;
+    }
+
+    .detail-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .detail-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .detail-content {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .detail-label {
+        color: #7f8c8d;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 15px;
+    }
+
+    .profile-form,
+    .password-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group label {
+        color: #2c3e50;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form-group label i {
+        color: #3498db;
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 12px 15px;
+        border: 2px solid #ecf0f1;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #3498db;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        padding-top: 20px;
+        border-top: 1px solid #ecf0f1;
+    }
+
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 10px;
+        color: white;
+        font-weight: 500;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .notification.show {
+        transform: translateX(0);
+    }
+
+    .notification.success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+
+    .notification.error {
+        background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    }
+
+    @media (max-width: 768px) {
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .detail-row {
+            grid-template-columns: 1fr;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .form-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    // Сохранение исходных значений для кнопки отмены
+    const originalProfileData = {
+        name: document.getElementById('admin-name').value,
+        email: document.getElementById('admin-email').value,
+        country: document.getElementById('admin-country').value
+    };
+
+    // Уведомления
+    function showNotification(message, type) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = 'notification ' + type + ' show';
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    // Редактирование профиля
+    document.getElementById('profile-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const saveBtn = document.getElementById('save-profile-btn');
+        const originalBtnText = saveBtn.innerHTML;
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...';
+
+        const name = document.getElementById('admin-name').value;
+        const email = document.getElementById('admin-email').value;
+        const country = document.getElementById('admin-country').value;
+
+        try {
+            const response = await fetch('/api/admin/profile', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, country })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('Профиль успешно обновлен', 'success');
+                // Обновляем исходные данные для кнопки отмены
+                originalProfileData.name = name;
+                originalProfileData.email = email;
+                originalProfileData.country = country;
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showNotification(result.error || 'Ошибка обновления', 'error');
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = originalBtnText;
+            }
+        } catch (error) {
+            showNotification('Ошибка соединения с сервером', 'error');
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalBtnText;
+        }
+    });
+
+    // Смена пароля
+    document.getElementById('password-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Изменение...';
+
+        const currentPassword = document.getElementById('current-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+
+        if (newPassword !== confirmPassword) {
+            showNotification('Новые пароли не совпадают', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            showNotification('Пароль должен быть не менее 6 символов', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/admin/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ currentPassword, newPassword })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('Пароль успешно изменен', 'success');
+                document.getElementById('password-form').reset();
+            } else {
+                showNotification(result.error || 'Ошибка смены пароля', 'error');
+            }
+        } catch (error) {
+            showNotification('Ошибка соединения с сервером', 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        }
+    });
+
+    // Кнопки отмены
+    document.getElementById('cancel-btn')?.addEventListener('click', () => {
+        document.getElementById('admin-name').value = originalProfileData.name;
+        document.getElementById('admin-email').value = originalProfileData.email;
+        document.getElementById('admin-country').value = originalProfileData.country;
+    });
+
+    document.getElementById('cancel-password-btn')?.addEventListener('click', () => {
+        document.getElementById('password-form').reset();
+    });
+</script>

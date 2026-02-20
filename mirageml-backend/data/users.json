@@ -1,33 +1,38 @@
 [
   {
-    "id": "1771434070361",
+    "id": "1771488019388",
+    "name": "Вербило Кирилл",
+    "email": "developer@mirageml.com",
+    "password": "$2b$10$m0TZ8XlVbLuzPvj1h5VjFOWUKWeKq5yXI35TNim/JcFkeY4ESx2Sa",
+    "role": "developer",
+    "roleDisplay": "Разработчик",
+    "theme": "dark",
+    "country": "ru",
+    "createdAt": "2026-02-19T08:00:19.388Z",
+    "sessions": []
+  },
+  {
+    "id": "1771576591701",
+    "name": "Кирилл",
+    "email": "moderator@mirageml.com",
+    "password": "$2b$10$CN6ZW5SWSIBQZm/FNomHeuiMYvr1DaMZNQ.Pu5ZpLB50gUnJFN.8m",
+    "role": "moderator",
+    "roleDisplay": "Модератор",
+    "theme": "dark",
+    "country": "ru",
+    "createdAt": "2026-02-20T08:36:31.701Z",
+    "sessions": []
+  },
+  {
+    "id": "1771577154016",
     "name": "Администратор",
     "email": "admin@mirageml.com",
-    "password": "$2b$10$J2UqG3.pQxtwWkXC6s32tuqjT/socAXRrRrlUcAwj58AFnGgpaL4i",
+    "password": "$2b$10$VTYqAy1yrDeCqDm9BuPHyul3Mj6fGTv5SAms88IQSGpdFcIWOqAuS",
     "role": "admin",
+    "roleDisplay": "Администратор",
     "theme": "dark",
     "country": "ru",
-    "createdAt": "2026-02-18T17:01:10.361Z",
-    "sessions": []
-  },
-  {
-    "id": "1771434100000",
-    "name": "Главный разработчик",
-    "email": "dev@mirageml.com",
-    "password": "$2b$10$vqppqsQg7/Z8m5CRj7G9pO0DDjeCPt/bf/DOYg.jl5ocBJKuKKNFG",
-    "role": "admin",
-    "theme": "dark",
-    "country": "ru",
-    "createdAt": "2026-02-18T17:01:40.000Z",
-    "sessions": []
-  },
-  {
-    "id": "1771435514680",
-    "name": "Тест Админ-панели",
-    "email": "7@mail.ru",
-    "password": "$2b$10$aUv5KmJ5g0JztTH34rhdgONH1khWMSvSgFsb2cEannEnC8wxi2.HC",
-    "theme": "dark",
-    "createdAt": "2026-02-18T17:25:14.680Z",
+    "createdAt": "2026-02-20T08:45:54.014Z",
     "sessions": []
   }
 ]

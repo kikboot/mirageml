@@ -6,6 +6,7 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
+const { USER_ROLES, ROLE_PERMISSIONS, hasPermission, isOwner } = require('./models/user-roles');
 
 const app = express();
 const PORT = 3001;
@@ -14,6 +15,7 @@ const JWT_SECRET = '8ddfda05949bcc8057da59d2b7e62b4f3e12f00d6af892704d87530ae673
 // Настройка EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.set('view cache', false); // Отключаем кэш для разработки
 
 // Middleware для парсинга cookies
 app.use((req, res, next) => {
@@ -405,6 +407,15 @@ app.delete('/api/account', authenticateToken, async (req, res) => {
             return res.status(404).json({ error: 'Пользователь не найден' });
         }
 
+        // ЗАЩИТА: Нельзя удалить администратора/разработчика/модератора
+        const protectedRoles = ['admin', 'developer', 'moderator'];
+        if (protectedRoles.includes(user.role)) {
+            console.error(`[SECURITY] Пользователь ${userId} с ролью ${user.role} попытался удалить свой аккаунт!`);
+            return res.status(403).json({ 
+                error: 'Удаление аккаунта с ролью "' + (user.roleDisplay || user.role) + '" запрещено. Обратитесь к другому администратору.' 
+            });
+        }
+
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
             return res.status(401).json({ error: 'Неверный пароль' });
@@ -643,15 +654,60 @@ app.get('/reviews', (req, res) => {
 // Админ-панель
 // ==========================================
 
-// Создаём админ-пользователя если не существует
+// Создаём пользователей с ролями если не существуют
 async function ensureAdminUser() {
     const users = getUsers();
-    const adminExists = users.some(u => u.email === 'admin@mirageml.com');
     
+    // Создаём разработчика (developer)
+    const developerExists = users.some(u => u.email === 'developer@mirageml.com');
+    if (!developerExists) {
+        const hashedPassword = await bcrypt.hash('mirage2026', 10);
+        const newDeveloper = {
+            id: Date.now().toString(),
+            name: 'Главный разработчик',
+            email: 'developer@mirageml.com',
+            password: hashedPassword,
+            role: USER_ROLES.DEVELOPER,
+            roleDisplay: 'Разработчик',
+            theme: 'dark',
+            country: 'ru',
+            createdAt: new Date().toISOString(),
+            sessions: []
+        };
+        users.push(newDeveloper);
+        console.log('✅ Создан DEVELOPER: developer@mirageml.com / mirage2026');
+    } else {
+        console.log('✅ DEVELOPER уже существует');
+    }
+    
+    // Создаём модератора (moderator)
+    const moderatorExists = users.some(u => u.email === 'moderator@mirageml.com');
+    if (!moderatorExists) {
+        const hashedPassword = await bcrypt.hash('moderator123', 10);
+        const newModerator = {
+            id: (Date.now() + 1).toString(),
+            name: 'Модератор',
+            email: 'moderator@mirageml.com',
+            password: hashedPassword,
+            role: USER_ROLES.MODERATOR,
+            roleDisplay: 'Модератор',
+            theme: 'dark',
+            country: 'ru',
+            createdAt: new Date().toISOString(),
+            sessions: []
+        };
+        users.push(newModerator);
+        console.log('✅ Создан MODERATOR: moderator@mirageml.com / moderator123');
+    } else {
+        console.log('✅ MODERATOR уже существует');
+    }
+    
+    // Создаём старого админа для совместимости
+    const adminExists = users.some(u => u.email === 'admin@mirageml.com');
     if (!adminExists) {
         const hashedPassword = await bcrypt.hash('admin123', 10);
         const newAdmin = {
-            id: Date.now().toString(),
+            id: (Date.now() + 2).toString(),
             name: 'Администратор',
             email: 'admin@mirageml.com',
             password: hashedPassword,
@@ -663,20 +719,62 @@ async function ensureAdminUser() {
             sessions: []
         };
         users.push(newAdmin);
-        saveUsers(users);
-        console.log('Создан админ-пользователь: admin@mirageml.com / admin123');
+        console.log('✅ Создан ADMIN: admin@mirageml.com / admin123');
     } else {
-        console.log('Админ-пользователь уже существует');
+        console.log('✅ ADMIN уже существует');
     }
+    
+    saveUsers(users);
 }
 ensureAdminUser();
 
 // Middleware для проверки авторизации администратора
 function requireAdminAuth(req, res, next) {
-    if (req.session && req.session.adminId && req.session.adminRole === 'admin') {
+    if (req.session && req.session.adminId) {
         return next();
     }
     res.redirect('/admin/login');
+}
+
+// Middleware для проверки прав доступа (RBAC)
+function requirePermission(resource, action) {
+    return (req, res, next) => {
+        const userRole = req.session.adminRole;
+        const userId = req.session.adminId;
+        
+        if (!userRole) {
+            return res.status(403).json({ error: 'Роль не определена' });
+        }
+        
+        const permission = hasPermission(userRole, resource, action);
+        
+        if (permission === true) {
+            return next();
+        }
+        
+        if (permission === 'own') {
+            // Проверка владения ресурсом
+            const resourceId = req.params.id || req.body.ownerId || req.query.ownerId;
+            if (resourceId && isOwner(userId, resourceId)) {
+                return next();
+            }
+            return res.status(403).json({ error: 'Доступ только к своим ресурсам' });
+        }
+        
+        return res.status(403).json({ 
+            error: 'Недостаточно прав',
+            required: `${resource}.${action}`,
+            yourRole: userRole
+        });
+    };
+}
+
+// Middleware для проверки роли разработчика
+function requireDeveloper(req, res, next) {
+    if (req.session.adminRole === USER_ROLES.DEVELOPER) {
+        return next();
+    }
+    res.status(403).json({ error: 'Доступно только разработчикам' });
 }
 
 // Страница входа
@@ -691,7 +789,7 @@ app.post('/admin/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         console.log('[Admin Login] Попытка входа:', email);
-        
+
         const users = getUsers();
         const user = users.find(u => u.email === email);
 
@@ -707,17 +805,19 @@ app.post('/admin/login', async (req, res) => {
             return res.render('admin-login', { error: 'Неверный email или пароль' });
         }
 
-        if (user.role !== 'admin') {
+        // Проверка: только developer и moderator могут войти в админку
+        const allowedRoles = [USER_ROLES.DEVELOPER, USER_ROLES.MODERATOR, 'admin'];
+        if (!allowedRoles.includes(user.role)) {
             console.log('[Admin Login] Недостаточно прав, роль:', user.role);
-            return res.render('admin-login', { error: 'Доступ только для администраторов' });
+            return res.render('admin-login', { error: 'Доступ запрещён. Недостаточно прав.' });
         }
 
         req.session.adminId = user.id;
         req.session.adminEmail = user.email;
         req.session.adminRole = user.role;
         req.session.adminName = user.name;
-        
-        console.log('[Admin Login] Успешный вход, session ID:', req.sessionID);
+
+        console.log('[Admin Login] Успешный вход, session ID:', req.sessionID, 'Роль:', user.role);
 
         res.redirect('/admin');
     } catch (error) {
@@ -744,21 +844,34 @@ app.get('/admin', requireAdminAuth, (req, res) => {
         totalProjects: projects.length,
         totalSessions: sessions.length,
         totalReviews: reviews.length,
+        developerCount: users.filter(u => u.role === USER_ROLES.DEVELOPER).length,
+        moderatorCount: users.filter(u => u.role === USER_ROLES.MODERATOR).length,
         adminCount: users.filter(u => u.role === 'admin').length,
-        userCount: users.filter(u => u.role === 'user').length,
+        userCount: users.filter(u => !u.role || u.role === 'user').length,
         approvedReviews: reviews.filter(r => r.approved).length,
         pendingReviews: reviews.filter(r => !r.approved).length
     };
 
-    const body = res.render('admin-dashboard', { stats, port: PORT }, { async: false });
+    // Информация о текущем администраторе
+    const currentAdmin = {
+        id: req.session.adminId,
+        name: req.session.adminName,
+        email: req.session.adminEmail,
+        role: req.session.adminRole,
+        roleDisplay: req.session.adminRole === USER_ROLES.DEVELOPER ? 'Разработчик' :
+                     req.session.adminRole === USER_ROLES.MODERATOR ? 'Модератор' : 'Администратор'
+    };
+
     res.render('admin-layout', {
         title: 'Главная',
         currentPage: 'dashboard',
-        body: body
+        stats: stats,
+        port: PORT,
+        currentAdmin: currentAdmin
     });
 });
 
-// Пользователи
+// Пользователи - только для developer
 app.get('/admin/users', requireAdminAuth, (req, res) => {
     const users = getUsers();
     const usersWithoutPassword = users.map(u => {
@@ -769,13 +882,26 @@ app.get('/admin/users', requireAdminAuth, (req, res) => {
     // Функция для отображения роли
     function getRoleDisplay(role, roleDisplay) {
         if (roleDisplay) return roleDisplay;
+        if (role === USER_ROLES.DEVELOPER) return 'Разработчик';
+        if (role === USER_ROLES.MODERATOR) return 'Модератор';
         if (role === 'admin') return 'Администратор';
         return 'Пользователь';
     }
 
+    // Проверка: может ли текущий пользователь удалять/редактировать
+    const canManageUsers = req.session.adminRole === USER_ROLES.DEVELOPER;
+    const currentUserId = req.session.adminId;
+
     const body = `
         <div class="card">
-            <h3><i class="fas fa-users"></i> Пользователи (${users.length})</h3>
+            <div class="card-header-flex">
+                <h3><i class="fas fa-users"></i> Пользователи (${users.length})</h3>
+                ${canManageUsers ? `
+                    <a href="/admin/users/create" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Добавить пользователя
+                    </a>
+                ` : ''}
+            </div>
             <table>
                 <thead>
                     <tr>
@@ -784,54 +910,555 @@ app.get('/admin/users', requireAdminAuth, (req, res) => {
                         <th>Email</th>
                         <th>Роль</th>
                         <th>Дата регистрации</th>
-                        <th>Действия</th>
+                        ${canManageUsers ? '<th>Действия</th>' : ''}
                     </tr>
                 </thead>
                 <tbody>
-                    ${usersWithoutPassword.map(u => `
+                    ${usersWithoutPassword.map(u => {
+                        const isCurrentUser = u.id === currentUserId;
+                        return `
                         <tr>
                             <td>${u.id}</td>
                             <td>${u.name}</td>
                             <td>${u.email}</td>
-                            <td><span class="badge ${u.role === 'admin' ? 'badge-admin' : 'badge-user'}">${getRoleDisplay(u.role, u.roleDisplay)}</span></td>
+                            <td><span class="badge badge-${u.role || 'user'}">${getRoleDisplay(u.role, u.roleDisplay)}</span></td>
                             <td>${new Date(u.createdAt).toLocaleDateString('ru-RU')}</td>
-                            <td>
-                                <a href="/admin/users/edit/${u.id}" class="btn btn-primary"><i class="fas fa-edit"></i></a>
-                                <a href="/admin/users/delete/${u.id}" class="btn btn-danger" onclick="return confirm('Удалить пользователя?')"><i class="fas fa-trash"></i></a>
-                            </td>
+                            ${canManageUsers ? `
+                                <td>
+                                    ${isCurrentUser ? `
+                                        <span class="badge badge-warning" style="cursor: default;">
+                                            <i class="fas fa-lock"></i> Ваш аккаунт
+                                        </span>
+                                    ` : `
+                                        <a href="/admin/users/edit/${u.id}" class="btn btn-primary"><i class="fas fa-edit"></i></a>
+                                        <a href="/admin/users/delete/${u.id}" class="btn btn-danger" onclick="return confirm('Удалить пользователя?')"><i class="fas fa-trash"></i></a>
+                                    `}
+                                </td>
+                            ` : ''}
                         </tr>
-                    `).join('')}
+                    `}).join('')}
                 </tbody>
             </table>
         </div>
     `;
 
+    // Информация о текущем администраторе
+    const currentAdmin = {
+        id: req.session.adminId,
+        name: req.session.adminName,
+        email: req.session.adminEmail,
+        role: req.session.adminRole,
+        roleDisplay: req.session.adminRole === USER_ROLES.DEVELOPER ? 'Разработчик' :
+                     req.session.adminRole === USER_ROLES.MODERATOR ? 'Модератор' : 'Администратор'
+    };
+
     res.render('admin-layout', {
         title: 'Пользователи',
         currentPage: 'users',
-        body: body
+        body: body,
+        currentAdmin: currentAdmin
     });
 });
 
-// Удаление пользователя
-app.get('/admin/users/delete/:id', requireAdminAuth, (req, res) => {
+// Страница создания пользователя (только developer)
+app.get('/admin/users/create', requireAdminAuth, requireDeveloper, (req, res) => {
+    const currentAdmin = {
+        id: req.session.adminId,
+        name: req.session.adminName,
+        email: req.session.adminEmail,
+        role: req.session.adminRole,
+        roleDisplay: 'Разработчик'
+    };
+
+    const body = `
+        <div class="card">
+            <div class="card-header-flex">
+                <h3><i class="fas fa-user-plus"></i> Новый пользователь</h3>
+                <a href="/admin/users" class="btn btn-ghost">
+                    <i class="fas fa-arrow-left"></i> Назад
+                </a>
+            </div>
+            <form id="create-user-form" class="form-container">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">
+                            <i class="fas fa-user"></i> Имя
+                        </label>
+                        <input type="text" id="name" name="name" required placeholder="Введите имя">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        <input type="email" id="email" name="email" required placeholder="example@mirageml.com">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password">
+                            <i class="fas fa-lock"></i> Пароль
+                        </label>
+                        <input type="password" id="password" name="password" required minlength="6" placeholder="Минимум 6 символов">
+                        <small class="form-hint">Пароль должен быть не менее 6 символов</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">
+                            <i class="fas fa-lock"></i> Подтверждение пароля
+                        </label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6" placeholder="Повторите пароль">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="role">
+                            <i class="fas fa-user-shield"></i> Роль
+                        </label>
+                        <select id="role" name="role" required>
+                            <option value="user">Пользователь</option>
+                            <option value="moderator">Модератор</option>
+                            <option value="admin">Администратор</option>
+                            <option value="developer">Разработчик</option>
+                        </select>
+                        <small class="form-hint">Выберите роль для нового пользователя</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="country">
+                            <i class="fas fa-globe"></i> Страна
+                        </label>
+                        <select id="country" name="country" required>
+                            <option value="ru">Россия</option>
+                            <option value="us">США</option>
+                            <option value="eu">Европа</option>
+                            <option value="other">Другая</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost" onclick="window.location.href='/admin/users'">
+                        <i class="fas fa-times"></i> Отмена
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Создать пользователя
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="notification" class="notification"></div>
+
+        <style>
+            .card-header-flex {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            .form-container {
+                max-width: 800px;
+            }
+            .form-row {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+            .form-group {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .form-group label {
+                color: #2c3e50;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .form-group label i {
+                color: #3498db;
+            }
+            .form-group input,
+            .form-group select {
+                padding: 12px 15px;
+                border: 2px solid #ecf0f1;
+                border-radius: 8px;
+                font-size: 14px;
+                transition: border-color 0.3s;
+            }
+            .form-group input:focus,
+            .form-group select:focus {
+                outline: none;
+                border-color: #3498db;
+            }
+            .form-hint {
+                color: #7f8c8d;
+                font-size: 12px;
+            }
+            .form-actions {
+                display: flex;
+                gap: 12px;
+                justify-content: flex-end;
+                padding-top: 20px;
+                border-top: 1px solid #ecf0f1;
+            }
+            .notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                border-radius: 10px;
+                color: white;
+                font-weight: 500;
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+                z-index: 1000;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            }
+            .notification.show {
+                transform: translateX(0);
+            }
+            .notification.success {
+                background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            }
+            .notification.error {
+                background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            }
+        </style>
+
+        <script>
+            function showNotification(message, type) {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = 'notification ' + type + ' show';
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+
+            document.getElementById('create-user-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value,
+                    confirmPassword: document.getElementById('confirmPassword').value,
+                    role: document.getElementById('role').value,
+                    country: document.getElementById('country').value
+                };
+
+                if (formData.password !== formData.confirmPassword) {
+                    showNotification('Пароли не совпадают', 'error');
+                    return;
+                }
+
+                if (formData.password.length < 6) {
+                    showNotification('Пароль должен быть не менее 6 символов', 'error');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/admin/users', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showNotification('Пользователь успешно создан', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/admin/users';
+                        }, 1500);
+                    } else {
+                        showNotification(result.error || 'Ошибка создания', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Ошибка соединения с сервером', 'error');
+                }
+            });
+        </script>
+    `;
+
+    res.render('admin-layout', {
+        title: 'Создание пользователя',
+        currentPage: 'users',
+        body: body,
+        currentAdmin: currentAdmin
+    });
+});
+
+// API: Создание пользователя (только developer)
+app.post('/api/admin/users', requireAdminAuth, requireDeveloper, async (req, res) => {
+    try {
+        const { name, email, password, role, country } = req.body;
+
+        if (!name || !email || !password || !role) {
+            return res.status(400).json({ error: 'Все обязательные поля должны быть заполнены' });
+        }
+
+        const users = getUsers();
+
+        // Проверка: email уже используется
+        if (users.some(u => u.email === email)) {
+            return res.status(400).json({ error: 'Email уже используется' });
+        }
+
+        // Хэширование пароля
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = {
+            id: Date.now().toString(),
+            name,
+            email,
+            password: hashedPassword,
+            role: role || 'user',
+            roleDisplay: role === 'developer' ? 'Разработчик' :
+                         role === 'moderator' ? 'Модератор' :
+                         role === 'admin' ? 'Администратор' : 'Пользователь',
+            theme: 'dark',  // Фиксированная тёмная тема
+            country: country || 'ru',
+            createdAt: new Date().toISOString(),
+            sessions: []
+        };
+
+        users.push(newUser);
+        saveUsers(users);
+
+        res.status(201).json({
+            success: true,
+            message: 'Пользователь успешно создан',
+            user: {
+                id: newUser.id,
+                name: newUser.name,
+                email: newUser.email,
+                role: newUser.role
+            }
+        });
+    } catch (error) {
+        console.error('Ошибка создания пользователя:', error);
+        res.status(500).json({ error: 'Ошибка при создании пользователя' });
+    }
+});
+
+// Страница профиля администратора
+app.get('/admin/profile', requireAdminAuth, (req, res) => {
+    const users = getUsers();
+    const admin = users.find(u => u.id === req.session.adminId);
+
+    if (!admin) {
+        return res.redirect('/admin/login');
+    }
+
+    const adminData = {
+        id: admin.id,
+        name: admin.name,
+        email: admin.email,
+        role: admin.role || 'admin',
+        roleDisplay: admin.roleDisplay || (
+            admin.role === USER_ROLES.DEVELOPER ? 'Разработчик' :
+            admin.role === USER_ROLES.MODERATOR ? 'Модератор' :
+            'Администратор'
+        ),
+        theme: admin.theme || 'dark',
+        country: admin.country || 'ru',
+        createdAt: admin.createdAt
+    };
+
+    // Информация о текущем администраторе
+    const currentAdmin = {
+        id: req.session.adminId,
+        name: req.session.adminName,
+        email: req.session.adminEmail,
+        role: req.session.adminRole,
+        roleDisplay: adminData.roleDisplay
+    };
+
+    res.render('admin-layout', {
+        title: 'Профиль',
+        currentPage: 'profile',
+        body: '',
+        adminData: adminData,
+        currentAdmin: currentAdmin
+    });
+});
+
+// API: Получение профиля администратора
+app.get('/api/admin/profile', requireAdminAuth, (req, res) => {
+    const users = getUsers();
+    const admin = users.find(u => u.id === req.session.adminId);
+
+    if (!admin) {
+        return res.status(404).json({ error: 'Администратор не найден' });
+    }
+
+    const { password, ...adminWithoutPassword } = admin;
+    res.json(adminWithoutPassword);
+});
+
+// API: Обновление профиля администратора
+app.put('/api/admin/profile', requireAdminAuth, async (req, res) => {
+    try {
+        const { name, email, country } = req.body;
+        const users = getUsers();
+        const adminIndex = users.findIndex(u => u.id === req.session.adminId);
+
+        if (adminIndex === -1) {
+            return res.status(404).json({ error: 'Администратор не найден' });
+        }
+
+        // Проверка email на уникальность
+        if (email && email !== users[adminIndex].email) {
+            if (users.some(u => u.email === email && u.id !== users[adminIndex].id)) {
+                return res.status(400).json({ error: 'Email уже используется' });
+            }
+        }
+
+        users[adminIndex] = {
+            ...users[adminIndex],
+            name: name || users[adminIndex].name,
+            email: email || users[adminIndex].email,
+            theme: 'dark',  // Фиксированная тёмная тема
+            country: country || users[adminIndex].country
+        };
+
+        saveUsers(users);
+
+        res.json({
+            success: true,
+            message: 'Профиль успешно обновлен',
+            admin: users[adminIndex]
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка при обновлении профиля' });
+    }
+});
+
+// API: Смена пароля администратора
+app.post('/api/admin/change-password', requireAdminAuth, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const users = getUsers();
+        const admin = users.find(u => u.id === req.session.adminId);
+
+        if (!admin) {
+            return res.status(404).json({ error: 'Администратор не найден' });
+        }
+
+        const match = await bcrypt.compare(currentPassword, admin.password);
+        if (!match) {
+            return res.status(401).json({ error: 'Текущий пароль неверный' });
+        }
+
+        if (!newPassword || newPassword.length < 6) {
+            return res.status(400).json({ error: 'Новый пароль должен быть не менее 6 символов' });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        admin.password = hashedPassword;
+        saveUsers(users);
+
+        res.json({ success: true, message: 'Пароль успешно изменен' });
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка при изменении пароля' });
+    }
+});
+
+// Удаление пользователя (только developer)
+app.get('/admin/users/delete/:id', requireAdminAuth, requireDeveloper, (req, res) => {
     const userId = req.params.id;
-    let users = getUsers();
-    
+    const currentUserId = req.session.adminId;
+    const users = getUsers();
+    const userToDelete = users.find(u => u.id === userId);
+
+    // ЗАЩИТА: Нельзя удалить самого себя
+    if (userId === currentUserId) {
+        console.error(`[SECURITY] Пользователь ${currentUserId} попытался удалить самого себя!`);
+        return res.status(403).send(`
+            <!DOCTYPE html>
+            <html lang="ru">
+            <head>
+                <meta charset="UTF-8">
+                <title>Ошибка</title>
+                <style>
+                    body {
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                        background: #f5f6fa;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        min-height: 100vh;
+                        margin: 0;
+                    }
+                    .error-container {
+                        background: white;
+                        padding: 40px;
+                        border-radius: 10px;
+                        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                        text-align: center;
+                        max-width: 500px;
+                    }
+                    .error-icon {
+                        font-size: 64px;
+                        margin-bottom: 20px;
+                    }
+                    h1 {
+                        color: #e74c3c;
+                        margin-bottom: 15px;
+                    }
+                    p {
+                        color: #7f8c8d;
+                        margin-bottom: 25px;
+                        line-height: 1.6;
+                    }
+                    .btn {
+                        display: inline-block;
+                        padding: 12px 25px;
+                        background: #3498db;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 5px;
+                        font-weight: 500;
+                        transition: background 0.3s;
+                    }
+                    .btn:hover {
+                        background: #2980b9;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="error-container">
+                    <div class="error-icon">🚫</div>
+                    <h1>Нельзя удалить самого себя!</h1>
+                    <p>
+                        Система безопасности предотвратила удаление вашей собственной учётной записи.
+                        Это защита от случайного удаления главного разработчика.
+                    </p>
+                    <a href="/admin/users" class="btn">← Вернуться к пользователям</a>
+                </div>
+            </body>
+            </html>
+        `);
+    }
+
     // Удаляем проекты пользователя
     let projects = getProjects();
     projects = projects.filter(p => p.userId !== userId);
     saveProjects(projects);
-    
+
     // Удаляем сессии пользователя
     let sessions = getSessions();
     sessions = sessions.filter(s => s.userId !== userId);
     saveSessions(sessions);
-    
+
     // Удаляем пользователя
     users = users.filter(u => u.id !== userId);
     saveUsers(users);
-    
+
     res.redirect('/admin/users');
 });
 

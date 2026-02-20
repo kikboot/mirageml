@@ -894,5 +894,15 @@
     "location": "Москва, Россия",
     "createdAt": "2026-02-18T17:25:14.981Z",
     "lastActive": "2026-02-18T17:25:14.981Z"
+  },
+  {
+    "id": "1771485802090",
+    "userId": "1771485766335",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNzcxNDg1NzY2MzM1IiwiZW1haWwiOiIxQG1pcmFnZW1sLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzcxNDg1ODAyLCJleHAiOjE3NzE0ODk0MDJ9.8N_sDCuiTrfC1-MBZG0Fpv4ggWCi8nP1WpBwL_abGfM",
+    "device": "Chrome, Windows",
+    "ip": "::1",
+    "location": "Москва, Россия",
+    "createdAt": "2026-02-19T07:23:22.090Z",
+    "lastActive": "2026-02-19T07:23:22.090Z"
   }
 ]

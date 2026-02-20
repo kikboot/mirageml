@@ -25,5 +25,23 @@
     "comment": "Привет, это проверка админ-панели. Я админ панели должна появиться запись, где можно одобрить отзыв пользователя. Это проверка работы",
     "approved": true,
     "createdAt": "2026-02-18T17:27:58.158Z"
+  },
+  {
+    "id": "1771485822513",
+    "name": "атв",
+    "email": "1@mirageml.com",
+    "rating": 2,
+    "comment": "Ytgkj[j",
+    "approved": true,
+    "createdAt": "2026-02-19T07:23:42.513Z"
+  },
+    {
+    "id": "1771485822513",
+    "name": "атв",
+    "email": "1@mirageml.com",
+    "rating": 2,
+    "comment": "Ytgkj[j",
+    "approved": false,
+    "createdAt": "2026-02-19T07:23:42.513Z"
   }
 ]
