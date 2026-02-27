@@ -650,6 +650,10 @@ app.get('/reviews', (req, res) => {
     res.sendFile(path.join(__dirname, '../mirageml-frontend/reviews/index.html'));
 });
 
+app.get('/about', (req, res) => {
+    res.sendFile(path.join(__dirname, '../mirageml-frontend/about/index.html'));
+});
+
 // ==========================================
 // Админ-панель
 // ==========================================

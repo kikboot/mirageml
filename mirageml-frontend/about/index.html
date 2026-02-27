@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О проекте MirageML - Визуальный редактор сайтов</title>
+    <meta name="description" content="Узнайте историю создания MirageML, нашу миссию и команду разработчиков">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../about/style.css">
+    <link type="image/x-icon" href="../logo/logo3.svg" rel="shortcut icon">
+</head>
+
+<body>
+    <div class="background-container">
+        <div class="animated-grid">
+            <div class="grid-orbit"></div>
+            <div class="grid-orbit"></div>
+            <div class="grid-orbit"></div>
+        </div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+    </div>
+
+    <!-- Хедер -->
+    <header class="glass-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <button class="mobile-menu-btn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="logo">
+                        <div class="logo-wrapper">
+                            <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
+                            <span class="logo-text">MirageML</span>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="main-nav">
+                </nav>
+                <div class="auth-buttons">
+                    <!-- Кнопки будут добавлены через JS в зависимости от авторизации -->
+                </div>
+        </div>
+    </header>
+
+    <!-- Мобильное меню -->
+    <div class="mobile-menu-container">
+        <button class="mobile-menu-close">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="mobile-logo">
+            <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
+            <span class="logo-text">MirageML</span>
+        </div>
+        <div class="mobile-menu-content">
+            <nav class="mobile-nav">
+            </nav>
+            <div class="mobile-auth-buttons">
+                <!-- Кнопки будут добавлены через JS в зависимости от авторизации -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero секция -->
+    <section class="about-hero">
+        <div class="container">
+            <div class="about-hero-content">
+                <div class="about-badge">
+                    <i class="fas fa-heart"></i>
+                    <span>История проекта</span>
+                </div>
+                <h1 class="about-title">
+                    <span class="title-line">О проекте</span>
+                    <span class="title-gradient">MirageML</span>
+                </h1>
+                <p class="about-subtitle">
+                    История создания, миссия и видение проекта, который меняет подход к веб-разработке
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция: История создания -->
+    <section class="story-section" id="story-section">
+        <div class="container">
+            <div class="section-header-modern">
+                <div class="section-badge">История</div>
+                <h2>Как идея перерастает в рабочий продукт</h2>
+                <p class="section-subtitle">История создания MirageML</p>
+            </div>
+            <div class="story-content">
+                <div class="story-text-full">
+                    <h3>Третий курс. Практика</h3>
+                    <p>
+                        Третий курс. Производственная практика в компании. Прихожу к руководителю за задачей, а он говорит: 
+                        <strong>«Придумайте сами, что хотите разработать. Или работайте над своим проектом»</strong>.
+                    </p>
+                    <p>
+                        Честно? Растерялся. Но потом сел и начал думать: чего мне самому как разработчику реально не хватает? 
+                        От чего каждый раз дергается глаз?
+                    </p>
+                    <p>
+                        И тут пробило: <strong>визуальный редактор для создания сайтов с нуля</strong>. С инструментами как в Figma, 
+                        но на выходе — чистый код. Никакого мусора, никаких костылей.
+                    </p>
+                    <p>
+                        Вечером набросал прототип. Выглядело оно, мягко говоря, так себе (скриншот самой первой версии до сих пор храню). 
+                        Но магия была в другом: <strong>оно работало</strong>. Можно было перетаскивать элементы и получать верстку, 
+                        за которую не стыдно.
+                    </p>
+                    <p class="story-quote">
+                        Практику сдал на пятерку. Руководитель тогда сказал фразу, которую запомнил навсегда: 
+                        <em>«Если бы ты к нам устраивался работать — с такой идеей взяли бы без вопросов»</em>.
+                    </p>
+                </div>
+
+                <div class="story-divider">
+                    <div class="divider-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                </div>
+
+                <div class="story-text-full">
+                    <h3>Диплом вместо болота</h3>
+                    <p>
+                        Летом продолжил работать над проектом. Вкалывал, доделывал, переписывал. А потом встал вопрос темы для диплома.
+                    </p>
+                    <p>
+                        Можно было бросить недоделанное, схватить типовую тему и сдать «для галочки». Но внутри что-то щелкнуло. 
+                        Я уже столько вложил, уже видел, что это реально нужно людям. Бросать? Рука не поднялась.
+                    </p>
+                    <p>
+                        Так <strong>MirageML стал моей дипломной работой</strong>.
+                    </p>
+                </div>
+
+                <div class="story-divider">
+                    <div class="divider-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                </div>
+
+                <div class="story-text-full">
+                    <h3>Год спустя</h3>
+                    <p>
+                        Сейчас заканчиваю колледж. Проект, который родился как идея для практики, дорос до полноценного продукта. 
+                        Большинство того, что хотел воплотить, реализовал. Добиваю баги, накручиваю функционал.
+                    </p>
+                    <p>
+                        Но знаете, что важнее всего? Я могу доделать MirageML в вакууме. Могу решать проблемы, которые придумал сам. 
+                        А могу сделать его инструментом, который реально закроет боли разработчиков.
+                    </p>
+                    <p class="story-highlight">
+                        <strong>Выбираю второе.</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция: Миссия -->
+    <section class="mission-section">
+        <div class="container">
+            <div class="section-header-modern">
+                <div class="section-badge">Мотивация</div>
+                <h2>Зачем я это делаю</h2>
+                <p class="section-subtitle">Личная история и мотивация</p>
+            </div>
+            <div class="mission-content">
+                <div class="mission-text-block">
+                    <p class="mission-intro">
+                        Когда я пришёл на практику в компанию, у меня не было конкретной задачи. 
+                        Руководитель просто сказал: <strong>«Придумайте сами, что хотите разработать»</strong>.
+                    </p>
+                    <p>
+                        И тогда я начал думать о том, что меня реально бесит в разработке. О том, от чего дёргается глаз 
+                        каждый раз, когда видишь чужой код. О том, чего мне самому не хватает как разработчику.
+                    </p>
+                    <p>
+                        Так родилась идея <strong>MirageML</strong> — визуального редактора, который создаёт чистый код. 
+                        Без мусора, без костылей, без «это потом поправим».
+                    </p>
+                    <div class="mission-quote">
+                        <i class="fas fa-quote-left"></i>
+                        <p>
+                            Я делаю это, потому что устал видеть, как хорошие идеи умирают из-за того, 
+                            что человек не умеет программировать. Я делаю это, чтобы дать людям инструмент, 
+                            который реально работает.
+                        </p>
+                        <i class="fas fa-quote-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция: Почему MirageML -->
+    <section class="why-section">
+        <div class="container">
+            <div class="section-header-modern">
+                <div class="section-badge">Особенности</div>
+                <h2>Почему MirageML особенный</h2>
+                <p class="section-subtitle">Что отличает этот проект от других</p>
+            </div>
+            <div class="why-content">
+                <div class="why-item">
+                    <div class="why-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="why-text">
+                        <h3>Один разработчик — полное внимание к деталям</h3>
+                        <p>
+                            MirageML разрабатываю только я. Это значит, что каждое решение продумано, 
+                            каждая функция имеет смысл. Нет команды, которая принимает решения комитетом. 
+                            Есть я и моё видение того, как должен работать идеальный инструмент.
+                        </p>
+                    </div>
+                </div>
+                <div class="why-item">
+                    <div class="why-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="why-text">
+                        <h3>Без подписок и скрытых платежей</h3>
+                        <p>
+                            Я ненавижу, когда за базовый функционал нужно платить каждый месяц. 
+                            Поэтому MirageML бесплатен в своей основе. Вы можете создать полноценный сайт, 
+                            не заплатив ни копейки. Платные функции — только дополнительные возможности.
+                        </p>
+                    </div>
+                </div>
+                <div class="why-item">
+                    <div class="why-icon">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <div class="why-text">
+                        <h3>Чистый код на выходе</h3>
+                        <p>
+                            Большинство визуальных редакторов генерируют мусор в коде. MirageML создаёт 
+                            оптимизированный HTML и CSS, который не стыдно показать другому разработчику. 
+                            Никаких inline-стилей, никаких лишних обёрток.
+                        </p>
+                    </div>
+                </div>
+                <div class="why-item">
+                    <div class="why-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="why-text">
+                        <h3>Живое развитие</h3>
+                        <p>
+                            Проект не заброшен и не «заморожен». Я постоянно работаю над улучшениями, 
+                            исправляю баги, добавляю новые функции. Каждая обратная связь от пользователей 
+                            учитывается и помогает сделать MirageML лучше.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция: Автор проекта -->
+    <section class="author-section">
+        <div class="container">
+            <div class="section-header-modern">
+                <div class="section-badge">Об авторе</div>
+                <h2>Кто создал MirageML</h2>
+                <p class="section-subtitle">Знакомьтесь, разработчик проекта</p>
+            </div>
+            <div class="author-content">
+                <div class="author-card">
+                    <div class="author-avatar">
+                        <img src="../logo/logo3.svg" alt="MirageML Logo" class="author-logo-img">
+                    </div>
+                    <div class="author-info">
+                        <h3>Кирилл</h3>
+                        <p class="author-role">Студент 4 курса & Full-stack разработчик</p>
+                        <p class="author-description">
+                            Меня зовут Кирилл, я учусь на 4 курсе и разрабатываю MirageML уже больше года. 
+                            Всё началось с производственной практики, когда руководитель дал мне свободу выбора: 
+                            «Придумайте сами, что хотите разработать». Так появилась идея визуального редактора.
+                        </p>
+                        <p class="author-description">
+                            Поначалу это был просто прототип — вечером набросал, утром показал. Но потом идея 
+                            захватила. Я продолжил работать летом, вечерами и выходными. MirageML стал моей 
+                            дипломной работой, а затем — проектом, в который я вложил сотни часов.
+                        </p>
+                        <p class="author-description">
+                            Я верю, что инструменты для создания сайтов должны быть доступными каждому. 
+                            Не нужно знать программирование, чтобы воплотить свою идею в жизнь. Не нужно 
+                            платить подписки, чтобы получить качественный результат.
+                        </p>
+                        <div class="author-stats">
+                            <div class="stat">
+                                <span class="stat-value">4</span>
+                                <span class="stat-label">Курс обучения</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">1+</span>
+                                <span class="stat-label">Год разработки</span>
+                            </div>
+                        </div>
+                        <div class="author-social">
+                            <p class="social-text">Связаться со мной:</p>
+                            <div class="social-links">
+                                <a href="mailto:developer@mirageml.com" class="social-link">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>Email</span>
+                                </a>
+                                <a href="../support/index.html" class="social-link">
+                                    <i class="fas fa-headset"></i>
+                                    <span>Поддержка</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция: Призыв к действию -->
+    <section class="cta-about-section">
+        <div class="container">
+            <div class="cta-about-card">
+                <div class="cta-about-content">
+                    <h2>Готовы создать свой первый сайт?</h2>
+                    <p>Присоединяйтесь к тысячам пользователей, которые уже создают сайты с MirageML</p>
+                    <div class="cta-about-actions">
+                        <button class="cta-button primary" id="start-project-btn">
+                            <span class="btn-content">
+                                <i class="fas fa-magic"></i>
+                                Начать создание
+                            </span>
+                            <div class="btn-shine"></div>
+                        </button>
+                        <button class="cta-button secondary" id="learn-more-btn">
+                            <i class="fas fa-book"></i>
+                            Узнать больше
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer class="about-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
+                        <span class="logo-text">MirageML</span>
+                    </div>
+                    <p class="footer-description">
+                        Визуальный редактор для создания HTML/CSS разметки с помощью интерфейса drag-and-drop
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h4>Навигация</h4>
+                    <ul class="footer-links">
+                        <li><a href="../main/index.html">Главная</a></li>
+                        <li><a href="../about/index.html">О проекте</a></li>
+                        <li><a href="../support/index.html">Поддержка</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Документы</h4>
+                    <ul class="footer-links">
+                        <li><a href="../conditions/index.html">Условия использования</a></li>
+                        <li><a href="../confidentiality/index.html">Конфиденциальность</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 MirageML. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../about/script.js"></script>
+</body>
+
+</html>
