@@ -654,6 +654,15 @@ app.get('/about', (req, res) => {
     res.sendFile(path.join(__dirname, '../mirageml-frontend/about/index.html'));
 });
 
+// Маршруты для страниц ошибок
+app.get('/404', (req, res) => {
+    res.status(404).sendFile(path.join(__dirname, '../mirageml-frontend/404/index.html'));
+});
+
+app.get('/500', (req, res) => {
+    res.status(500).sendFile(path.join(__dirname, '../mirageml-frontend/500/index.html'));
+});
+
 // ==========================================
 // Админ-панель
 // ==========================================
@@ -1652,9 +1661,55 @@ app.get('/admin/reviews/delete/:id', requireAdminAuth, (req, res) => {
     res.redirect('/admin/reviews');
 });
 
+// ==========================================
+// Обработка ошибок и 404/500 страницы
+// ==========================================
+
+// Обработка 404 - Страница не найдена
+app.use((req, res, next) => {
+    // Если это API запрос, возвращаем JSON
+    if (req.path.startsWith('/api/') || req.path.startsWith('/admin/')) {
+        return res.status(404).json({
+            error: 'Not Found',
+            message: 'Запрошенный ресурс не найден',
+            path: req.path
+        });
+    }
+    
+    // Для обычных запросов показываем 404 страницу
+    res.status(404).sendFile(path.join(__dirname, '../mirageml-frontend/404/index.html'));
+});
+
+// Обработка 500 - Внутренняя ошибка сервера
+app.use((err, req, res, next) => {
+    console.error('Server Error:', err);
+    
+    // Логирование ошибки в файл (для production)
+    if (process.env.NODE_ENV === 'production') {
+        // Здесь можно добавить логирование в файл или external сервис
+        console.error('Error details:', err.stack);
+    }
+    
+    // Если это API запрос, возвращаем JSON
+    if (req.path.startsWith('/api/') || req.path.startsWith('/admin/')) {
+        return res.status(500).json({
+            error: 'Internal Server Error',
+            message: process.env.NODE_ENV === 'production' 
+                ? 'Внутренняя ошибка сервера' 
+                : err.message,
+            path: req.path
+        });
+    }
+    
+    // Для обычных запросов показываем 500 страницу
+    res.status(500).sendFile(path.join(__dirname, '../mirageml-frontend/500/index.html'));
+});
+
 // Запуск сервера
 app.listen(PORT, () => {
     console.log(`Сервер запущен на http://localhost:${PORT}`);
     console.log(`Админ-панель доступна по адресу http://localhost:${PORT}/admin/login`);
     console.log(`Логин: admin@mirageml.com | Пароль: admin123`);
+    console.log(`404 страница: http://localhost:${PORT}/404`);
+    console.log(`500 страница: http://localhost:${PORT}/500`);
 });
