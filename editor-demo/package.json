@@ -1,0 +1,21 @@
+{
+  "name": "mirageml-editor-demo",
+  "version": "1.0.0",
+  "description": "MirageML Editor Demo - Конструктор секций как на Tilda",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "mirageml",
+    "editor",
+    "drag-and-drop",
+    "website-builder"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
