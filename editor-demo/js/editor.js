@@ -255,17 +255,21 @@ function updatePropertiesPanel() {
 
 function renderSectionProperties(section) {
     if (!DOM.propertiesContent) return;
-    
+
     // Определяем текущий тип фона
     const bgStyle = section.element.style.background || '';
     let bgType = 'color';
     if (bgStyle.includes('gradient')) bgType = 'gradient';
     if (bgStyle.includes('url(')) bgType = 'image';
     
+    // Проверяем, есть ли видео фон
+    const videoElement = section.element.querySelector('video');
+    if (videoElement) bgType = 'video';
+
     // Получаем текущий цвет фона
     const currentBgColor = getBgColorHex(bgStyle);
     const currentOpacity = getOpacityFromColor(bgStyle);
-    
+
     DOM.propertiesContent.innerHTML = `
         <div class="property-group">
             <h4><i class="fas fa-list"></i> Элементы секции</h4>
@@ -280,7 +284,7 @@ function renderSectionProperties(section) {
                 <i class="fas fa-plus"></i> Добавить элемент
             </button>
         </div>
-        
+
         <div class="property-group">
             <h4><i class="fas fa-cog"></i> Основные</h4>
             <div class="property-item">
@@ -288,7 +292,7 @@ function renderSectionProperties(section) {
                 <input type="text" id="prop-name" value="${section.name}" onchange="updateSectionName(this.value)">
             </div>
         </div>
-        
+
         <div class="property-group">
             <h4><i class="fas fa-expand"></i> Размер</h4>
             <div class="property-row">
@@ -302,7 +306,7 @@ function renderSectionProperties(section) {
                 </div>
             </div>
         </div>
-        
+
         <div class="property-group">
             <h4><i class="fas fa-sync-alt"></i> Поворот</h4>
             <div class="property-item">
@@ -310,7 +314,7 @@ function renderSectionProperties(section) {
                 <input type="number" id="prop-rotation" value="${section.rotation || 0}" min="0" max="360" onchange="updateSectionRotation(this.value)">
             </div>
         </div>
-        
+
         <div class="property-group">
             <h4><i class="fas fa-arrows-alt"></i> Отступы</h4>
             <div class="property-row">
@@ -324,10 +328,10 @@ function renderSectionProperties(section) {
                 </div>
             </div>
         </div>
-        
+
         <div class="property-group">
-            <h4><i class="fas fa-fill-drip"></i> Фон (Figma)</h4>
-            
+            <h4><i class="fas fa-fill-drip"></i> Фон</h4>
+
             <!-- Вкладки типа фона -->
             <div class="bg-tabs" style="display:flex;gap:4px;margin-bottom:12px;">
                 <button class="bg-tab ${bgType==='color'?'active':''}" onclick="switchBgTab('color')" style="flex:1;padding:8px;background:${bgType==='color'?'rgba(99,102,241,0.2)':'rgba(255,255,255,0.05)'};border:1px solid ${bgType==='color'?'var(--primary)':'var(--glass-border)'};border-radius:6px;color:var(--light);cursor:pointer;">
@@ -339,8 +343,11 @@ function renderSectionProperties(section) {
                 <button class="bg-tab ${bgType==='image'?'active':''}" onclick="switchBgTab('image')" style="flex:1;padding:8px;background:${bgType==='image'?'rgba(99,102,241,0.2)':'rgba(255,255,255,0.05)'};border:1px solid ${bgType==='image'?'var(--primary)':'var(--glass-border)'};border-radius:6px;color:var(--light);cursor:pointer;">
                     <i class="fas fa-image"></i> Фото
                 </button>
+                <button class="bg-tab ${bgType==='video'?'active':''}" onclick="switchBgTab('video')" style="flex:1;padding:8px;background:${bgType==='video'?'rgba(99,102,241,0.2)':'rgba(255,255,255,0.05)'};border:1px solid ${bgType==='video'?'var(--primary)':'var(--glass-border)'};border-radius:6px;color:var(--light);cursor:pointer;">
+                    <i class="fas fa-video"></i> Видео
+                </button>
             </div>
-            
+
             <!-- Цвет -->
             <div id="bg-color-panel" style="display:${bgType==='color'?'block':'none'}">
                 <div class="property-item">
@@ -358,7 +365,7 @@ function renderSectionProperties(section) {
                     </div>
                 </div>
             </div>
-            
+
             <!-- Градиент -->
             <div id="bg-gradient-panel" style="display:${bgType==='gradient'?'block':'none'}">
                 <div class="property-item">
@@ -396,7 +403,7 @@ function renderSectionProperties(section) {
                     </button>
                 </div>
             </div>
-            
+
             <!-- Изображение -->
             <div id="bg-image-panel" style="display:${bgType==='image'?'block':'none'}">
                 <div class="property-item">
@@ -404,11 +411,11 @@ function renderSectionProperties(section) {
                     <input type="text" id="bg-image-url" placeholder="https://..." value="${getBgImageUrl(section.element.style.background)}" onchange="updateBgImage(this.value)" style="width:100%;">
                 </div>
                 <div class="property-item">
-                    <button class="btn btn-ghost" onclick="setBgImage('Проблема.png')" style="width:100%;margin-bottom:8px;">
-                        <i class="fas fa-image"></i> Использовать фото "Проблема.png"
+                    <button class="btn btn-ghost" onclick="setBgImage('https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1920')" style="width:100%;margin-bottom:8px;">
+                        <i class="fas fa-image"></i> Офис (Unsplash)
                     </button>
-                    <button class="btn btn-ghost" onclick="setBgImage('https://source.unsplash.com/random/1920x1080')" style="width:100%;">
-                        <i class="fas fa-globe"></i> Случайное фото (Unsplash)
+                    <button class="btn btn-ghost" onclick="setBgImage('https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920')" style="width:100%;">
+                        <i class="fas fa-globe"></i> Команда (Unsplash)
                     </button>
                 </div>
                 <div class="property-item">
@@ -456,7 +463,37 @@ function renderSectionProperties(section) {
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Видео -->
+            <div id="bg-video-panel" style="display:${bgType==='video'?'block':'none'}">
+                <div class="property-item">
+                    <label><i class="fas fa-video"></i> URL видео</label>
+                    <input type="text" id="bg-video-url" placeholder="https://..." value="${getVideoUrl(section.element)}" onchange="updateBgVideo(this.value)" style="width:100%;">
+                </div>
+                <div class="property-item">
+                    <button class="btn btn-ghost" onclick="setBgVideo('https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-1610-large.mp4')" style="width:100%;margin-bottom:8px;">
+                        <i class="fas fa-film"></i> Космос (Mixkit)
+                    </button>
+                    <button class="btn btn-ghost" onclick="setBgVideo('https://assets.mixkit.co/videos/preview/mixkit-abstract-video-of-a-man-with-a-camera-3977-large.mp4')" style="width:100%;">
+                        <i class="fas fa-globe"></i> Абстракция (Mixkit)
+                    </button>
+                </div>
+                <div class="property-item">
+                    <label><i class="fas fa-circle"></i> Overlay (цвет поверх)</label>
+                    <div class="color-picker-wrapper">
+                        <input type="color" id="video-overlay-color" value="#000000" oninput="updateVideoOverlay()">
+                        <input type="text" id="video-overlay-color-text" value="#000000" onchange="updateVideoOverlay()" style="flex:1;">
+                    </div>
+                </div>
+                <div class="property-item">
+                    <label>Прозрачность overlay</label>
+                    <div class="range-wrapper">
+                        <input type="range" id="video-overlay-opacity" min="0" max="100" value="50" oninput="updateVideoOverlay()">
+                        <span class="range-value" id="video-overlay-opacity-value">50%</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Эффекты -->
             <div class="property-item" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--glass-border);">
                 <label><i class="fas fa-magic"></i> Размытие фона (blur)</label>
@@ -487,7 +524,7 @@ function renderSectionProperties(section) {
                 </div>
             </div>
         </div>
-        
+
         <div class="property-group">
             <h4><i class="fas fa-check"></i> Действия</h4>
             <button class="btn btn-primary" onclick="saveToHistory(); showToast('Изменения сохранены', 'success')" style="width:calc(100% - 40px);margin:0 20px 12px;">
@@ -495,25 +532,26 @@ function renderSectionProperties(section) {
             </button>
         </div>
     `;
-    
+
     setupColorPicker('prop-bg-color', 'prop-bg-color-text');
 }
 
 // Переключение вкладок фона
 window.switchBgTab = function(type) {
     if (!state.selectedSection) return;
-    
+
     document.querySelectorAll('.bg-tab').forEach(tab => {
         tab.style.background = 'rgba(255,255,255,0.05)';
         tab.style.borderColor = 'var(--glass-border)';
     });
     event.target.closest('.bg-tab').style.background = 'rgba(99,102,241,0.2)';
     event.target.closest('.bg-tab').style.borderColor = 'var(--primary)';
-    
+
     document.getElementById('bg-color-panel').style.display = type === 'color' ? 'block' : 'none';
     document.getElementById('bg-gradient-panel').style.display = type === 'gradient' ? 'block' : 'none';
     document.getElementById('bg-image-panel').style.display = type === 'image' ? 'block' : 'none';
-    
+    document.getElementById('bg-video-panel').style.display = type === 'video' ? 'block' : 'none';
+
     // Сохраняем текущий фон при переключении
     if (type === 'gradient' && !state.selectedSection.element.style.background.includes('gradient')) {
         updateGradient();
@@ -522,6 +560,12 @@ window.switchBgTab = function(type) {
         const input = document.getElementById('bg-image-url');
         if (input && input.value) {
             updateBgImage(input.value);
+        }
+    }
+    if (type === 'video') {
+        const input = document.getElementById('bg-video-url');
+        if (input && input.value) {
+            updateBgVideo(input.value);
         }
     }
 };
@@ -683,12 +727,12 @@ window.updateBgImageOpacity = function(value) {
 // Overlay
 window.updateBgOverlay = function() {
     if (!state.selectedSection) return;
-    
+
     const color = document.getElementById('bg-overlay-color')?.value || '#000000';
     const opacity = document.getElementById('bg-overlay-opacity')?.value || 50;
-    
+
     document.getElementById('bg-overlay-opacity-value').textContent = `${opacity}%`;
-    
+
     const url = getBgImageUrl(state.selectedSection.element.style.background);
     if (url) {
         state.selectedSection.element.style.background = `linear-gradient(rgba(0,0,0,${opacity/100}), rgba(0,0,0,${opacity/100})), url(${url})`;
@@ -696,6 +740,112 @@ window.updateBgOverlay = function() {
         state.selectedSection.element.style.backgroundPosition = 'center';
     }
 };
+
+// =============================================
+// Функции для видео фона
+// =============================================
+
+// Получить URL видео из секции
+function getVideoUrl(element) {
+    const video = element.querySelector('video');
+    if (video) {
+        const source = video.querySelector('source');
+        return source ? source.src : '';
+    }
+    return '';
+}
+
+// Обновить видео фон
+window.updateBgVideo = function(url) {
+    if (!state.selectedSection) return;
+    
+    const section = state.selectedSection.element;
+    let video = section.querySelector('video');
+    let overlay = section.querySelector('.video-overlay');
+    
+    if (url) {
+        // Если видео нет, создаём его
+        if (!video) {
+            // Удаляем существующий фон
+            section.style.background = '';
+            
+            // Создаём видео
+            video = document.createElement('video');
+            video.autoplay = true;
+            video.muted = true;
+            video.loop = true;
+            video.style.cssText = 'position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); z-index: 0;';
+            
+            const source = document.createElement('source');
+            source.src = url;
+            source.type = 'video/mp4';
+            video.appendChild(source);
+            
+            section.style.position = 'relative';
+            section.style.overflow = 'hidden';
+            section.insertBefore(video, section.firstChild);
+            
+            // Создаём overlay
+            overlay = document.createElement('div');
+            overlay.className = 'video-overlay';
+            overlay.style.cssText = 'position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1; pointer-events: none;';
+            section.insertBefore(overlay, video.nextSibling);
+        } else {
+            // Обновляем URL видео
+            const source = video.querySelector('source');
+            if (source) source.src = url;
+            video.load();
+            video.play();
+        }
+    } else {
+        // Удаляем видео
+        if (video) video.remove();
+        if (overlay) overlay.remove();
+    }
+    
+    saveToHistory();
+};
+
+// Установить видео фон
+window.setBgVideo = function(url) {
+    if (!state.selectedSection) {
+        showToast('Выберите секцию', 'error');
+        return;
+    }
+    
+    const input = document.getElementById('bg-video-url');
+    if (input) {
+        input.value = url;
+        updateBgVideo(url);
+        showToast('Видео фон установлен', 'success');
+    }
+};
+
+// Обновить overlay для видео
+window.updateVideoOverlay = function() {
+    if (!state.selectedSection) return;
+    
+    const section = state.selectedSection.element;
+    const overlay = section.querySelector('.video-overlay');
+    
+    if (overlay) {
+        const color = document.getElementById('video-overlay-color')?.value || '#000000';
+        const opacity = document.getElementById('video-overlay-opacity')?.value || 50;
+        
+        document.getElementById('video-overlay-opacity-value').textContent = `${opacity}%`;
+        overlay.style.background = `rgba(${hexToRgb(color)}, ${opacity/100})`;
+    }
+    
+    saveToHistory();
+};
+
+// Конвертация HEX в RGB
+function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? 
+        `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : 
+        '0, 0, 0';
+}
 
 // Размытие
 window.updateBgBlur = function(value) {
@@ -1393,6 +1543,45 @@ function resetImageUpload() {
 }
 
 function setupEventListeners() {
+    // Скрытие/показ левой панели
+    document.getElementById('toggle-sidebar-btn')?.addEventListener('click', () => {
+        const leftSidebar = document.querySelector('.left-sidebar');
+        const editorContainer = document.querySelector('.editor-container');
+        
+        if (leftSidebar) {
+            leftSidebar.classList.toggle('collapsed');
+            editorContainer.classList.toggle('sidebar-hidden');
+            
+            // Сохраняем состояние
+            const isCollapsed = leftSidebar.classList.contains('collapsed');
+            localStorage.setItem('sidebarCollapsed', isCollapsed);
+            
+            updateStatus(isCollapsed ? 'Панель скрыта' : 'Панель показана');
+        }
+    });
+
+    // Восстанавливаем состояние панели при загрузке
+    const wasCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    if (wasCollapsed) {
+        const leftSidebar = document.querySelector('.left-sidebar');
+        const editorContainer = document.querySelector('.editor-container');
+        leftSidebar?.classList.add('collapsed');
+        editorContainer?.classList.add('sidebar-hidden');
+    }
+
+    // Кнопка для показа панели
+    document.getElementById('show-sidebar-btn')?.addEventListener('click', () => {
+        const leftSidebar = document.querySelector('.left-sidebar');
+        const editorContainer = document.querySelector('.editor-container');
+        
+        if (leftSidebar) {
+            leftSidebar.classList.remove('collapsed');
+            editorContainer.classList.remove('sidebar-hidden');
+            localStorage.setItem('sidebarCollapsed', 'false');
+            updateStatus('Панель показана');
+        }
+    });
+
     DOM.sectionSearch?.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase();
         document.querySelectorAll('.section-card').forEach(card => {
@@ -1525,25 +1714,40 @@ function redo() {
 
 function setupKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
+        // Ctrl+B - скрыть/показать панель
+        if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+            e.preventDefault();
+            const leftSidebar = document.querySelector('.left-sidebar');
+            const editorContainer = document.querySelector('.editor-container');
+            
+            if (leftSidebar) {
+                leftSidebar.classList.toggle('collapsed');
+                editorContainer.classList.toggle('sidebar-hidden');
+                const isCollapsed = leftSidebar.classList.contains('collapsed');
+                localStorage.setItem('sidebarCollapsed', isCollapsed);
+                updateStatus(isCollapsed ? 'Панель скрыта (Ctrl+B)' : 'Панель показана (Ctrl+B)');
+            }
+        }
+        
         if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
         if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) { e.preventDefault(); redo(); }
-        if ((e.ctrlKey || e.metaKey) && e.key === 'c' && state.selectedSection) { 
-            e.preventDefault(); 
+        if ((e.ctrlKey || e.metaKey) && e.key === 'c' && state.selectedSection) {
+            e.preventDefault();
             state.clipboard = { type: 'section', data: state.selectedSection };
             updateStatus('Скопировано');
         }
-        if ((e.ctrlKey || e.metaKey) && e.key === 'v' && state.clipboard) { 
-            e.preventDefault(); 
+        if ((e.ctrlKey || e.metaKey) && e.key === 'v' && state.clipboard) {
+            e.preventDefault();
             if (state.clipboard.type === 'section') addSectionToCanvas(SECTIONS_LIBRARY.find(s => s.id === state.clipboard.data.sectionId));
             updateStatus('Вставлено');
         }
-        if ((e.ctrlKey || e.metaKey) && e.key === 'd' && state.selectedSection) { 
-            e.preventDefault(); 
-            duplicateSelected(); 
+        if ((e.ctrlKey || e.metaKey) && e.key === 'd' && state.selectedSection) {
+            e.preventDefault();
+            duplicateSelected();
         }
-        if (e.key === 'Delete' && state.selectedSection) { 
-            e.preventDefault(); 
-            deleteSelected(); 
+        if (e.key === 'Delete' && state.selectedSection) {
+            e.preventDefault();
+            deleteSelected();
         }
     });
 }

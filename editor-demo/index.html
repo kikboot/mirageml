@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MirageML Editor Pro - Визуальный конструктор сайтов</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link type="image/x-icon" href="../logo/logo3.svg" rel="shortcut icon">
+    <link type="image/x-icon" href="../mirageml-frontend/logo/logo3.svg" rel="shortcut icon">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -27,9 +27,12 @@
         <!-- Верхний Toolbar -->
         <header class="editor-toolbar">
             <div class="toolbar-left">
+                <button class="toolbar-btn" id="toggle-sidebar-btn" title="Скрыть/показать панель">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <div class="logo">
-                    <img src="../logo/logo3.svg" alt="MirageML">
-                    <span>MirageML Editor Pro</span>
+                    <img src="../mirageml-frontend/logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
+                            <span class="logo-text">MirageML</span>
                 </div>
             </div>
             
@@ -97,6 +100,11 @@
             </div>
         </header>
 
+        <!-- Кнопка для показа скрытой панели -->
+        <button class="sidebar-toggle-show" id="show-sidebar-btn" title="Показать панель">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
         <div class="editor-main">
             <!-- Левая панель - Библиотека секций -->
             <aside class="sidebar left-sidebar">
@@ -125,16 +133,24 @@
                         
                         <div class="categories-filter" id="categories-filter">
                             <button class="filter-btn active" data-category="all">Все</button>
-                            <button class="filter-btn" data-category="hero">Hero</button>
+                            <button class="filter-btn" data-category="cover">Обложка</button>
+                            <button class="filter-btn" data-category="about">О проекте</button>
+                            <button class="filter-btn" data-category="header">Заголовок</button>
+                            <button class="filter-btn" data-category="text">Текст</button>
+                            <button class="filter-btn" data-category="image">Изображение</button>
+                            <button class="filter-btn" data-category="gallery">Галерея</button>
                             <button class="filter-btn" data-category="features">Преимущества</button>
-                            <button class="filter-btn" data-category="about">О нас</button>
                             <button class="filter-btn" data-category="team">Команда</button>
-                            <button class="filter-btn" data-category="pricing">Цены</button>
-                            <button class="filter-btn" data-category="contact">Контакты</button>
-                            <button class="filter-btn" data-category="footer">Подвал</button>
-                            <button class="filter-btn" data-category="media">Медиа</button>
                             <button class="filter-btn" data-category="testimonials">Отзывы</button>
-                            <button class="filter-btn" data-category="info">Инфо</button>
+                            <button class="filter-btn" data-category="contact">Контакты</button>
+                            <button class="filter-btn" data-category="form">Форма</button>
+                            <button class="filter-btn" data-category="button">Кнопка</button>
+                            <button class="filter-btn" data-category="pricing">Тарифы</button>
+                            <button class="filter-btn" data-category="footer">Подвал</button>
+                            <button class="filter-btn" data-category="video">Видео</button>
+                            <button class="filter-btn" data-category="divider">Разделитель</button>
+                            <button class="filter-btn" data-category="faq">FAQ</button>
+                            <button class="filter-btn" data-category="cta">CTA</button>
                         </div>
                         
                         <div class="sections-grid" id="sections-library">
@@ -478,6 +494,10 @@
             <div class="help-content">
                 <h3>Горячие клавиши</h3>
                 <div class="shortcuts-grid">
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>B</kbd>
+                        <span>Скрыть/показать панель</span>
+                    </div>
                     <div class="shortcut-item">
                         <kbd>Ctrl</kbd> + <kbd>Z</kbd>
                         <span>Отменить</span>
