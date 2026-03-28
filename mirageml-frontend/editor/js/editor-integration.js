@@ -1,14 +1,4 @@
-/**
- * MirageML Editor - Backend Integration
- * Интеграция редактора с бекендом
- */
-
-// =============================================
-// Инициализация интеграции
-// =============================================
-
 async function initBackendIntegration() {
-    // Проверяем авторизацию при загрузке
     const isAuth = await MirageMLAPI.checkAuth();
 
     if (isAuth) {
@@ -17,8 +7,6 @@ async function initBackendIntegration() {
         console.log('[Integration] Пользователь авторизован:', MirageMLAPI.getCurrentUser());
     } else {
         console.log('[Integration] Пользователь не авторизован. Работа без сохранения на сервер.');
-        // НЕ перенаправляем! Даём пользователю работать в редакторе
-        // Сохранение будет работать в localStorage
     }
 
     setupProjectModal();
@@ -27,33 +15,26 @@ async function initBackendIntegration() {
 }
 
 function setupProjectsButton() {
-    // Кнопка "Проекты" в toolbar открывает модальное окно
     document.getElementById('projects-btn')?.addEventListener('click', () => {
         showProjectModal();
     });
 }
 
-// =============================================
-// Авторизация
-// =============================================
-
 function updateUserMenu() {
     const user = MirageMLAPI.getCurrentUser();
     if (!user) return;
 
-    // Обновляем аватар и имя пользователя в toolbar
     const avatarEl = document.getElementById('user-avatar');
     const nameEl = document.getElementById('user-name');
     const userInfoBtn = document.getElementById('user-info-btn');
-    
+
     if (avatarEl) {
         avatarEl.textContent = user.name.substring(0, 2).toUpperCase();
     }
     if (nameEl) {
         nameEl.textContent = user.name;
     }
-    
-    // Клик по нику перенаправляет в профиль
+
     if (userInfoBtn) {
         userInfoBtn.style.cursor = 'pointer';
         userInfoBtn.addEventListener('click', () => {
@@ -62,18 +43,13 @@ function updateUserMenu() {
     }
 }
 
-// =============================================
-// Управление проектами
-// =============================================
-
 function setupProjectModal() {
-    // Кнопка создания проекта
     document.getElementById('create-project-btn')?.addEventListener('click', async () => {
         const name = prompt('Введите название проекта:', 'Новый проект');
         if (!name) return;
-        
+
         const result = await MirageMLAPI.createProject(name);
-        
+
         if (result.success) {
             showToast('Проект создан', 'success');
             loadProjectsList();
@@ -87,7 +63,7 @@ function setupProjectModal() {
 async function showProjectModal() {
     const modal = document.getElementById('project-modal');
     if (!modal) return;
-    
+
     modal.style.display = 'flex';
     await loadProjectsList();
 }
@@ -95,10 +71,10 @@ async function showProjectModal() {
 async function loadProjectsList() {
     const projectsList = document.getElementById('projects-list');
     if (!projectsList) return;
-    
+
     const projects = await MirageMLAPI.getProjects();
     const currentProjectId = localStorage.getItem('currentProjectId');
-    
+
     if (projects.length === 0) {
         projectsList.innerHTML = `
             <div class="empty-projects">
@@ -109,7 +85,7 @@ async function loadProjectsList() {
         `;
         return;
     }
-    
+
     projectsList.innerHTML = projects.map(project => {
         const isActive = project.id === currentProjectId;
         const date = new Date(project.updated_at || project.created_at).toLocaleDateString('ru-RU', {
@@ -117,7 +93,7 @@ async function loadProjectsList() {
             month: 'long',
             year: 'numeric'
         });
-        
+
         return `
             <div class="project-item ${isActive ? 'active' : ''}" data-project-id="${project.id}">
                 <div class="project-info">
@@ -146,16 +122,15 @@ async function loadProjectsList() {
 
 async function selectProject(projectId, event) {
     if (event) event.stopPropagation();
-    
+
     const project = await MirageMLAPI.loadProject(projectId);
-    
+
     if (project) {
-        authState.currentProject = project;  // Устанавливаем текущий проект
-        // Загружаем проект в редактор
+        authState.currentProject = project;
         loadProjectIntoEditor(project);
         showToast('Проект загружен', 'success');
         document.getElementById('project-modal').style.display = 'none';
-        loadProjectsList(); // Обновляем список
+        loadProjectsList();
     } else {
         showToast('Ошибка загрузки проекта', 'error');
     }
@@ -163,11 +138,10 @@ async function selectProject(projectId, event) {
 
 async function closeProject(event) {
     if (event) event.stopPropagation();
-    
+
     authState.currentProject = null;
     localStorage.removeItem('currentProjectId');
 
-    // Очищаем холст
     state.sections = [];
     DOM.canvas.innerHTML = '';
     DOM.canvasPlaceholder.style.display = 'flex';
@@ -182,7 +156,7 @@ async function loadCurrentProject() {
     if (projectId) {
         const project = await MirageMLAPI.getProject(projectId);
         if (project) {
-            authState.currentProject = project;  // Устанавливаем текущий проект
+            authState.currentProject = project;
             loadProjectIntoEditor(project);
         }
     }
@@ -192,36 +166,28 @@ function loadProjectIntoEditor(project) {
     console.log('[Integration] loadProjectIntoEditor - загружаем проект:', project.name);
     console.log('[Integration] loadProjectIntoEditor - элементы:', project.elements ? Object.keys(project.elements).length : 0);
 
-    // Очищаем текущий холст
     state.sections = [];
     DOM.canvas.innerHTML = '';
     if (DOM.canvasPlaceholder) DOM.canvasPlaceholder.style.display = 'none';
 
-    // Загружаем элементы из проекта
     if (project.elements) {
-        // Сортируем элементы по order
         const sortedElements = Object.values(project.elements).sort((a, b) => a.order - b.order);
 
         sortedElements.forEach((elementData, index) => {
-            // Создаем временный контейнер для HTML
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = elementData.html;
             const sectionElement = tempDiv.firstElementChild;
 
             if (sectionElement) {
-                // Добавляем классы и стили обратно
                 sectionElement.classList.add('canvas-section');
                 sectionElement.style.border = '2px solid transparent';
                 sectionElement.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
 
-                // Генерируем уникальный ID
                 const sectionId = `section-${Date.now()}-${index}`;
                 sectionElement.id = sectionId;
 
-                // Добавляем на холст
                 DOM.canvas.appendChild(sectionElement);
 
-                // Добавляем в состояние
                 state.sections.push({
                     id: sectionId,
                     name: elementData.name || 'Секция',
@@ -239,10 +205,8 @@ function loadProjectIntoEditor(project) {
 }
 
 function setupSaveButton() {
-    // Находим кнопку сохранения и обновляем её обработчик
     const saveBtn = document.getElementById('save-btn');
     if (saveBtn) {
-        // Удаляем старый обработчик (клонированием)
         const newSaveBtn = saveBtn.cloneNode(true);
         saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
 
@@ -259,7 +223,6 @@ async function handleSaveProject() {
     console.log('[Integration] handleSaveProject - sessionStorage token:', sessionStorage.getItem('token') ? 'есть' : 'нет');
 
     if (!isAuth) {
-        // Пользователь не авторизован - пробуем ещё раз проверить
         console.log('[Integration] handleSaveProject - пробуем восстановить авторизацию...');
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (token) {
@@ -275,7 +238,6 @@ async function handleSaveProject() {
         }
     }
 
-    // Проверяем ещё раз после попытки восстановления
     if (!MirageMLAPI.isAuthenticated()) {
         showToast('Ошибка авторизации. Перенаправляем...', 'error');
         setTimeout(() => {
@@ -296,7 +258,6 @@ async function handleSaveProject() {
         showToast('Проект сохранён на сервере', 'success');
         updateStatus('Проект сохранён на сервере');
 
-        // Обновляем список проектов
         if (document.getElementById('project-modal').style.display === 'flex') {
             loadProjectsList();
         }
@@ -305,10 +266,6 @@ async function handleSaveProject() {
         updateStatus('Ошибка сохранения');
     }
 }
-
-// =============================================
-// Вспомогательные функции
-// =============================================
 
 function escapeHtml(text) {
     const div = document.createElement('div');
@@ -324,16 +281,9 @@ function updateElementsCount() {
 }
 
 function updateLayersList() {
-    // Функция обновления списка слоев
-    // Реализация зависит от наличия вкладки слоев в редакторе
     console.log('[Integration] Layers list updated');
 }
 
-// =============================================
-// Запуск интеграции
-// =============================================
-
-// Добавляем инициализацию после загрузки DOM
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initBackendIntegration);
 } else {

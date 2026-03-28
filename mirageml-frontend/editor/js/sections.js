@@ -1,7 +1,3 @@
-// MirageML Editor Pro - Professional Sections Library (Tilda-style)
-// Профессиональная библиотека секций уровня Tilda
-
-// Категории секций с иконками и названиями (ГЛОБАЛЬНАЯ ПЕРЕМЕННАЯ)
 window.SECTION_CATEGORIES = {
     cover: { icon: 'fa-star', name: 'Обложка (Hero)', expanded: false },
     about: { icon: 'fa-building', name: 'О проекте', expanded: false },
@@ -22,11 +18,7 @@ window.SECTION_CATEGORIES = {
     logo: { icon: 'fa-shield-alt', name: 'Логотипы/Клиенты', expanded: false }
 };
 
-// Библиотека секций (ГЛОБАЛЬНАЯ ПЕРЕМЕННАЯ)
 window.SECTIONS_LIBRARY = [
-    // =============================================
-    // HERO/OBLOЖKA - 10 премиум вариантов
-    // =============================================
     {
         id: 'hero-1', name: 'Hero: Классический градиент', category: 'cover', icon: 'fa-star',
         html: `<section class="section hero-gradient-premium" style="padding: 140px 20px; min-height: 700px; display: flex; align-items: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; overflow: hidden;"><div style="position: absolute; top: -50%; right: -10%; width: 600px; height: 600px; background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(60px);"></div><div style="position: absolute; bottom: -30%; left: -5%; width: 400px; height: 400px; background: rgba(255,255,255,0.08); border-radius: 50%; filter: blur(50px);"></div><div style="max-width: 1200px; margin: 0 auto; text-align: center; position: relative; z-index: 2;"><span style="display: inline-block; padding: 8px 20px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 50px; color: #fff; font-size: 14px; font-weight: 500; margin-bottom: 24px; backdrop-filter: blur(10px);">🚀 Запустите проект сегодня</span><h1 style="font-size: 64px; font-weight: 800; color: #ffffff; margin-bottom: 24px; line-height: 1.1;">Создавайте будущее<br>вашего бизнеса</h1><p style="font-size: 20px; color: rgba(255,255,255,0.9); max-width: 650px; margin: 0 auto 48px; line-height: 1.6;">Цифровые решения для роста вашего бизнеса</p><div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;"><button style="padding: 18px 42px; font-size: 17px; background: #ffffff; color: #667eea; border: none; border-radius: 12px; cursor: pointer; font-weight: 700; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">Начать проект</button><button style="padding: 18px 42px; font-size: 17px; background: transparent; color: #ffffff; border: 2px solid rgba(255,255,255,0.5); border-radius: 12px; cursor: pointer; font-weight: 600;">Узнать больше</button></div><div style="display: flex; align-items: center; justify-content: center; gap: 40px; margin-top: 60px; flex-wrap: wrap;"><div style="text-align: center;"><div style="font-size: 32px; font-weight: 800; color: #fff;">500+</div><div style="font-size: 14px; color: rgba(255,255,255,0.7);">Проектов</div></div><div style="width: 1px; height: 40px; background: rgba(255,255,255,0.3);"></div><div style="text-align: center;"><div style="font-size: 32px; font-weight: 800; color: #fff;">98%</div><div style="font-size: 14px; color: rgba(255,255,255,0.7);">Довольных</div></div><div style="width: 1px; height: 40px; background: rgba(255,255,255,0.3);"></div><div style="text-align: center;"><div style="font-size: 32px; font-weight: 800; color: #fff;">10+</div><div style="font-size: 14px; color: rgba(255,255,255,0.7);">Лет опыта</div></div></div></div></section>`,
@@ -118,9 +110,6 @@ window.SECTIONS_LIBRARY = [
         css: `.hero-logo { min-height: 650px; }`
     },
 
-    // =============================================
-    // О ПРОЕКТЕ (ABOUT) - 8 премиум вариантов
-    // =============================================
     {
         id: 'about-1', name: 'О проекте: Статистика', category: 'about', icon: 'fa-building',
         html: `<section class="section about-stats-premium" style="padding:100px 20px;background:#f8fafc;"><div style="max-width:1200px;margin:0 auto;"><div style="text-align:center;margin-bottom:64px;"><span style="display:inline-block;padding:6px 16px;background:rgba(99,102,241,0.1);color:#6366f1;font-size:13px;font-weight:600;border-radius:20px;margin-bottom:16px;">О КОМПАНИИ</span><h2 style="font-size:42px;color:#1a202c;margin-bottom:24px;font-weight:700;">Цифры, которые говорят за нас</h2><p style="font-size:18px;color:#64748b;max-width:700px;margin:0 auto;">Более 10 лет мы создаём решения, которые меняют бизнес наших клиентов</p></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:32px;"><div style="text-align:center;padding:40px 32px;background:white;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.08);"><div style="font-size:64px;font-weight:900;color:#6366f1;margin-bottom:8px;">15+</div><div style="color:#64748b;font-weight:500;">Лет опыта</div></div><div style="text-align:center;padding:40px 32px;background:white;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.08);"><div style="font-size:64px;font-weight:900;color:#10b981;margin-bottom:8px;">500+</div><div style="color:#64748b;font-weight:500;">Проектов</div></div><div style="text-align:center;padding:40px 32px;background:white;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.08);"><div style="font-size:64px;font-weight:900;color:#f59e0b;margin-bottom:8px;">50+</div><div style="color:#64748b;font-weight:500;">Экспертов</div></div><div style="text-align:center;padding:40px 32px;background:white;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.08);"><div style="font-size:64px;font-weight:900;color:#ef4444;margin-bottom:8px;">99%</div><div style="color:#64748b;font-weight:500;">Довольных</div></div></div></div></section>`,
@@ -162,9 +151,6 @@ window.SECTIONS_LIBRARY = [
         css: `.about-text-premium{min-height:500px;}`
     },
 
-    // =============================================
-    // ЗАГОЛОВОК (HEADER) - 6 премиум вариантов
-    // =============================================
     {
         id: 'header-1', name: 'Заголовок: Классический', category: 'header', icon: 'fa-heading',
         html: `<section class="section header-classic" style="padding:80px 20px;background:#ffffff;"><div style="max-width:900px;margin:0 auto;text-align:center;"><h2 style="font-size:48px;color:#1a202c;margin-bottom:24px;font-weight:700;">Заголовок раздела</h2><p style="font-size:20px;color:#64748b;max-width:600px;margin:0 auto;">Подзаголовок, который раскрывает суть раздела</p></div></section>`,
@@ -196,9 +182,6 @@ window.SECTIONS_LIBRARY = [
         css: `.header-dark{min-height:250px;}`
     },
 
-    // =============================================
-    // ТЕКСТОВЫЙ БЛОК (TEXT) - 6 премиум вариантов
-    // =============================================
     {
         id: 'text-1', name: 'Текст: Классический', category: 'text', icon: 'fa-paragraph',
         html: `<section class="section text-classic-premium" style="padding:80px 20px;background:#ffffff;"><div style="max-width:800px;margin:0 auto;"><div style="width:60px;height:4px;background:linear-gradient(135deg,#6366f1,#8b5cf6);margin-bottom:32px;"></div><p style="font-size:18px;color:#4a5568;line-height:1.8;margin-bottom:24px;">Это пример текстового блока. Здесь вы можете разместить описание вашего продукта или услуги.</p><p style="font-size:18px;color:#4a5568;line-height:1.8;">Добавляйте несколько абзацев для подробного описания.</p></div></section>`,
@@ -230,9 +213,6 @@ window.SECTIONS_LIBRARY = [
         css: `.text-center-premium{min-height:300px;}`
     },
 
-    // =============================================
-    // ИЗОБРАЖЕНИЕ (IMAGE) - 8 премиум вариантов
-    // =============================================
     {
         id: 'image-1', name: 'Изображение: Одно', category: 'image', icon: 'fa-image',
         html: `<section class="section image-single-premium" style="padding:80px 20px;background:#ffffff;"><div style="max-width:1200px;margin:0 auto;"><img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1200" alt="Image" style="width:100%;height:600px;object-fit:cover;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.1);"></div></section>`,
@@ -274,9 +254,6 @@ window.SECTIONS_LIBRARY = [
         css: `.image-parallax{min-height:500px;}`
     },
 
-    // =============================================
-    // ГАЛЕРЕЯ (GALLERY) - 6 премиум вариантов
-    // =============================================
     {
         id: 'gallery-1', name: 'Галерея: Сетка 3x2', category: 'gallery', icon: 'fa-images',
         html: `<section class="section gallery-grid-premium" style="padding:80px 20px;background:#ffffff;"><div style="max-width:1200px;margin:0 auto;"><h2 style="text-align:center;font-size:36px;color:#1a202c;margin-bottom:60px;font-weight:700;">Наши работы</h2><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400" alt="1" style="width:100%;height:300px;object-fit:cover;border-radius:12px;transition:transform 0.3s;cursor:pointer;"><img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=400" alt="2" style="width:100%;height:300px;object-fit:cover;border-radius:12px;transition:transform 0.3s;cursor:pointer;"><img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400" alt="3" style="width:100%;height:300px;object-fit:cover;border-radius:12px;transition:transform 0.3s;cursor:pointer;"><img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=400" alt="4" style="width:100%;height:300px;object-fit:cover;border-radius:12px;transition:transform 0.3s;cursor:pointer;"><img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400" alt="5" style="width:100%;height:300px;object-fit:cover;border-radius:12px;transition:transform 0.3s;cursor:pointer;"><img src="https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=400" alt="6" style="width:100%;height:300px;object-fit:cover;border-radius:12px;transition:transform 0.3s;cursor:pointer;"></div></div></section>`,
@@ -308,9 +285,6 @@ window.SECTIONS_LIBRARY = [
         css: `.gallery-tile{min-height:550px;}`
     },
 
-    // =============================================
-    // ПРЕИМУЩЕСТВА (FEATURES) - 8 премиум вариантов
-    // =============================================
     {
         id: 'features-1', name: 'Преимущества: 3 карточки', category: 'features', icon: 'fa-th-large',
         html: `<section class="section features-cards-premium" style="padding:100px 20px;background:#f8fafc;"><div style="max-width:1200px;margin:0 auto;"><div style="text-align:center;margin-bottom:64px;"><span style="display:inline-block;padding:6px 16px;background:rgba(99,102,241,0.1);color:#6366f1;font-size:13px;font-weight:600;border-radius:20px;margin-bottom:16px;">ПРЕИМУЩЕСТВА</span><h2 style="font-size:42px;color:#1a202c;margin-bottom:16px;font-weight:700;">Наши преимущества</h2><p style="font-size:18px;color:#64748b;max-width:600px;margin:0 auto;">Почему клиенты выбирают именно нас</p></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;"><div style="background:white;padding:40px 32px;border-radius:20px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.05);transition:transform 0.3s;"><div style="width:80px;height:80px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;box-shadow:0 10px 30px rgba(99,102,241,0.3);"><i class="fas fa-rocket" style="font-size:32px;color:white;"></i></div><h3 style="font-size:22px;color:#1a202c;margin-bottom:12px;font-weight:700;">Быстро</h3><p style="color:#64748b;line-height:1.7;">Молниеносная скорость работы и соблюдение сроков</p></div><div style="background:white;padding:40px 32px;border-radius:20px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.05);transition:transform 0.3s;"><div style="width:80px;height:80px;background:linear-gradient(135deg,#10b981,#059669);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;box-shadow:0 10px 30px rgba(16,185,129,0.3);"><i class="fas fa-shield-alt" style="font-size:32px;color:white;"></i></div><h3 style="font-size:22px;color:#1a202c;margin-bottom:12px;font-weight:700;">Надёжно</h3><p style="color:#64748b;line-height:1.7;">Гарантия качества и защита ваших данных</p></div><div style="background:white;padding:40px 32px;border-radius:20px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.05);transition:transform 0.3s;"><div style="width:80px;height:80px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;box-shadow:0 10px 30px rgba(245,158,11,0.3);"><i class="fas fa-gem" style="font-size:32px;color:white;"></i></div><h3 style="font-size:22px;color:#1a202c;margin-bottom:12px;font-weight:700;">Качественно</h3><p style="color:#64748b;line-height:1.7;">Премиальное качество всех услуг</p></div></div></div></section>`,
@@ -352,9 +326,6 @@ window.SECTIONS_LIBRARY = [
         css: `.features-tabs{min-height:700px;}`
     },
 
-    // =============================================
-    // КОМАНДА (TEAM) - 6 премиум вариантов с placeholder фото
-    // =============================================
     {
         id: 'team-1', name: 'Команда: Сетка 4', category: 'team', icon: 'fa-users',
         html: `<section class="section team-grid-premium" style="padding:100px 20px;background:#ffffff;"><div style="max-width:1200px;margin:0 auto;"><div style="text-align:center;margin-bottom:64px;"><span style="display:inline-block;padding:6px 16px;background:rgba(99,102,241,0.1);color:#6366f1;font-size:13px;font-weight:600;border-radius:20px;margin-bottom:16px;">КОМАНДА</span><h2 style="font-size:42px;color:#1a202c;margin-bottom:16px;font-weight:700;">Наши эксперты</h2><p style="font-size:18px;color:#64748b;max-width:600px;margin:0 auto;">Профессионалы, которые работают над вашим проектом</p></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:32px;"><div style="text-align:center;group-hover:transform 0.3s;"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300" alt="Team Member" style="width:200px;height:200px;border-radius:50%;object-fit:cover;margin:0 auto 20px;box-shadow:0 10px 30px rgba(0,0,0,0.1);"><h4 style="font-size:20px;color:#1a202c;margin-bottom:8px;font-weight:600;">Александр Петров</h4><p style="color:#6366f1;font-size:14px;">CEO & Founder</p></div><div style="text-align:center;"><img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300" alt="Team Member" style="width:200px;height:200px;border-radius:50%;object-fit:cover;margin:0 auto 20px;box-shadow:0 10px 30px rgba(0,0,0,0.1);"><h4 style="font-size:20px;color:#1a202c;margin-bottom:8px;font-weight:600;">Анна Сидорова</h4><p style="color:#6366f1;font-size:14px;">Арт-директор</p></div><div style="text-align:center;"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300" alt="Team Member" style="width:200px;height:200px;border-radius:50%;object-fit:cover;margin:0 auto 20px;box-shadow:0 10px 30px rgba(0,0,0,0.1);"><h4 style="font-size:20px;color:#1a202c;margin-bottom:8px;font-weight:600;">Максим Козлов</h4><p style="color:#6366f1;font-size:14px;">Технический директор</p></div><div style="text-align:center;"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300" alt="Team Member" style="width:200px;height:200px;border-radius:50%;object-fit:cover;margin:0 auto 20px;box-shadow:0 10px 30px rgba(0,0,0,0.1);"><h4 style="font-size:20px;color:#1a202c;margin-bottom:8px;font-weight:600;">Елена Морозова</h4><p style="color:#6366f1;font-size:14px;">Маркетолог</p></div></div></div></section>`,
@@ -386,9 +357,6 @@ window.SECTIONS_LIBRARY = [
         css: `.team-banner{min-height:500px;}`
     },
 
-    // =============================================
-    // ОТЗЫВЫ (TESTIMONIALS) - 6 премиум вариантов
-    // =============================================
     {
         id: 'testimonials-1', name: 'Отзывы: 3 карточки', category: 'testimonials', icon: 'fa-comments',
         html: `<section class="section testimonials-cards-premium" style="padding:100px 20px;background:#f8fafc;"><div style="max-width:1200px;margin:0 auto;"><div style="text-align:center;margin-bottom:64px;"><span style="display:inline-block;padding:6px 16px;background:rgba(99,102,241,0.1);color:#6366f1;font-size:13px;font-weight:600;border-radius:20px;margin-bottom:16px;">ОТЗЫВЫ</span><h2 style="font-size:42px;color:#1a202c;margin-bottom:16px;font-weight:700;">Что говорят клиенты</h2><p style="font-size:18px;color:#64748b;max-width:600px;margin:0 auto;">Реальные отзывы наших клиентов</p></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;"><div style="background:white;padding:40px;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.05);"><div style="display:flex;gap:4px;margin-bottom:16px;"><i class="fas fa-star" style="color:#f59e0b;"></i><i class="fas fa-star" style="color:#f59e0b;"></i><i class="fas fa-star" style="color:#f59e0b;"></i><i class="fas fa-star" style="color:#f59e0b;"></i><i class="fas fa-star" style="color:#f59e0b;"></i></div><p style="color:#4a5568;line-height:1.7;margin-bottom:24px;font-style:italic;">"Отличная команда! Сделали всё в срок и даже раньше. Результат превзошёл ожидания!"</p><div style="display:flex;align-items:center;gap:12px;"><img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"><div><div style="font-weight:600;color:#1a202c;">Алексей Иванов</div><div style="font-size:13px;color:#6366f1;">CEO, TechCorp</div></div></div></div><div style="background:white;padding:40px;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.05);"><div style="display:flex;gap:4px;margin-bottom:16px;"><i class="fas fa-star" style="color:#f59e0b;"></i><i class="fas fa-star" style="color:#f59e0b;"></i><i class="fas fa-star" style="color:#f59e0b;"></i><i class="fas fa-star" style="color:#f59e0b;"></i><i class="fas fa-star" style="color:#f59e0b;"></i></div><p style="color:#4a5568;line-height:1.7;margin-bottom:24px;font-style:italic;">"Профессиональный подход к делу. Рекомендую всем, кто ценит качество."</p><div style="display:flex;align-items:center;gap:12px;"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"><div><div style="font-weight:600;color:#1a202c;">Мария Петрова</div><div style="font-size:13px;color:#6366f1;">Маркетолог, Startup</div></div></div></div><div style="background:white;padding:40px;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.05);"><div style="display:flex;gap:4px;margin-bottom:16px;"><i class="fas fa-star" style="color:#f59e0b;"></i><i class="fas fa-star" style="color:#f59e0b;"></i><i class="fas fa-star" style="color:#f59e0b;"></i><i class="fas fa-star" style="color:#f59e0b;"></i><i class="fas fa-star" style="color:#f59e0b;"></i></div><p style="color:#4a5568;line-height:1.7;margin-bottom:24px;font-style:italic;">"Лучшее соотношение цены и качества. Обязательно будем работать ещё."</p><div style="display:flex;align-items:center;gap:12px;"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"><div><div style="font-weight:600;color:#1a202c;">Дмитрий Соколов</div><div style="font-size:13px;color:#6366f1;">Директор, Company</div></div></div></div></div></div></section>`,
@@ -420,9 +388,6 @@ window.SECTIONS_LIBRARY = [
         css: `.testimonials-slider{min-height:550px;}`
     },
 
-    // =============================================
-    // КОНТАКТЫ (CONTACT) - 6 премиум вариантов
-    // =============================================
     {
         id: 'contact-1', name: 'Контакты: С формой', category: 'contact', icon: 'fa-envelope',
         html: `<section class="section contact-form-premium" style="padding:100px 20px;"><div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;"><div><span style="font-size:14px;font-weight:600;color:#6366f1;text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;display:block;">КОНТАКТЫ</span><h2 style="font-size:42px;color:#1a202c;margin-bottom:24px;font-weight:700;">Свяжитесь с нами</h2><p style="color:#64748b;margin-bottom:40px;font-size:18px;">Оставьте заявку и мы свяжемся с вами в течение 15 минут</p><div style="display:flex;flex-direction:column;gap:16px;"><div style="display:flex;align-items:center;gap:12px;"><div style="width:48px;height:48px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:12px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-phone" style="color:white;"></i></div><div><div style="font-size:14px;color:#64748b;">Телефон</div><div style="font-weight:600;color:#1a202c;">+7 (999) 123-45-67</div></div></div><div style="display:flex;align-items:center;gap:12px;"><div style="width:48px;height:48px;background:linear-gradient(135deg,#10b981,#059669);border-radius:12px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-envelope" style="color:white;"></i></div><div><div style="font-size:14px;color:#64748b;">Email</div><div style="font-weight:600;color:#1a202c;">info@mirageml.com</div></div></div><div style="display:flex;align-items:center;gap:12px;"><div style="width:48px;height:48px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:12px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-map-marker-alt" style="color:white;"></i></div><div><div style="font-size:14px;color:#64748b;">Адрес</div><div style="font-weight:600;color:#1a202c;">Москва, ул. Примерная, 10</div></div></div></div></div><div style="background:white;padding:48px;border-radius:24px;box-shadow:0 20px 60px rgba(0,0,0,0.1);"><form><input type="text" placeholder="Ваше имя" style="width:100%;padding:16px;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:16px;background:#f8fafc;"><input type="email" placeholder="Email" style="width:100%;padding:16px;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:16px;background:#f8fafc;"><input type="tel" placeholder="Телефон" style="width:100%;padding:16px;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:24px;background:#f8fafc;"><button style="width:100%;padding:18px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;border-radius:12px;cursor:pointer;font-weight:600;font-size:16px;">Отправить заявку</button></form></div></div></section>`,
@@ -454,9 +419,6 @@ window.SECTIONS_LIBRARY = [
         css: `.contact-timer{min-height:650px;}`
     },
 
-    // =============================================
-    // ФОРМА (FORM) - 6 премиум вариантов
-    // =============================================
     {
         id: 'form-1', name: 'Форма: Заявка', category: 'form', icon: 'fa-file-alt',
         html: `<section class="section form-lead" style="padding: 100px 20px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);"><div style="max-width: 600px; margin: 0 auto; background: white; padding: 48px; border-radius: 24px;"><h2 style="font-size: 32px; color: #1a202c; margin-bottom: 24px; text-align: center;">Оставить заявку</h2><form><input type="text" placeholder="Имя" style="width: 100%; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 20px;"><input type="email" placeholder="Email" style="width: 100%; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 24px;"><button style="width: 100%; padding: 18px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600;">Отправить</button></form></div></section>`,
@@ -478,10 +440,7 @@ window.SECTIONS_LIBRARY = [
         css: `.form-register { min-height: 600px; }`
     },
 
-    // =============================================
-    // КНОПКА (BUTTON) - 4 варианта
-    // =============================================
-    {
+    { КНОПКА (BUTTON) - 4 варианта    {
         id: 'button-1', name: 'Кнопка: CTA', category: 'button', icon: 'fa-hand-pointer',
         html: `<section class="section button-cta" style="padding: 100px 20px; background: #ffffff; text-align: center;"><div style="max-width: 800px; margin: 0 auto;"><h2 style="font-size: 36px; color: #1a202c; margin-bottom: 32px;">Готовы начать?</h2><button style="padding: 20px 48px; font-size: 18px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600;">Начать бесплатно</button></div></section>`,
         css: `.button-cta { min-height: 300px; }`
@@ -502,9 +461,6 @@ window.SECTIONS_LIBRARY = [
         css: `.button-links { min-height: 200px; }`
     },
 
-    // =============================================
-    // ПОДВАЛ (FOOTER) - 4 варианта
-    // =============================================
     {
         id: 'footer-1', name: 'Подвал: Классический', category: 'footer', icon: 'fa-window-minimize',
         html: `<footer class="section footer-classic" style="padding: 60px 20px; background: #1a202c;"><div style="max-width: 1200px; margin: 0 auto;"><p style="color: #9ca3af; text-align: center;">&copy; 2024 Ваша компания. Все права защищены.</p></div></footer>`,
@@ -526,10 +482,7 @@ window.SECTIONS_LIBRARY = [
         css: `.footer-dark { min-height: 350px; }`
     },
 
-    // =============================================
-    // ВИДЕО (VIDEO) - 4 варианта
-    // =============================================
-    {
+    { ВИДЕО (VIDEO) - 4 варианта    {
         id: 'video-1', name: 'Видео: На фоне', category: 'video', icon: 'fa-film',
         html: `<section class="section video-background" style="padding: 140px 20px; text-align: center; min-height: 700px; display: flex; align-items: center; position: relative; overflow: hidden;"><video autoplay muted loop style="position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); z-index: 0;"><source src="https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-1610-large.mp4" type="video/mp4"></video><div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 1;"></div><div style="position: relative; z-index: 2;"><h2 style="font-size: 48px; color: #ffffff; margin-bottom: 24px;">Видео презентация</h2></div></section>`,
         css: `.video-background { min-height: 700px; }`
@@ -550,9 +503,6 @@ window.SECTIONS_LIBRARY = [
         css: `.video-description { min-height: 500px; }`
     },
 
-    // =============================================
-    // РАЗДЕЛИТЕЛЬ (DIVIDER) - 4 варианта
-    // =============================================
     {
         id: 'divider-1', name: 'Разделитель: Линия', category: 'divider', icon: 'fa-minus',
         html: `<section class="section divider-line" style="padding: 40px 20px; background: #ffffff;"><hr style="border: none; height: 2px; background: linear-gradient(90deg, transparent, #6366f1, transparent); max-width: 600px; margin: 0 auto;"></section>`,
@@ -574,9 +524,6 @@ window.SECTIONS_LIBRARY = [
         css: `.divider-pattern { min-height: 100px; }`
     },
 
-    // =============================================
-    // ТАРИФЫ (PRICING) - 6 премиум вариантов
-    // =============================================
     {
         id: 'pricing-1', name: 'Тарифы: 3 карточки', category: 'pricing', icon: 'fa-tags',
         html: `<section class="section pricing-cards-premium" style="padding:100px 20px;background:#f8fafc;"><div style="max-width:1200px;margin:0 auto;"><div style="text-align:center;margin-bottom:64px;"><span style="display:inline-block;padding:6px 16px;background:rgba(99,102,241,0.1);color:#6366f1;font-size:13px;font-weight:600;border-radius:20px;margin-bottom:16px;">ТАРИФЫ</span><h2 style="font-size:42px;color:#1a202c;margin-bottom:16px;font-weight:700;">Тарифные планы</h2><p style="font-size:18px;color:#64748b;max-width:600px;margin:0 auto;">Выберите подходящий вариант для вашего бизнеса</p></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;"><div style="background:white;padding:40px;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.05);"><h3 style="font-size:24px;color:#1a202c;margin-bottom:16px;">Старт</h3><p style="color:#64748b;margin-bottom:24px;">Для небольших проектов</p><div style="font-size:48px;font-weight:800;color:#1a202c;margin-bottom:24px;">9 900 ₽</div><ul style="list-style:none;padding:0;margin-bottom:32px;"><li style="padding:8px 0;display:flex;align-items:center;gap:12px;color:#4a5568;"><i class="fas fa-check" style="color:#10b981;"></i>Дизайн главной</li><li style="padding:8px 0;display:flex;align-items:center;gap:12px;color:#4a5568;"><i class="fas fa-check" style="color:#10b981;"></i>Адаптивная версия</li><li style="padding:8px 0;display:flex;align-items:center;gap:12px;color:#4a5568;"><i class="fas fa-check" style="color:#10b981;"></i>Срок 5 дней</li></ul><button style="width:100%;padding:16px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;border-radius:12px;cursor:pointer;font-weight:600;">Выбрать</button></div><div style="background:linear-gradient(135deg,#6366f1,#8b5cf6);padding:40px;border-radius:20px;box-shadow:0 10px 40px rgba(99,102,241,0.3);position:relative;overflow:hidden;"><div style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.2);padding:6px 16px;border-radius:20px;font-size:12px;color:white;font-weight:600;">ПОПУЛЯРНЫЙ</div><h3 style="font-size:24px;color:#ffffff;margin-bottom:16px;">Бизнес</h3><p style="color:rgba(255,255,255,0.9);margin-bottom:24px;">Для растущего бизнеса</p><div style="font-size:48px;font-weight:800;color:#ffffff;margin-bottom:24px;">24 900 ₽</div><ul style="list-style:none;padding:0;margin-bottom:32px;"><li style="padding:8px 0;display:flex;align-items:center;gap:12px;color:rgba(255,255,255,0.9);"><i class="fas fa-check" style="color:#10b981;"></i>Дизайн 5 страниц</li><li style="padding:8px 0;display:flex;align-items:center;gap:12px;color:rgba(255,255,255,0.9);"><i class="fas fa-check" style="color:#10b981;"></i>Адаптивная версия</li><li style="padding:8px 0;display:flex;align-items:center;gap:12px;color:rgba(255,255,255,0.9);"><i class="fas fa-check" style="color:#10b981;"></i>SEO оптимизация</li><li style="padding:8px 0;display:flex;align-items:center;gap:12px;color:rgba(255,255,255,0.9);"><i class="fas fa-check" style="color:#10b981;"></i>Срок 10 дней</li></ul><button style="width:100%;padding:16px;background:white;color:#6366f1;border:none;border-radius:12px;cursor:pointer;font-weight:600;">Выбрать</button></div><div style="background:white;padding:40px;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.05);"><h3 style="font-size:24px;color:#1a202c;margin-bottom:16px;">Премиум</h3><p style="color:#64748b;margin-bottom:24px;">Для крупных проектов</p><div style="font-size:48px;font-weight:800;color:#1a202c;margin-bottom:24px;">49 900 ₽</div><ul style="list-style:none;padding:0;margin-bottom:32px;"><li style="padding:8px 0;display:flex;align-items:center;gap:12px;color:#4a5568;"><i class="fas fa-check" style="color:#10b981;"></i>Дизайн 10+ страниц</li><li style="padding:8px 0;display:flex;align-items:center;gap:12px;color:#4a5568;"><i class="fas fa-check" style="color:#10b981;"></i>Адаптивная версия</li><li style="padding:8px 0;display:flex;align-items:center;gap:12px;color:#4a5568;"><i class="fas fa-check" style="color:#10b981;"></i>SEO и аналитика</li><li style="padding:8px 0;display:flex;align-items:center;gap:12px;color:#4a5568;"><i class="fas fa-check" style="color:#10b981;"></i>Срок 20 дней</li></ul><button style="width:100%;padding:16px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;border-radius:12px;cursor:pointer;font-weight:600;">Выбрать</button></div></div></div></section>`,
@@ -608,9 +555,6 @@ window.SECTIONS_LIBRARY = [
         css: `.pricing-minimal{min-height:600px;}`
     },
 
-    // =============================================
-    // FAQ - 6 премиум вариантов
-    // =============================================
     {
         id: 'faq-1', name: 'FAQ: Аккордеон', category: 'faq', icon: 'fa-question-circle',
         html: `<section class="section faq-accordion-premium" style="padding:100px 20px;background:#f8fafc;"><div style="max-width:900px;margin:0 auto;"><div style="text-align:center;margin-bottom:64px;"><span style="display:inline-block;padding:6px 16px;background:rgba(99,102,241,0.1);color:#6366f1;font-size:13px;font-weight:600;border-radius:20px;margin-bottom:16px;">FAQ</span><h2 style="font-size:42px;color:#1a202c;margin-bottom:16px;font-weight:700;">Частые вопросы</h2><p style="font-size:18px;color:#64748b;max-width:600px;margin:0 auto;">Ответы на популярные вопросы о наших услугах</p></div><div style="display:flex;flex-direction:column;gap:16px;"><div style="background:white;padding:30px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.05);cursor:pointer;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;"><h3 style="font-size:20px;color:#1a202c;font-weight:600;">Сколько времени занимает разработка?</h3><i class="fas fa-chevron-down" style="color:#6366f1;"></i></div><p style="color:#64748b;line-height:1.7;">Обычно от 5 до 14 рабочих дней в зависимости от сложности проекта. Главная страница — 3-5 дней, многостраничный сайт — 10-14 дней.</p></div><div style="background:white;padding:30px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.05);cursor:pointer;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;"><h3 style="font-size:20px;color:#1a202c;font-weight:600;">Какая стоимость разработки?</h3><i class="fas fa-chevron-down" style="color:#6366f1;"></i></div><p style="color:#64748b;line-height:1.7;">Стоимость начинается от 9 900₽ за главную страницу и зависит от количества страниц, функционала и сроков выполнения.</p></div><div style="background:white;padding:30px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.05);cursor:pointer;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;"><h3 style="font-size:20px;color:#1a202c;font-weight:600;">Есть ли гарантия?</h3><i class="fas fa-chevron-down" style="color:#6366f1;"></i></div><p style="color:#64748b;line-height:1.7;">Да, мы предоставляем гарантию 30 дней на все работы. В течение этого периода бесплатно исправляем любые недочёты.</p></div><div style="background:white;padding:30px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.05);cursor:pointer;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;"><h3 style="font-size:20px;color:#1a202c;font-weight:600;">Как происходит оплата?</h3><i class="fas fa-chevron-down" style="color:#6366f1;"></i></div><p style="color:#64748b;line-height:1.7;">Работаем по предоплате 50%. Оставшаяся часть оплачивается после утверждения финального дизайна перед передачей файлов.</p></div></div></div></section>`,
@@ -642,10 +586,7 @@ window.SECTIONS_LIBRARY = [
         css: `.faq-list{min-height:650px;}`
     },
 
-    // =============================================
-    // CTA (CALL TO ACTION) - 6 премиум вариантов
-    // =============================================
-    {
+    { CTA (CALL TO ACTION) - 6 премиум вариантов    {
         id: 'cta-1', name: 'CTA: Призыв', category: 'cta', icon: 'fa-bullhorn',
         html: `<section class="section cta-classic-premium" style="padding:100px 20px;text-align:center;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);position:relative;overflow:hidden;"><div style="position:absolute;top:-50%;right:-10%;width:600px;height:600px;background:rgba(255,255,255,0.1);border-radius:50%;filter:blur(60px);"></div><div style="max-width:800px;margin:0 auto;position:relative;z-index:2;"><span style="display:inline-block;padding:8px 20px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);border-radius:50px;color:#fff;font-size:13px;font-weight:600;margin-bottom:24px;backdrop-filter:blur(10px);">⚡ ОГРАНИЧЕННОЕ ПРЕДЛОЖЕНИЕ</span><h2 style="font-size:48px;color:#ffffff;margin-bottom:24px;font-weight:800;">Готовы начать проект?</h2><p style="font-size:20px;color:rgba(255,255,255,0.9);margin-bottom:40px;max-width:600px;margin-left:auto;margin-right:auto;">Оставьте заявку сейчас и получите скидку 20% на первый проект</p><div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;"><button style="padding:18px 42px;font-size:18px;background:#ffffff;color:#667eea;border:none;border-radius:12px;cursor:pointer;font-weight:700;box-shadow:0 10px 40px rgba(0,0,0,0.2);">Оставить заявку</button><button style="padding:18px 42px;font-size:18px;background:transparent;color:#ffffff;border:2px solid rgba(255,255,255,0.5);border-radius:12px;cursor:pointer;font-weight:600;backdrop-filter:blur(10px);">Узнать больше</button></div></div></section>`,
         css: `.cta-classic-premium{min-height:500px;}`
@@ -677,7 +618,6 @@ window.SECTIONS_LIBRARY = [
     }
 ];
 
-// Группировка секций по категориям (ГЛОБАЛЬНАЯ ФУНКЦИЯ)
 window.getSectionsByCategory = function() {
     const grouped = {};
     window.SECTIONS_LIBRARY.forEach(section => {
@@ -689,17 +629,14 @@ window.getSectionsByCategory = function() {
     return grouped;
 }
 
-// Получить количество секций в категории (ГЛОБАЛЬНАЯ ФУНКЦИЯ)
 window.getSectionsCount = function(category) {
     return window.SECTIONS_LIBRARY.filter(s => s.category === category).length;
 }
 
-// Получить общее количество секций (ГЛОБАЛЬНАЯ ФУНКЦИЯ)
 window.getTotalSectionsCount = function() {
     return window.SECTIONS_LIBRARY.length;
 }
 
-// Экспорт
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { SECTIONS_LIBRARY, SECTION_CATEGORIES, getSectionsByCategory, getSectionsCount, getTotalSectionsCount };
 }

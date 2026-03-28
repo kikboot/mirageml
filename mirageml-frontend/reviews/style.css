@@ -52,7 +52,6 @@ body {
     padding: 0 20px;
 }
 
-/* Background Animations */
 .background-container {
     position: fixed;
     top: 0;
@@ -157,7 +156,6 @@ body {
     66% { transform: translateY(30px) rotate(240deg); }
 }
 
-/* Glass Header */
 .glass-header {
     position: fixed;
     top: 0;
@@ -245,7 +243,6 @@ body {
     gap: 12px;
 }
 
-/* User menu styles */
 .user-menu {
     position: relative;
     display: inline-block;
@@ -362,7 +359,6 @@ body {
     font-size: 14px;
 }
 
-/* Modal styles */
 .modal {
     display: none;
     position: fixed;
@@ -543,13 +539,11 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-/* Main Content */
 main {
     padding: 140px 0 80px;
     min-height: 100vh;
 }
 
-/* Reviews Hero Section */
 .reviews-hero {
     text-align: center;
     margin-bottom: 80px;
@@ -601,7 +595,6 @@ main {
     margin: 0 auto;
 }
 
-/* Review Form Modern */
 .review-form-modern {
     margin-bottom: 80px;
 }
@@ -712,7 +705,6 @@ main {
     color: var(--gray);
 }
 
-/* Rating Stars Modern */
 .rating-stars-modern {
     display: flex;
     gap: 8px;
@@ -768,7 +760,6 @@ main {
     color: var(--light);
 }
 
-/* Submit Button */
 .submit-btn {
     width: 100%;
     justify-content: center;
@@ -793,7 +784,6 @@ main {
     overflow: hidden;
 }
 
-/* Стили для сообщения о необходимости авторизации */
 .auth-required-message {
     text-align: center;
     padding: 60px 40px;
@@ -854,7 +844,6 @@ main {
     left: 100%;
 }
 
-/* Reviews Display */
 .reviews-display {
     margin-top: 80px;
 }
@@ -900,7 +889,6 @@ main {
     font-weight: 500;
 }
 
-/* Reviews Filters */
 .reviews-filters {
     display: flex;
     gap: 40px;
@@ -960,7 +948,6 @@ main {
     color: var(--light);
 }
 
-/* Reviews Grid Modern */
 .reviews-grid-modern {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -1089,7 +1076,6 @@ main {
     background: rgba(255, 255, 255, 0.05);
 }
 
-/* Loading and Empty States */
 .loading-reviews,
 .no-reviews,
 .error-loading {
@@ -1119,7 +1105,6 @@ main {
     color: var(--light);
 }
 
-/* Reviews Actions */
 .reviews-actions {
     text-align: center;
 }
@@ -1145,7 +1130,6 @@ main {
     transform: translateY(-2px);
 }
 
-/* Footer Modern */
 .footer-modern {
     background: var(--darker);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -1315,7 +1299,6 @@ main {
     color: var(--danger);
 }
 
-/* Responsive Design */
 @media (max-width: 1024px) {
     .footer-main {
         grid-template-columns: 1fr;
@@ -1416,25 +1399,21 @@ main {
     }
 }
 
-/* Utility Classes */
 .glass-effect {
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
 }
 
-/* Scroll Behavior */
 html {
     scroll-behavior: smooth;
 }
 
-/* Selection */
 ::selection {
     background: rgba(99, 102, 241, 0.3);
     color: var(--light);
 }
 
-/* Focus styles for accessibility */
 button:focus,
 input:focus,
 textarea:focus,
@@ -1443,7 +1422,6 @@ select:focus {
     outline-offset: 2px;
 }
 
-/* Loading animation */
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -1453,7 +1431,6 @@ select:focus {
     animation: spin 1s linear infinite;
 }
 
-/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;

@@ -1,4 +1,3 @@
-// MirageML Editor Pro - Full Featured Visual Editor
 let state = {
     sections: [],
     selectedSection: null,
@@ -17,7 +16,7 @@ let DOM = {};
 function init() {
     initDOM();
     initTabs();
-    renderAccordion(); // Рендерим аккордеон вместо старой сетки
+    renderAccordion();
     setupEventListeners();
     setupDragAndDrop();
     setupKeyboardShortcuts();
@@ -65,7 +64,6 @@ function initTabs() {
     });
 }
 
-// Рендеринг аккордеона секций
 function renderAccordion(searchQuery = '') {
     const container = document.getElementById('accordion-container');
     if (!container) return;
@@ -78,14 +76,10 @@ function renderAccordion(searchQuery = '') {
         const category = SECTION_CATEGORIES[catKey];
         if (!category) continue;
 
-        // Фильтрация секций по поиску
         const filteredSections = sections.filter(s =>
             s.name.toLowerCase().includes(query) ||
             s.category.toLowerCase().includes(query)
         );
-
-        // Пропускаем пустые категории при поиске
-        if (searchQuery && filteredSections.length === 0) continue;
 
         const count = searchQuery ? filteredSections.length : sections.length;
         const isExpanded = category.expanded ? 'expanded' : '';
@@ -133,7 +127,6 @@ function renderAccordion(searchQuery = '') {
 
     container.innerHTML = html;
 
-    // Навешиваем обработчики drag-and-drop на новые карточки
     container.querySelectorAll('.section-card').forEach(card => {
         card.addEventListener('click', () => {
             const sectionId = card.dataset.sectionId;
@@ -151,7 +144,6 @@ function renderAccordion(searchQuery = '') {
     });
 }
 
-// Переключение аккордеона
 window.toggleAccordionItem = function(categoryKey) {
     const item = document.querySelector(`.accordion-item[data-category="${categoryKey}"]`);
     if (!item) return;
@@ -166,12 +158,9 @@ window.toggleAccordionItem = function(categoryKey) {
         SECTION_CATEGORIES[categoryKey].expanded = true;
     }
 
-    // Перерисовываем аккордеон для обновления иконок
-    const searchQuery = DOM.sectionSearch?.value || '';
     renderAccordion(searchQuery);
 };
 
-// Развернуть все категории
 window.expandAllCategories = function() {
     for (const key of Object.keys(SECTION_CATEGORIES)) {
         SECTION_CATEGORIES[key].expanded = true;
@@ -181,7 +170,6 @@ window.expandAllCategories = function() {
     updateStatus('Все категории развернуты');
 };
 
-// Свернуть все категории
 window.collapseAllCategories = function() {
     for (const key of Object.keys(SECTION_CATEGORIES)) {
         SECTION_CATEGORIES[key].expanded = false;
@@ -204,26 +192,23 @@ function addSectionToCanvas(sectionData, isImage = false, imageData = null) {
     } else {
         sectionContainer.innerHTML = sectionData.html;
     }
-    
-    // Resize handles
+
     ['nw','n','ne','e','se','s','sw','w'].forEach(dir => {
         const handle = document.createElement('div');
         handle.className = `resize-handle ${dir}`;
         handle.dataset.direction = dir;
         sectionContainer.appendChild(handle);
     });
-    
-    // Rotate handle & line
+
     const rotateHandle = document.createElement('div');
     rotateHandle.className = 'rotate-handle';
     rotateHandle.innerHTML = '<i class="fas fa-sync-alt"></i>';
     sectionContainer.appendChild(rotateHandle);
-    
+
     const rotateLine = document.createElement('div');
     rotateLine.className = 'rotate-line';
     sectionContainer.appendChild(rotateLine);
-    
-    // Controls
+
     const controls = document.createElement('div');
     controls.className = 'section-controls';
     controls.innerHTML = `
@@ -308,13 +293,10 @@ function selectElement(sectionId, elementId) {
     if (!element) return;
     
     state.selectedElement = element;
-    state.selectedSection = section; // Запоминаем секцию для фона
-    
-    // Подсвечиваем элемент
+    state.selectedSection = section;
+
     highlightElement(element.element);
-    // Рендерим свойства элемента
     renderElementProperties(element);
-    // Показываем toolbar
     showFloatingToolbar();
     
     updateStatus(`Выбран элемент: ${element.name}`);
@@ -323,13 +305,11 @@ function selectElement(sectionId, elementId) {
 }
 
 function highlightElement(el) {
-    // Снимаем выделение со всех элементов
     document.querySelectorAll('.canvas-element-highlight').forEach(e => {
         e.classList.remove('canvas-element-highlight');
         e.style.outline = '';
     });
-    
-    // Выделяем текущий
+
     el.classList.add('canvas-element-highlight');
     el.style.outline = '2px dashed var(--primary)';
     el.style.outlineOffset = '2px';
@@ -337,7 +317,6 @@ function highlightElement(el) {
     el.style.zIndex = '1000';
 }
 
-// Функция для обновления значений в панели свойств
 function updatePropertiesPanel() {
     if (state.selectedSection && !state.selectedElement) {
         renderSectionProperties(state.selectedSection);
@@ -349,17 +328,14 @@ function updatePropertiesPanel() {
 function renderSectionProperties(section) {
     if (!DOM.propertiesContent) return;
 
-    // Определяем текущий тип фона
     const bgStyle = section.element.style.background || '';
     let bgType = 'color';
     if (bgStyle.includes('gradient')) bgType = 'gradient';
     if (bgStyle.includes('url(')) bgType = 'image';
-    
-    // Проверяем, есть ли видео фон
+
     const videoElement = section.element.querySelector('video');
     if (videoElement) bgType = 'video';
 
-    // Получаем текущий цвет фона
     const currentBgColor = getBgColorHex(bgStyle);
     const currentOpacity = getOpacityFromColor(bgStyle);
 
@@ -425,7 +401,6 @@ function renderSectionProperties(section) {
         <div class="property-group">
             <h4><i class="fas fa-fill-drip"></i> Фон</h4>
 
-            <!-- Вкладки типа фона -->
             <div class="bg-tabs" style="display:flex;gap:4px;margin-bottom:12px;">
                 <button class="bg-tab ${bgType==='color'?'active':''}" onclick="switchBgTab('color')" style="flex:1;padding:8px;background:${bgType==='color'?'rgba(99,102,241,0.2)':'rgba(255,255,255,0.05)'};border:1px solid ${bgType==='color'?'var(--primary)':'var(--glass-border)'};border-radius:6px;color:var(--light);cursor:pointer;">
                     <i class="fas fa-circle"></i> Цвет
@@ -441,7 +416,6 @@ function renderSectionProperties(section) {
                 </button>
             </div>
 
-            <!-- Цвет -->
             <div id="bg-color-panel" style="display:${bgType==='color'?'block':'none'}">
                 <div class="property-item">
                     <label><i class="fas fa-circle"></i> Цвет фона</label>
@@ -459,7 +433,6 @@ function renderSectionProperties(section) {
                 </div>
             </div>
 
-            <!-- Градиент -->
             <div id="bg-gradient-panel" style="display:${bgType==='gradient'?'block':'none'}">
                 <div class="property-item">
                     <label><i class="fas fa-random"></i> Тип градиента</label>
@@ -497,7 +470,6 @@ function renderSectionProperties(section) {
                 </div>
             </div>
 
-            <!-- Изображение -->
             <div id="bg-image-panel" style="display:${bgType==='image'?'block':'none'}">
                 <div class="property-item">
                     <label><i class="fas fa-image"></i> URL изображения</label>
@@ -557,7 +529,6 @@ function renderSectionProperties(section) {
                 </div>
             </div>
 
-            <!-- Видео -->
             <div id="bg-video-panel" style="display:${bgType==='video'?'block':'none'}">
                 <div class="property-item">
                     <label><i class="fas fa-video"></i> URL видео</label>
@@ -587,7 +558,6 @@ function renderSectionProperties(section) {
                 </div>
             </div>
 
-            <!-- Эффекты -->
             <div class="property-item" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--glass-border);">
                 <label><i class="fas fa-magic"></i> Размытие фона (blur)</label>
                 <div class="range-wrapper">
@@ -629,7 +599,6 @@ function renderSectionProperties(section) {
     setupColorPicker('prop-bg-color', 'prop-bg-color-text');
 }
 
-// Переключение вкладок фона
 window.switchBgTab = function(type) {
     if (!state.selectedSection) return;
 
@@ -645,7 +614,7 @@ window.switchBgTab = function(type) {
     document.getElementById('bg-image-panel').style.display = type === 'image' ? 'block' : 'none';
     document.getElementById('bg-video-panel').style.display = type === 'video' ? 'block' : 'none';
 
-    // Сохраняем текущий фон при переключении
+ Сохраняем текущий фон при переключении
     if (type === 'gradient' && !state.selectedSection.element.style.background.includes('gradient')) {
         updateGradient();
     }
@@ -663,7 +632,6 @@ window.switchBgTab = function(type) {
     }
 };
 
-// Обновление градиента
 window.updateGradient = function() {
     if (!state.selectedSection) return;
     
@@ -686,26 +654,22 @@ window.updateGradient = function() {
     
     state.selectedSection.element.style.background = gradient;
     
-    // Обновляем значения
+ Обновляем значения
     document.getElementById('gradient-angle-value').textContent = `${angle}°`;
 };
 
-// Добавление стопа градиента
 window.addGradientStop = function() {
     showToast('Функция в разработке', 'info');
 };
 
-// Обновление фона - цвет
 window.updateSectionBgColor = function(value) {
     if (state.selectedSection) {
-        // Получаем текущую прозрачность
         const opacity = document.getElementById('bg-opacity')?.value || 100;
         const hex = value.replace('#', '');
         const r = parseInt(hex.substring(0, 2), 16);
         const g = parseInt(hex.substring(2, 4), 16);
         const b = parseInt(hex.substring(4, 6), 16);
-        
-        // Применяем цвет с прозрачностью
+
         state.selectedSection.element.style.background = `rgba(${r}, ${g}, ${b}, ${opacity/100})`;
         
         const colorInput = document.getElementById('prop-bg-color');
@@ -717,7 +681,6 @@ window.updateSectionBgColor = function(value) {
     }
 };
 
-// Прозрачность цвета
 window.updateBgOpacity = function(value) {
     if (state.selectedSection) {
         document.getElementById('bg-opacity-value').textContent = `${value}%`;
@@ -732,7 +695,6 @@ window.updateBgOpacity = function(value) {
     }
 };
 
-// Получение прозрачности из цвета
 function getOpacityFromColor(color) {
     if (!color) return 100;
     if (color.includes('rgba')) {
@@ -742,7 +704,6 @@ function getOpacityFromColor(color) {
     return 100;
 }
 
-// Получение HEX из background
 function getBgColorHex(bgStyle) {
     if (!bgStyle) return '#ffffff';
     if (bgStyle.startsWith('#')) return bgStyle;
@@ -758,20 +719,18 @@ function getBgColorHex(bgStyle) {
     return '#ffffff';
 }
 
-// Получение URL изображения из background
 function getBgImageUrl(bgStyle) {
     if (!bgStyle) return '';
     const match = bgStyle.match(/url\(['"]?(.*?)['"]?\)/);
     return match ? match[1] : '';
 }
 
-// Быстрая установка фона
 window.setBgImage = function(url) {
     if (!state.selectedSection) {
         showToast('Выберите секцию', 'error');
         return;
     }
-    
+
     const input = document.getElementById('bg-image-url');
     if (input) {
         input.value = url;
@@ -780,7 +739,6 @@ window.setBgImage = function(url) {
     }
 };
 
-// Обновление фона - изображение
 window.updateBgImage = function(url) {
     if (!state.selectedSection) return;
     
@@ -794,7 +752,6 @@ window.updateBgImage = function(url) {
     }
 };
 
-// Размер фона
 window.updateBgSize = function(value) {
     if (state.selectedSection) {
         state.selectedSection.element.style.backgroundSize = value;
@@ -802,14 +759,12 @@ window.updateBgSize = function(value) {
     }
 };
 
-// Позиция фона
 window.updateBgPosition = function(value) {
     if (state.selectedSection) {
         state.selectedSection.element.style.backgroundPosition = value;
     }
 };
 
-// Прозрачность изображения
 window.updateBgImageOpacity = function(value) {
     if (state.selectedSection) {
         document.getElementById('bg-image-opacity-value').textContent = `${value}%`;
@@ -817,7 +772,6 @@ window.updateBgImageOpacity = function(value) {
     }
 };
 
-// Overlay
 window.updateBgOverlay = function() {
     if (!state.selectedSection) return;
 
@@ -834,11 +788,6 @@ window.updateBgOverlay = function() {
     }
 };
 
-// =============================================
-// Функции для видео фона
-// =============================================
-
-// Получить URL видео из секции
 function getVideoUrl(element) {
     const video = element.querySelector('video');
     if (video) {
@@ -848,27 +797,23 @@ function getVideoUrl(element) {
     return '';
 }
 
-// Обновить видео фон
 window.updateBgVideo = function(url) {
     if (!state.selectedSection) return;
-    
+
     const section = state.selectedSection.element;
     let video = section.querySelector('video');
     let overlay = section.querySelector('.video-overlay');
-    
+
     if (url) {
-        // Если видео нет, создаём его
         if (!video) {
-            // Удаляем существующий фон
             section.style.background = '';
-            
-            // Создаём видео
+
             video = document.createElement('video');
             video.autoplay = true;
             video.muted = true;
             video.loop = true;
             video.style.cssText = 'position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); z-index: 0;';
-            
+
             const source = document.createElement('source');
             source.src = url;
             source.type = 'video/mp4';
@@ -878,28 +823,25 @@ window.updateBgVideo = function(url) {
             section.style.overflow = 'hidden';
             section.insertBefore(video, section.firstChild);
             
-            // Создаём overlay
+         Создаём overlay
             overlay = document.createElement('div');
             overlay.className = 'video-overlay';
             overlay.style.cssText = 'position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1; pointer-events: none;';
             section.insertBefore(overlay, video.nextSibling);
         } else {
-            // Обновляем URL видео
             const source = video.querySelector('source');
             if (source) source.src = url;
             video.load();
             video.play();
         }
     } else {
-        // Удаляем видео
         if (video) video.remove();
         if (overlay) overlay.remove();
     }
-    
+
     saveToHistory();
 };
 
-// Установить видео фон
 window.setBgVideo = function(url) {
     if (!state.selectedSection) {
         showToast('Выберите секцию', 'error');
@@ -914,7 +856,6 @@ window.setBgVideo = function(url) {
     }
 };
 
-// Обновить overlay для видео
 window.updateVideoOverlay = function() {
     if (!state.selectedSection) return;
     
@@ -932,7 +873,6 @@ window.updateVideoOverlay = function() {
     saveToHistory();
 };
 
-// Конвертация HEX в RGB
 function hexToRgb(hex) {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? 
@@ -940,7 +880,6 @@ function hexToRgb(hex) {
         '0, 0, 0';
 }
 
-// Размытие
 window.updateBgBlur = function(value) {
     if (state.selectedSection) {
         document.getElementById('bg-blur-value').textContent = `${value}px`;
@@ -948,7 +887,6 @@ window.updateBgBlur = function(value) {
     }
 };
 
-// Фильтры
 window.updateBgFilter = function() {
     if (state.selectedSection) {
         const brightness = document.getElementById('bg-brightness')?.value || 100;
@@ -963,7 +901,6 @@ window.updateBgFilter = function() {
     }
 };
 
-// Применение фильтров
 function applyBgFilters() {
     if (!state.selectedSection) return;
     
@@ -981,8 +918,7 @@ function renderElementProperties(element) {
     const el = element.element;
     const computedStyle = window.getComputedStyle(el);
     const tag = element.tag;
-    
-    // Получаем текущие цвета
+
     const currentColor = rgbToHex(computedStyle.color);
     const currentBgColor = rgbToHex(computedStyle.backgroundColor);
 
@@ -1086,7 +1022,6 @@ function renderElementProperties(element) {
     setupColorPicker('el-bg-color', 'el-bg-color-text');
 }
 
-// Live обновление свойств элемента
 window.updateElementName = function(value) {
     if (state.selectedElement) {
         state.selectedElement.name = value;
@@ -1151,7 +1086,6 @@ function getElementIcon(tag) {
     return icons[tag] || 'fa-square';
 }
 
-// Live обновление свойств секции
 window.updateSectionName = function(value) {
     if (state.selectedSection) {
         state.selectedSection.name = value;
@@ -1183,7 +1117,7 @@ window.updateSectionPadding = function(side, value) {
 window.updateSectionBgColor = function(value) {
     if (state.selectedSection) {
         state.selectedSection.element.style.backgroundColor = value;
-        // Синхронизируем color picker и text input
+     Синхронизируем color picker и text input
         const colorInput = document.getElementById('prop-bg-color');
         const colorText = document.getElementById('prop-bg-color-text');
         if (colorInput && colorText) {
@@ -1213,10 +1147,9 @@ window.applySectionProperties = function() {
     
     const bgColor = document.getElementById('prop-bg-color')?.value;
     if (bgColor && bgColor !== '#ffffff') section.style.backgroundColor = bgColor;
-    
-    // Не снимаем выделение - оставляем возможность продолжать редактирование
+
     saveToHistory();
-    renderSectionProperties(state.selectedSection); // Перерисовываем панель с новыми значениями
+    renderSectionProperties(state.selectedSection);
     showToast('Свойства применены', 'success');
     updateStatus('Свойства секции обновлены');
 };
@@ -1247,13 +1180,11 @@ window.applyElementProperties = function() {
     if (width) el.style.width = width;
     if (height) el.style.height = height;
     if (borderRadius) el.style.borderRadius = borderRadius;
-    
-    // Обновляем название элемента
+
     state.selectedElement.name = getElementName(el);
-    
-    // Не снимаем выделение - оставляем возможность продолжать редактирование
+
     saveToHistory();
-    renderElementProperties(state.selectedElement); // Перерисовываем панель с новыми значениями
+    renderElementProperties(state.selectedElement);
     showToast('Свойства применены', 'success');
     updateStatus('Свойства элемента обновлены');
 };
@@ -1408,12 +1339,12 @@ function setupToolbar() {
 
 function setupCanvasInteractions() {
     DOM.canvas?.addEventListener('click', (e) => {
-        // Игнорируем клики по контролам
+     Игнорируем клики по контролам
         if (e.target.closest('.section-controls') || e.target.closest('.resize-handle') || e.target.closest('.rotate-handle')) {
             return;
         }
         
-        // Проверяем клик по элементу внутри секции
+     Проверяем клик по элементу внутри секции
         const textElement = e.target.closest('h1, h2, h3, h4, p, button, a, img, div');
         if (textElement && !e.target.closest('.canvas-section')) {
             const section = state.sections.find(s => s.element.contains(textElement));
@@ -1441,7 +1372,7 @@ function setupCanvasInteractions() {
         }
     });
     
-    // Клик по секции для выделения
+ Клик по секции для выделения
     DOM.canvas?.addEventListener('click', (e) => {
         const sectionEl = e.target.closest('.canvas-section');
         if (sectionEl && !e.target.closest('.section-controls')) {
@@ -1453,7 +1384,7 @@ function setupCanvasInteractions() {
         }
     });
     
-    // Двойной клик для быстрого редактирования текста
+ Двойной клик для быстрого редактирования текста
     DOM.canvas?.addEventListener('dblclick', (e) => {
         const textElement = e.target.closest('h1, h2, h3, h4, p, button, a');
         if (textElement && !e.target.closest('.section-controls')) {
@@ -1462,7 +1393,7 @@ function setupCanvasInteractions() {
                 const element = section.elements.find(el => el.element === textElement);
                 if (element) {
                     selectElement(section.id, element.id);
-                    // Открываем prompt для быстрого редактирования
+                 Открываем prompt для быстрого редактирования
                     const newText = prompt('Введите текст:', textElement.textContent);
                     if (newText !== null) {
                         textElement.textContent = newText;
@@ -1483,7 +1414,7 @@ function setupCanvasInteractions() {
         if (DOM.cursorPosition) DOM.cursorPosition.textContent = `X: ${Math.round(x)}, Y: ${Math.round(y)}`;
     });
     
-    // Обновление мини-карты при скролле
+ Обновление мини-карты при скролле
     DOM.canvasWrapper?.addEventListener('scroll', () => {
         updateMinimap();
     });
@@ -1636,7 +1567,7 @@ function resetImageUpload() {
 }
 
 function setupEventListeners() {
-    // Скрытие/показ левой панели
+ Скрытие/показ левой панели
     document.getElementById('toggle-sidebar-btn')?.addEventListener('click', () => {
         const leftSidebar = document.querySelector('.left-sidebar');
         const editorContainer = document.querySelector('.editor-container');
@@ -1645,7 +1576,7 @@ function setupEventListeners() {
             leftSidebar.classList.toggle('collapsed');
             editorContainer.classList.toggle('sidebar-hidden');
             
-            // Сохраняем состояние
+         Сохраняем состояние
             const isCollapsed = leftSidebar.classList.contains('collapsed');
             localStorage.setItem('sidebarCollapsed', isCollapsed);
             
@@ -1653,7 +1584,7 @@ function setupEventListeners() {
         }
     });
 
-    // Восстанавливаем состояние панели при загрузке
+ Восстанавливаем состояние панели при загрузке
     const wasCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
     if (wasCollapsed) {
         const leftSidebar = document.querySelector('.left-sidebar');
@@ -1662,7 +1593,7 @@ function setupEventListeners() {
         editorContainer?.classList.add('sidebar-hidden');
     }
 
-    // Кнопка для показа панели
+ Кнопка для показа панели
     document.getElementById('show-sidebar-btn')?.addEventListener('click', () => {
         const leftSidebar = document.querySelector('.left-sidebar');
         const editorContainer = document.querySelector('.editor-container');
@@ -1675,13 +1606,13 @@ function setupEventListeners() {
         }
     });
 
-    // Поиск секций в аккордеоне
+ Поиск секций в аккордеоне
     DOM.sectionSearch?.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase();
         renderAccordion(query);
     });
 
-    // Кнопки развернуть/свернуть все
+ Кнопки развернуть/свернуть все
     document.getElementById('expand-all-btn')?.addEventListener('click', expandAllCategories);
     document.getElementById('collapse-all-btn')?.addEventListener('click', collapseAllCategories);
 
@@ -1750,11 +1681,11 @@ function generateCSS() {
 }
 
 function saveProject() {
-    // Используем интеграцию с бекендом если доступна
+ Используем интеграцию с бекендом если доступна
     if (typeof handleSaveProject === 'function') {
         handleSaveProject();
     } else {
-        // Fallback на localStorage
+     Fallback на localStorage
         localStorage.setItem('mirageml-project', JSON.stringify({
             sections: state.sections.map(s => ({ id: s.id, name: s.name })),
             savedAt: new Date().toISOString()
@@ -1789,7 +1720,7 @@ function redo() {
 
 function setupKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
-        // Ctrl+B - скрыть/показать панель
+     Ctrl+B - скрыть/показать панель
         if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
             e.preventDefault();
             const leftSidebar = document.querySelector('.left-sidebar');
@@ -1858,10 +1789,10 @@ function updateMinimap() {
     const viewport = document.getElementById('minimap-viewport');
     if (!minimap || !viewport || state.sections.length === 0) return;
     
-    // Очищаем мини-карту
+ Очищаем мини-карту
     minimap.innerHTML = '';
     
-    // Добавляем блоки для каждой секции
+ Добавляем блоки для каждой секции
     const canvasHeight = DOM.canvas.scrollHeight;
     const sectionHeight = 100 / state.sections.length;
     
@@ -1882,10 +1813,10 @@ function updateMinimap() {
         minimap.appendChild(block);
     });
     
-    // Добавляем viewport индикатор
+ Добавляем viewport индикатор
     minimap.appendChild(viewport);
     
-    // Обновляем позицию viewport
+ Обновляем позицию viewport
     const wrapper = DOM.canvasWrapper;
     const scrollTop = wrapper.scrollTop;
     const scrollHeight = wrapper.scrollHeight - wrapper.clientHeight;

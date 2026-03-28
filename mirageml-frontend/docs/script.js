@@ -1,7 +1,4 @@
-// Script для страницы документации
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Мобильное меню
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const mobileMenuClose = document.querySelector('.mobile-menu-close');
     const mobileMenuContainer = document.querySelector('.mobile-menu-container');
@@ -27,26 +24,22 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = '';
     });
 
-    // FAQ аккордеон
     const faqQuestions = document.querySelectorAll('.faq-question');
     faqQuestions.forEach(question => {
         question.addEventListener('click', function() {
             const answer = this.nextElementSibling;
             const isOpen = answer.classList.contains('expanded');
 
-            // Закрываем все открытые ответы
             document.querySelectorAll('.faq-answer').forEach(ans => {
                 ans.classList.remove('expanded');
             });
 
-            // Открываем текущий ответ, если он был закрыт
             if (!isOpen) {
                 answer.classList.add('expanded');
             }
         });
     });
 
-    // Модальные окна
     const loginModal = document.getElementById('login-modal');
     const registerModal = document.getElementById('register-modal');
     const loginBtn = document.getElementById('login-btn');
@@ -59,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileLoginBtn = document.getElementById('mobile-login-btn');
     const mobileRegisterBtn = document.getElementById('mobile-register-btn');
 
-    // Открытие модальных окон
     loginBtn.addEventListener('click', () => {
         loginModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
@@ -80,7 +72,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = 'hidden';
     });
 
-    // Закрытие модальных окон
     closeBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             loginModal.style.display = 'none';
@@ -89,7 +80,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Закрытие модальных окон при клике вне их области
     window.addEventListener('click', function(event) {
         if (event.target === loginModal) {
             loginModal.style.display = 'none';
@@ -101,7 +91,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Переключение между формами
     switchToRegister && switchToRegister.addEventListener('click', function() {
         loginModal.style.display = 'none';
         registerModal.style.display = 'flex';
@@ -122,7 +111,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = '';
     });
 
-    // Обработка форм
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
 
@@ -134,7 +122,6 @@ document.addEventListener('DOMContentLoaded', function() {
         registerForm.addEventListener('submit', handleRegister);
     }
 
-    // Плавный скролл для якорных ссылок
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -148,7 +135,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Активация текущей страницы в навигации
     const currentPage = window.location.pathname.split('/').pop();
     if (currentPage === 'index.html' || currentPage === '') {
         const currentNavLinks = document.querySelectorAll('.nav-link[href*="docs"]');
@@ -157,23 +143,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Проверка авторизации при загрузке
     checkAuthStatus();
 
-    // Инициализация пользовательского меню
     initUserMenu();
 });
 
-// Функция проверки авторизации
 async function checkAuthStatus() {
-    // Проверяем токен в localStorage и sessionStorage
     let token = localStorage.getItem('token');
     if (!token) {
         token = sessionStorage.getItem('token');
     }
 
     if (!token) {
-        // Пользователь не авторизован
         showGuestUI();
         return;
     }
@@ -190,7 +171,6 @@ async function checkAuthStatus() {
             const user = await response.json();
             showUserUI(user);
         } else {
-            // Токен недействителен
             localStorage.removeItem('token');
             sessionStorage.removeItem('token');
             showGuestUI();
@@ -203,7 +183,6 @@ async function checkAuthStatus() {
     }
 }
 
-// Отображение UI для гостя
 function showGuestUI() {
     document.getElementById('guest-buttons').style.display = 'flex';
     document.getElementById('user-menu').style.display = 'none';
@@ -211,14 +190,12 @@ function showGuestUI() {
     document.getElementById('mobile-user-menu').style.display = 'none';
 }
 
-// Отображение UI для авторизованного пользователя
 function showUserUI(user) {
     document.getElementById('guest-buttons').style.display = 'none';
     document.getElementById('user-menu').style.display = 'block';
     document.getElementById('mobile-guest-buttons').style.display = 'none';
     document.getElementById('mobile-user-menu').style.display = 'block';
 
-    // Обновляем информацию о пользователе
     const userInitials = getInitials(user.name);
     document.getElementById('user-initials').textContent = userInitials;
     document.getElementById('dropdown-initials').textContent = userInitials;
@@ -229,7 +206,6 @@ function showUserUI(user) {
     document.getElementById('mobile-user-email').textContent = user.email;
 }
 
-// Функция получения инициалов
 function getInitials(name) {
     if (!name) return 'NN';
     const nameParts = name.trim().split(/\s+/);
@@ -240,7 +216,6 @@ function getInitials(name) {
     }
 }
 
-// Обработка входа
 async function handleLogin(e) {
     e.preventDefault();
 
@@ -264,7 +239,6 @@ async function handleLogin(e) {
         }
 
         if (response.ok && data.success) {
-            // Сохраняем токен в зависимости от настроек
             const rememberMe = document.getElementById('remember-me').checked;
 
             if (rememberMe) {
@@ -273,14 +247,11 @@ async function handleLogin(e) {
                 sessionStorage.setItem('token', data.token);
             }
 
-            // Обновляем UI
             showUserUI(data.user);
-            
-            // Закрываем модальное окно
+
             document.getElementById('login-modal').style.display = 'none';
             document.body.style.overflow = '';
         } else {
-            // Показываем ошибку
             const notification = document.getElementById('login-notification');
             notification.textContent = data.error || 'Неверный email или пароль';
             notification.style.display = 'block';
@@ -293,7 +264,6 @@ async function handleLogin(e) {
     }
 }
 
-// Обработка регистрации
 async function handleRegister(e) {
     e.preventDefault();
 
@@ -329,15 +299,12 @@ async function handleRegister(e) {
         }
 
         if (response.ok && data.success) {
-            // Открываем модальное окно входа
             document.getElementById('register-modal').style.display = 'none';
             document.getElementById('login-modal').style.display = 'flex';
-            
-            // Заполняем поля
+
             document.getElementById('login-email').value = email;
             document.getElementById('login-password').value = password;
-            
-            // Показываем сообщение
+
             const notification = document.getElementById('login-notification');
             notification.textContent = 'Аккаунт успешно создан. Войдите в систему.';
             notification.className = 'notification success';
@@ -355,22 +322,17 @@ async function handleRegister(e) {
     }
 }
 
-// Функция выхода
 async function logout() {
-    // Удаляем токен
     localStorage.removeItem('token');
     sessionStorage.removeItem('token');
-    
-    // Обновляем UI
+
     showGuestUI();
-    
-    // Закрываем мобильное меню, если открыто
+
     document.querySelector('.mobile-menu-container').classList.remove('active');
     document.querySelector('.mobile-menu-overlay').style.display = 'none';
     document.body.style.overflow = '';
 }
 
-// Инициализация пользовательского меню
 function initUserMenu() {
     const userAvatarBtn = document.getElementById('user-avatar-btn');
     const userDropdown = document.getElementById('user-dropdown');
@@ -399,7 +361,6 @@ function initUserMenu() {
         isOpen = false;
     };
 
-    // Обработчики для десктопного меню
     userAvatarBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (isOpen) {
@@ -409,27 +370,23 @@ function initUserMenu() {
         }
     });
 
-    // Закрытие меню при клике вне его области
     document.addEventListener('click', (e) => {
         if (!userAvatarBtn.contains(e.target) && !userDropdown.contains(e.target)) {
             closeMenu();
         }
     });
 
-    // Обработчики для мобильного меню
     document.addEventListener('click', (e) => {
         const mobileMenu = document.querySelector('.mobile-menu-container');
         if (mobileMenu && mobileMenu.classList.contains('active')) {
             const isInsideUserMenu = document.getElementById('mobile-user-menu').contains(e.target);
             const isUserMenuTrigger = e.target.closest('#mobile-user-menu') || e.target.closest('#mobile-user-initials');
-            
+
             if (!isInsideUserMenu && !isUserMenuTrigger) {
-                // Закрываем мобильное меню, если клик не по пользовательскому меню
             }
         }
     });
 
-    // Обработчики для кнопок выхода
     document.getElementById('logout-btn-header')?.addEventListener('click', logout);
     document.getElementById('mobile-logout-btn')?.addEventListener('click', logout);
 }

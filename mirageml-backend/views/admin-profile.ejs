@@ -1,5 +1,4 @@
 <div class="profile-container">
-    <!-- Карточка профиля -->
     <div class="card profile-card">
         <div class="profile-header">
             <div class="profile-avatar">
@@ -50,7 +49,6 @@
         </div>
     </div>
 
-    <!-- Форма редактирования профиля -->
     <div class="card">
         <div class="card-header">
             <h3><i class="fas fa-user-edit"></i> Редактирование профиля</h3>
@@ -96,7 +94,6 @@
         </form>
     </div>
 
-    <!-- Смена пароля -->
     <div class="card">
         <div class="card-header">
             <h3><i class="fas fa-key"></i> Смена пароля</h3>
@@ -136,7 +133,6 @@
     </div>
 </div>
 
-<!-- Уведомления -->
 <div id="notification" class="notification"></div>
 
 <style>
@@ -396,14 +392,12 @@
 </style>
 
 <script>
-    // Сохранение исходных значений для кнопки отмены
     const originalProfileData = {
         name: document.getElementById('admin-name').value,
         email: document.getElementById('admin-email').value,
         country: document.getElementById('admin-country').value
     };
 
-    // Уведомления
     function showNotification(message, type) {
         const notification = document.getElementById('notification');
         notification.textContent = message;
@@ -413,7 +407,6 @@
         }, 3000);
     }
 
-    // Редактирование профиля
     document.getElementById('profile-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -437,7 +430,6 @@
 
             if (result.success) {
                 showNotification('Профиль успешно обновлен', 'success');
-                // Обновляем исходные данные для кнопки отмены
                 originalProfileData.name = name;
                 originalProfileData.email = email;
                 originalProfileData.country = country;
@@ -454,7 +446,6 @@
         }
     });
 
-    // Смена пароля
     document.getElementById('password-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -504,7 +495,6 @@
         }
     });
 
-    // Кнопки отмены
     document.getElementById('cancel-btn')?.addEventListener('click', () => {
         document.getElementById('admin-name').value = originalProfileData.name;
         document.getElementById('admin-email').value = originalProfileData.email;

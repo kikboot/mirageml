@@ -1,4 +1,3 @@
-/* Editor Modern Styles */
 :root {
     --primary: #6366f1;
     --primary-dark: #4f46e5;
@@ -52,7 +51,6 @@ body {
     height: 100vh;
 }
 
-/* Background Animations */
 .background-container {
     position: fixed;
     top: 0;
@@ -156,7 +154,6 @@ body {
     66% { transform: translateY(30px) rotate(240deg); }
 }
 
-/* Editor Container */
 .editor-container {
     display: flex;
     flex-direction: column;
@@ -166,7 +163,6 @@ body {
     background: var(--darker);
 }
 
-/* Glass Header */
 .glass-header {
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
@@ -225,7 +221,6 @@ body {
     margin-left: auto;
 }
 
-/* Buttons */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -305,7 +300,6 @@ body {
     border-radius: 8px;
 }
 
-/* Main Content */
 .editor-main-content {
     display: flex;
     flex: 1;
@@ -314,7 +308,6 @@ body {
     max-height: calc(100vh - var(--header-height));
 }
 
-/* Sidebars */
 .editor-sidebar {
     width: var(--sidebar-width);
     background: var(--glass-bg);
@@ -336,7 +329,6 @@ body {
     width: var(--sidebar-width);
 }
 
-/* Panel Headers */
 .panel-header-modern {
     padding: 20px;
     background: rgba(255, 255, 255, 0.05);
@@ -367,7 +359,6 @@ body {
     font-size: 18px;
 }
 
-/* Canvas Size Section */
 .canvas-size-section {
     padding: 16px 20px;
     border-bottom: 1px solid var(--glass-border);
@@ -491,7 +482,6 @@ body {
     font-weight: 500;
 }
 
-/* Elements Grid */
 .elements-grid-modern {
     padding: 16px;
     display: grid;
@@ -561,7 +551,6 @@ body {
     color: var(--primary-light);
 }
 
-/* Workspace */
 .editor-workspace {
     flex: 1;
     display: flex;
@@ -618,7 +607,6 @@ body {
     text-align: center;
 }
 
-/* Canvas Container */
 .canvas-container-modern {
     flex: 1;
     display: flex;
@@ -632,7 +620,7 @@ body {
 
 .canvas-grid-modern {
     position: relative;
-    background: #f0f0f0; /* Бело-серый фон */
+    background: #f0f0f0;
     box-shadow: var(--shadow-lg);
     border-radius: var(--border-radius);
     overflow: hidden;
@@ -653,7 +641,6 @@ body {
     box-sizing: border-box;
 }
 
-/* Специальные стили для различных размеров холста */
 .canvas-grid-modern.size-800x600 {
     width: 800px !important;
     height: 600px !important;
@@ -684,7 +671,6 @@ body {
     height: 1080px !important;
 }
 
-/* Стили для контейнера холста */
 .canvas-container-modern {
     flex: 1;
     display: flex;
@@ -696,7 +682,6 @@ body {
     min-height: 600px;
 }
 
-/* Адаптация для разных размеров экранов */
 @media (max-width: 1366px) {
     .canvas-container-modern {
         padding: 10px;
@@ -748,7 +733,6 @@ body {
     }
 }
 
-/* Properties Tabs */
 .properties-tabs {
     display: flex;
     background: rgba(255, 255, 255, 0.05);
@@ -796,7 +780,6 @@ body {
     flex-direction: column;
 }
 
-/* Properties Form */
 .properties-form-modern {
     padding: 20px;
     overflow-y: auto;
@@ -905,7 +888,6 @@ body {
     justify-content: center;
 }
 
-/* Layers */
 .layers-container-modern {
     flex: 1;
     overflow: hidden;
@@ -1022,7 +1004,6 @@ body {
     opacity: 1;
 }
 
-/* Canvas Elements */
 .canvas-element {
     position: absolute;
     border: 1px dashed transparent;
@@ -1033,11 +1014,11 @@ body {
     user-select: none;
     box-sizing: border-box;
     border-radius: 6px;
-    transition: none; /* Отключаем переходы для лучшей производительности при перемещении */
+    transition: none;
     background: rgba(255, 255, 255, 0.9);
     color: var(--dark);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    will-change: left, top; /* Оптимизация производительности */
+    will-change: left, top;
 }
 
 .canvas-element:hover {
@@ -1052,7 +1033,6 @@ body {
     box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8), 0 0 10px rgba(99, 102, 241, 0.3);
 }
 
-/* Resize Handles */
 .resize-handle {
     position: absolute;
     width: 12px;
@@ -1117,7 +1097,6 @@ body {
     cursor: e-resize;
 }
 
-/* Rotate Handle */
 .rotate-handle {
     position: absolute;
     right: -30px;
@@ -1148,13 +1127,12 @@ body {
     box-shadow: var(--shadow-lg);
 }
 
-/* Help Button */
 .help-btn-modern {
     position: fixed;
     bottom: 24px;
     right: 24px;
-    z-index: 999; /* Повышаем z-index, чтобы кнопка была поверх других элементов */
-    margin-bottom: 10px; /* Добавляем отступ, чтобы не мешала нижней части */
+    z-index: 999;
+    margin-bottom: 10px;
 }
 
 .help-btn-modern .btn {
@@ -1163,7 +1141,6 @@ body {
     padding: 12px 20px;
 }
 
-/* Modal Windows */
 .modal {
     display: none;
     position: fixed;
@@ -1253,7 +1230,6 @@ body {
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* Export Modal */
 .export-options-modern {
     padding: 24px;
     display: grid;
@@ -1318,7 +1294,6 @@ body {
     outline: none;
 }
 
-/* Preview Modal */
 .preview-modal {
     max-width: 1200px;
     max-height: 90vh;
@@ -1338,7 +1313,6 @@ body {
     box-shadow: var(--shadow-sm);
 }
 
-/* Help Modal */
 .help-content {
     padding: 0;
     overflow-y: auto;
@@ -1421,7 +1395,6 @@ body {
     margin: 0;
 }
 
-/* Image Upload Modal */
 .upload-content {
     padding: 24px;
     display: flex;
@@ -1497,7 +1470,6 @@ body {
     border-top: 1px solid var(--glass-border);
 }
 
-/* Toast Notifications */
 .toast {
     position: fixed;
     top: 20px;
@@ -1560,7 +1532,6 @@ body {
     }
 }
 
-/* Responsive Design for 1366x768 */
 @media (max-width: 1366px) {
     :root {
         --sidebar-width: 260px;
@@ -1683,7 +1654,6 @@ body {
     }
 }
 
-/* Scrollbar Styling */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -1703,7 +1673,6 @@ body {
     background: var(--primary-dark);
 }
 
-/* Focus States for Accessibility */
 .btn:focus,
 .form-input-modern:focus,
 .modern-select:focus {
@@ -1711,7 +1680,6 @@ body {
     outline-offset: 2px;
 }
 
-/* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;

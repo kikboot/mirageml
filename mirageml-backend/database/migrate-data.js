@@ -1,25 +1,18 @@
-/**
- * Скрипт для миграции данных из JSON в PostgreSQL
- * Использование: npm run db:migrate-data
- */
-
 const fs = require('fs');
 const path = require('path');
 const db = require('./db');
 require('dotenv').config();
 
 async function migrateData() {
-    console.log('🚀 Начало миграции данных из JSON в PostgreSQL...\n');
-    
+    console.log('Начало миграции данных из JSON в PostgreSQL...\n');
+
     const DATA_DIR = path.join(__dirname, '../data');
-    
-    // 1. Миграция пользователей
-    console.log('📁 Миграция пользователей...');
+
     const usersFile = path.join(DATA_DIR, 'users.json');
     if (fs.existsSync(usersFile)) {
         const users = JSON.parse(fs.readFileSync(usersFile));
         let migrated = 0;
-        
+
         for (const user of users) {
             try {
                 const existing = await db.getUserByEmail(user.email);
@@ -36,26 +29,24 @@ async function migrateData() {
                         createdAt: user.createdAt
                     });
                     migrated++;
-                    console.log(`   ✅ Пользователь: ${user.email}`);
+                    console.log(`Пользователь: ${user.email}`);
                 } else {
-                    console.log(`   ⏭️  Пропущен (существует): ${user.email}`);
+                    console.log(`Пропущен (существует): ${user.email}`);
                 }
             } catch (error) {
-                console.error(`   ❌ Ошибка: ${user.email} - ${error.message}`);
+                console.error(`Ошибка: ${user.email} - ${error.message}`);
             }
         }
-        console.log(`   Мигрировано: ${migrated}/${users.length}\n`);
+        console.log(`Мигрировано: ${migrated}/${users.length}\n`);
     } else {
-        console.log('   ⏭️  Файл users.json не найден\n');
+        console.log('Файл users.json не найден\n');
     }
-    
-    // 2. Миграция проектов
-    console.log('📁 Миграция проектов...');
+
     const projectsFile = path.join(DATA_DIR, 'projects.json');
     if (fs.existsSync(projectsFile)) {
         const projects = JSON.parse(fs.readFileSync(projectsFile));
         let migrated = 0;
-        
+
         for (const project of projects) {
             try {
                 const existing = await db.getProjectById(project.id);
@@ -68,26 +59,24 @@ async function migrateData() {
                         canvas_size: project.canvasSize
                     });
                     migrated++;
-                    console.log(`   ✅ Проект: ${project.name}`);
+                    console.log(`Проект: ${project.name}`);
                 } else {
-                    console.log(`   ⏭️  Пропущен (существует): ${project.name}`);
+                    console.log(`Пропущен (существует): ${project.name}`);
                 }
             } catch (error) {
-                console.error(`   ❌ Ошибка: ${project.name} - ${error.message}`);
+                console.error(`Ошибка: ${project.name} - ${error.message}`);
             }
         }
-        console.log(`   Мигрировано: ${migrated}/${projects.length}\n`);
+        console.log(`Мигрировано: ${migrated}/${projects.length}\n`);
     } else {
-        console.log('   ⏭️  Файл projects.json не найден\n');
+        console.log('Файл projects.json не найден\n');
     }
-    
-    // 3. Миграция отзывов
-    console.log('📁 Миграция отзывов...');
+
     const reviewsFile = path.join(DATA_DIR, 'reviews.json');
     if (fs.existsSync(reviewsFile)) {
         const reviews = JSON.parse(fs.readFileSync(reviewsFile));
         let migrated = 0;
-        
+
         for (const review of reviews) {
             try {
                 const existing = await db.getReviewById(review.id);
@@ -101,36 +90,33 @@ async function migrateData() {
                         approved: review.approved
                     });
                     migrated++;
-                    console.log(`   ✅ Отзыв: ${review.name}`);
+                    console.log(`Отзыв: ${review.name}`);
                 } else {
-                    console.log(`   ⏭️  Пропущен (существует): ${review.name}`);
+                    console.log(`Пропущен (существует): ${review.name}`);
                 }
             } catch (error) {
-                console.error(`   ❌ Ошибка: ${review.name} - ${error.message}`);
+                console.error(`Ошибка: ${review.name} - ${error.message}`);
             }
         }
-        console.log(`   Мигрировано: ${migrated}/${reviews.length}\n`);
+        console.log(`Мигрировано: ${migrated}/${reviews.length}\n`);
     } else {
-        console.log('   ⏭️  Файл reviews.json не найден\n');
+        console.log('Файл reviews.json не найден\n');
     }
-    
-    // 4. Миграция сессий (только активные за последние 24 часа)
-    console.log('📁 Миграция сессий (только активные)...');
+
     const sessionsFile = path.join(DATA_DIR, 'sessions.json');
     if (fs.existsSync(sessionsFile)) {
         const sessions = JSON.parse(fs.readFileSync(sessionsFile));
         const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
         let migrated = 0;
-        
+
         for (const session of sessions) {
             try {
-                // Проверяем, активна ли сессия
                 const lastActive = new Date(session.lastActive);
                 if (lastActive < oneDayAgo) {
-                    console.log(`   ⏭️  Пропущена (устарела): ${session.id}`);
+                    console.log(`Пропущена (устарела): ${session.id}`);
                     continue;
                 }
-                
+
                 const existing = await db.getSessionByToken(session.token);
                 if (!existing) {
                     await db.createSession({
@@ -142,21 +128,21 @@ async function migrateData() {
                         location: session.location
                     });
                     migrated++;
-                    console.log(`   ✅ Сессия: ${session.id}`);
+                    console.log(`Сессия: ${session.id}`);
                 } else {
-                    console.log(`   ⏭️  Пропущена (существует): ${session.id}`);
+                    console.log(`Пропущена (существует): ${session.id}`);
                 }
             } catch (error) {
-                console.error(`   ❌ Ошибка: ${session.id} - ${error.message}`);
+                console.error(`Ошибка: ${session.id} - ${error.message}`);
             }
         }
-        console.log(`   Мигрировано: ${migrated}/${sessions.length}\n`);
+        console.log(`Мигрировано: ${migrated}/${sessions.length}\n`);
     } else {
-        console.log('   ⏭️  Файл sessions.json не найден\n');
+        console.log('Файл sessions.json не найден\n');
     }
-    
-    console.log('✅ Миграция завершена!');
-    console.log('\n📋 Теперь вы можете удалить JSON файлы:');
+
+    console.log('Миграция завершена!');
+    console.log('\n Теперь вы можете удалить JSON файлы:');
     console.log('   - data/users.json');
     console.log('   - data/projects.json');
     console.log('   - data/sessions.json');

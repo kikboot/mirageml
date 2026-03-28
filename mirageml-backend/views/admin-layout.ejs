@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %> - MirageML Admin</title>
+    <title><%= title %> Админ-панель</title>
     <link type="image/x-icon" href="/logo/logo-admin.svg" rel="shortcut icon">
     <style>
         :root {
@@ -25,7 +25,6 @@
             box-sizing: border-box; 
         }
 
-        /* Анимации */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -143,12 +142,10 @@
             animation: fadeIn 0.5s ease-out;
         }
 
-        /* Анимация для основного контента при загрузке */
         .main-content {
             animation: fadeInUp 0.6s ease-out;
         }
 
-        /* Sidebar */
         .sidebar {
             width: 280px;
             background: var(--sidebar-bg);
@@ -298,7 +295,6 @@
             transition: var(--transition);
         }
 
-        /* Main Content */
         .main-content {
             margin-left: 280px;
             flex: 1;
@@ -393,7 +389,6 @@
             animation: rotate 0.5s ease-in-out;
         }
 
-        /* Cards */
         .card {
             background: white;
             border-radius: var(--border-radius);
@@ -440,7 +435,6 @@
             color: #667eea;
         }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -503,7 +497,6 @@
             line-height: 1;
         }
 
-        /* Tables */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -575,7 +568,6 @@
             transform: scaleY(1);
         }
 
-        /* Badges */
         .badge {
             display: inline-block;
             padding: 6px 14px;
@@ -643,7 +635,6 @@
             box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);
         }
 
-        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -741,7 +732,6 @@
             transform: translateY(-3px);
         }
 
-        /* Forms */
         .form-group {
             margin-bottom: 25px;
             animation: fadeIn 0.5s ease-out;
@@ -815,7 +805,6 @@
             margin-top: 25px;
         }
 
-        /* Charts Grid */
         .charts-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -852,7 +841,6 @@
             max-height: 300px;
         }
 
-        /* Info Grid */
         .info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -896,7 +884,6 @@
             font-size: 13px;
         }
 
-        /* System Info */
         .system-info {
             padding: 30px;
         }
@@ -955,7 +942,6 @@
             border: 1px solid #e8ecef;
         }
 
-        /* Responsive */
         @media (max-width: 1024px) {
             .sidebar {
                 width: 260px;

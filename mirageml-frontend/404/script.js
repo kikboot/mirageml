@@ -1,11 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Анимация появления элементов
     initAnimations();
 
-    // Добавляем интерактивность для плавающих элементов
     initFloatingElements();
 
-    // Проверка авторизации
     checkAuthStatus();
 });
 
@@ -36,7 +33,6 @@ function initFloatingElements() {
     });
 }
 
-// Добавляем эффект параллакса при движении мыши
 document.addEventListener('mousemove', (e) => {
     const shapes = document.querySelectorAll('.shape');
     const mouseX = e.clientX / window.innerWidth;
@@ -51,27 +47,19 @@ document.addEventListener('mousemove', (e) => {
     });
 });
 
-// Обработка клавиатуры для быстрой навигации
 document.addEventListener('keydown', (e) => {
-    // Escape - вернуться на главную
     if (e.key === 'Escape') {
         window.location.href = '../main/index.html';
     }
-    
-    // H - главная
+
     if (e.key === 'h' || e.key === 'H') {
         window.location.href = '../main/index.html';
     }
-    
-    // S - поддержка
+
     if (e.key === 's' || e.key === 'S') {
         window.location.href = '../support/index.html';
     }
 });
-
-// ==========================================
-// Управление авторизацией (из главной страницы)
-// ==========================================
 
 async function checkAuthStatus() {
     let token = localStorage.getItem('token');

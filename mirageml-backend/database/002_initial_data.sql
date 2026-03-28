@@ -1,14 +1,3 @@
--- MirageML Initial Data
--- Начальные данные для базы данных MirageML
-
--- =============================================
--- Пользователи (admin, moderator, developer)
--- =============================================
-
--- Разработчик (developer)
--- Email: developer@mirageml.com
--- Пароль: mirage2026
--- Хеш пароля: bcrypt('mirage2026', 10)
 INSERT INTO users (id, name, email, password, role, role_display, theme, country, created_at)
 VALUES (
     'dev_' || EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::VARCHAR,
@@ -23,10 +12,6 @@ VALUES (
 )
 ON CONFLICT (email) DO NOTHING;
 
--- Модератор (moderator)
--- Email: moderator@mirageml.com
--- Пароль: moderator123
--- Хеш пароля: bcrypt('moderator123', 10)
 INSERT INTO users (id, name, email, password, role, role_display, theme, country, created_at)
 VALUES (
     'mod_' || EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::VARCHAR,
@@ -41,10 +26,6 @@ VALUES (
 )
 ON CONFLICT (email) DO NOTHING;
 
--- Администратор (admin) - для совместимости
--- Email: admin@mirageml.com
--- Пароль: admin123
--- Хеш пароля: bcrypt('admin123', 10)
 INSERT INTO users (id, name, email, password, role, role_display, theme, country, created_at)
 VALUES (
     'adm_' || EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::VARCHAR,
@@ -59,10 +40,6 @@ VALUES (
 )
 ON CONFLICT (email) DO NOTHING;
 
--- =============================================
--- Примеры отзывов (из reviews.json)
--- =============================================
-
 INSERT INTO reviews (id, name, email, rating, comment, approved, created_at)
 VALUES 
     ('1769529283080', 'Главный разработчик - Вербило Кирилл', '4@mail.ru', 5, 
@@ -74,9 +51,3 @@ VALUES
     ('1771485822513', 'атв', '1@mirageml.com', 2, 
      'Ytgkj[j', true, '2026-02-19T07:23:42.513Z')
 ON CONFLICT (id) DO NOTHING;
-
--- =============================================
--- Примечание
--- =============================================
--- Таблицы projects и sessions остаются пустыми
--- Они заполняются динамически при работе пользователей

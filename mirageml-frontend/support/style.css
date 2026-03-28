@@ -1,5 +1,3 @@
-/* Support Page Styles - Based on Main Page Styles */
-
 :root {
     --primary: #6366f1;
     --primary-dark: #4f46e5;
@@ -53,7 +51,6 @@ body {
     height: 100%;
 }
 
-/* Background Animations */
 .background-container {
     position: fixed;
     top: 0;
@@ -157,14 +154,12 @@ body {
     66% { transform: translateY(30px) rotate(240deg); }
 }
 
-/* Container */
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-/* Glass Header */
 .glass-header {
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
@@ -268,7 +263,6 @@ body {
     align-items: center;
 }
 
-/* Buttons */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -330,7 +324,6 @@ body {
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
 }
 
-/* Mobile Menu */
 .mobile-menu-container {
     position: fixed;
     top: 0;
@@ -392,7 +385,6 @@ body {
     border-top: 1px solid var(--glass-border);
 }
 
-/* Hero Section */
 .support-hero {
     padding: 80px 0 40px;
     text-align: center;
@@ -451,7 +443,6 @@ body {
     line-height: 1.6;
 }
 
-/* Support Options Section */
 .support-options {
     padding: 80px 0;
 }
@@ -541,7 +532,6 @@ body {
     line-height: 1.6;
 }
 
-/* FAQ Section */
 .faq-section {
     padding: 80px 0;
 }
@@ -603,7 +593,6 @@ body {
     line-height: 1.6;
 }
 
-/* CTA Section */
 .support-cta {
     padding: 80px 0;
     text-align: center;
@@ -670,7 +659,6 @@ body {
     box-shadow: var(--shadow-lg);
 }
 
-/* User Menu Styles */
 .user-menu {
     position: relative;
     display: inline-block;
@@ -843,7 +831,6 @@ body {
     transform: translateX(4px);
 }
 
-/* Mobile User Menu Styles */
 .mobile-user-menu {
     width: 100%;
     padding: 16px;
@@ -948,7 +935,6 @@ body {
     transform: translateX(4px);
 }
 
-/* Footer */
 .footer-modern {
     background: rgba(15, 23, 42, 0.8);
     backdrop-filter: blur(10px);
@@ -1120,7 +1106,6 @@ body {
     color: var(--danger);
 }
 
-/* Modal Windows */
 .modal {
     display: none;
     position: fixed;
@@ -1269,7 +1254,6 @@ body {
     color: var(--danger);
 }
 
-/* Responsive Design */
 @media (max-width: 1024px) {
     .footer-links {
         grid-template-columns: repeat(2, 1fr);
@@ -1356,7 +1340,6 @@ body {
     }
 }
 
-/* Scrollbar Styling */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -1376,7 +1359,6 @@ body {
     background: var(--primary-dark);
 }
 
-/* Focus States for Accessibility */
 .btn:focus,
 .form-group input:focus,
 .form-group textarea:focus {
@@ -1384,7 +1366,6 @@ body {
     outline-offset: 2px;
 }
 
-/* Theme Variables */
 :root {
     --bg-primary: var(--darker);
     --bg-secondary: var(--dark);
@@ -1396,7 +1377,6 @@ body {
     --glass-border-custom: rgba(255, 255, 255, 0.12);
 }
 
-/* Светлая тема */
 :root.light-theme,
 .light-theme {
     --bg-primary: #f8fafc;
@@ -1409,7 +1389,6 @@ body {
     --glass-border-custom: rgba(0, 0, 0, 0.1);
 }
 
-/* Body */
 body {
     background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
     color: var(--text-primary);
@@ -1418,7 +1397,6 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Card Hover Effect */
 .card-hover {
     transition: var(--transition);
 }
@@ -1428,7 +1406,6 @@ body {
     box-shadow: var(--shadow-lg);
 }
 
-/* Input Styles */
 .form-group input,
 .form-group textarea {
     transition: var(--transition);
@@ -1441,7 +1418,6 @@ body {
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
-/* Loading Animation */
 .spinner {
     width: 16px;
     height: 16px;
@@ -1458,7 +1434,6 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* Loading Button State */
 .btn.loading {
     pointer-events: none;
 }
@@ -1471,20 +1446,17 @@ body {
     opacity: 0;
 }
 
-/* Notification Styles */
 .notification.success {
     background: rgba(16, 185, 129, 0.2);
     border: 1px solid var(--success);
     color: var(--success);
 }
 
-/* Input Error State */
 input.error {
     border-color: var(--danger) !important;
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
 }
 
-/* Coming Soon Badge */
 .coming-soon-badge {
     position: absolute;
     top: 10px;
@@ -1503,13 +1475,11 @@ input.error {
     display: block;
 }
 
-/* Disabled button styles */
 .btn.disabled {
     opacity: 0.6 !important;
     pointer-events: none !important;
 }
 
-/* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

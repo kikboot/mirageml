@@ -202,13 +202,10 @@ database/
 ```javascript
 const db = require('./database/db');
 
-// Получить всех пользователей
 const users = await db.getAllUsers();
 
-// Получить пользователя по email
 const user = await db.getUserByEmail('test@example.com');
 
-// Создать проект
 const project = await db.createProject({
     id: '123',
     user_id: 'user-id',
@@ -217,7 +214,6 @@ const project = await db.createProject({
     canvas_size: { width: 1024, height: 768 }
 });
 
-// Получить статистику
 const stats = await db.getStats();
 ```
 

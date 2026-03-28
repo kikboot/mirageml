@@ -30,7 +30,6 @@
     --glass-border: rgba(255, 255, 255, 0.12);
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     
-    /* Темные значения по умолчанию */
     --bg-primary: var(--darker);
     --bg-secondary: var(--dark);
     --text-primary: var(--light);
@@ -41,7 +40,6 @@
     --glass-border-custom: rgba(255, 255, 255, 0.12);
 }
 
-/* Светлая тема */
 :root.light-theme,
 .light-theme {
     --bg-primary: #f8fafc;
@@ -75,7 +73,6 @@ body {
     padding: 0 20px;
 }
 
-/* Background Animations */
 .background-container {
     position: fixed;
     top: 0;
@@ -180,7 +177,6 @@ body {
     66% { transform: translateY(30px) rotate(240deg); }
 }
 
-/* Glass Header */
 .glass-header {
     position: fixed;
     top: 0;
@@ -345,7 +341,6 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-/* Mobile Menu */
 .mobile-menu-container {
     position: fixed;
     top: 0;
@@ -464,7 +459,6 @@ body {
     transition-delay: 0.3s;
 }
 
-/* Modern Hero Section */
 .hero-modern {
     min-height: 100vh;
     display: flex;
@@ -683,7 +677,6 @@ body {
     height: 100px;
 }
 
-/* Modern Sections */
 .section-header-modern {
     text-align: center;
     max-width: 700px;
@@ -718,7 +711,6 @@ body {
     line-height: 1.6;
 }
 
-/* Новые секции */
 .product-section,
 .audience-section,
 .workflow-section,
@@ -1266,7 +1258,6 @@ body {
     flex-wrap: wrap;
 }
 
-/* Advantages Modern */
 .advantages-modern {
     padding: 100px 0;
     position: relative;
@@ -1377,7 +1368,6 @@ body {
     transform: scaleX(1);
 }
 
-/* Features Modern */
 .features-modern {
     padding: 100px 0;
     position: relative;
@@ -1451,7 +1441,6 @@ body {
     opacity: 1;
 }
 
-/* Reviews Modern */
 .reviews-modern {
     padding: 100px 0;
     position: relative;
@@ -1555,7 +1544,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* Donate Modern */
 .donate-modern {
     padding: 100px 0;
     position: relative;
@@ -1729,7 +1717,6 @@ body {
     font-weight: 500;
 }
 
-/* Modal Modern */
 .modal {
     display: none;
     position: fixed;
@@ -1890,7 +1877,6 @@ body {
     border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
-/* Footer Modern */
 .footer-modern {
     background: var(--darker);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -2060,7 +2046,6 @@ body {
     color: var(--danger);
 }
 
-/* User Menu Styles */
 .user-menu {
     position: relative;
     display: inline-block;
@@ -2245,7 +2230,6 @@ body {
     color: var(--light);
 }
 
-/* Эффект подчеркивания при наведении */
 #logout-btn::before {
     content: '';
     position: absolute;
@@ -2263,14 +2247,12 @@ body {
     transform: scaleX(1);
 }
 
-/* Убираем стандартные стили кнопки */
 #logout-btn:focus {
     outline: none;
     background: rgba(239, 68, 68, 0.1);
     box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
 }
 
-/* Анимация появления для мобильных устройств */
 @media (max-width: 768px) {
     #logout-btn {
         font-size: 16px;
@@ -2282,7 +2264,6 @@ body {
     }
 }
 
-/* Для тач-устройств добавляем увеличенную зону касания */
 @media (hover: none) and (pointer: coarse) {
     #logout-btn {
         padding: 20px;
@@ -2299,7 +2280,6 @@ body {
     }
 }
 
-/* Стили для выпадающего меню с улучшенным внешним видом */
 .dropdown-content {
     min-width: 280px;
     background: var(--dark);
@@ -2341,7 +2321,6 @@ body {
     transform: rotate(45deg);
 }
 
-/* Стили для разделителя перед кнопкой Выйти */
 .dropdown-divider {
     height: 1px;
     background: var(--glass-border);
@@ -2349,7 +2328,6 @@ body {
     opacity: 0.5;
 }
 
-/* Стили для header пользователя */
 .dropdown-header {
     padding: 16px 20px 12px;
     display: flex;
@@ -2397,7 +2375,6 @@ body {
     text-overflow: ellipsis;
 }
 
-/* Стили для всех элементов меню */
 .dropdown-item {
     display: flex;
     align-items: center;
@@ -2435,7 +2412,6 @@ body {
     color: var(--primary);
 }
 
-/* Анимация для пунктов меню */
 .dropdown-item::after {
     content: '';
     position: absolute;
@@ -2452,7 +2428,6 @@ body {
     transform: translateX(0);
 }
 
-/* Анимация для аватара пользователя */
 .user-avatar {
     width: 44px;
     height: 44px;
@@ -2486,7 +2461,6 @@ body {
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
 }
 
-/* Стрелочка рядом с аватаром */
 .dropdown-arrow {
     margin-left: 4px;
     font-size: 12px;
@@ -2498,7 +2472,6 @@ body {
     transform: rotate(180deg);
 }
 
-/* Эффект свечения при активном меню */
 .user-avatar::before {
     content: '';
     position: absolute;
@@ -2523,7 +2496,6 @@ body {
     to { transform: rotate(360deg); }
 }
 
-/* Адаптивные стили для мобильных устройств */
 @media (max-width: 768px) {
     .user-avatar {
         width: 40px;
@@ -2582,7 +2554,6 @@ body {
     }
 }
 
-/* Темная тема для dropdown */
 @media (prefers-color-scheme: dark) {
     .dropdown-content {
         background: var(--darker);
@@ -2603,7 +2574,6 @@ body {
     }
 }
 
-/* Анимация для появления dropdown */
 @keyframes dropdownSlideIn {
     from {
         opacity: 0;
@@ -2621,7 +2591,6 @@ body {
     animation: dropdownSlideIn 0.2s ease forwards;
 }
 
-/* Улучшенный ховер-эффект для десктопов */
 @media (hover: hover) {
     .dropdown-item {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2646,7 +2615,6 @@ body {
     }
 }
 
-/* Responsive Design */
 @media (max-width: 1200px) {
     .container {
         max-width: 960px;
@@ -2987,7 +2955,6 @@ body {
     }
 }
 
-/* Оптимизация для тач-устройств */
 @media (hover: none) and (pointer: coarse) {
     .nav-link:hover,
     .btn:hover,
@@ -3022,7 +2989,6 @@ body {
         display: none;
     }
     
-    /* Увеличиваем область клика для мобильных */
     .nav-link,
     .btn,
     .cta-button {
@@ -3040,7 +3006,6 @@ body {
     }
 }
 
-/* Print styles */
 @media print {
     .background-container,
     .glass-header,
@@ -3084,7 +3049,6 @@ body {
     }
 }
 
-/* Loading States */
 .loading-reviews,
 .no-reviews,
 .error-loading {
@@ -3094,7 +3058,6 @@ body {
     grid-column: 1 / -1;
 }
 
-/* Utility Classes */
 .text-gradient {
     background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     -webkit-background-clip: text;
@@ -3108,18 +3071,15 @@ body {
     border: 1px solid var(--glass-border);
 }
 
-/* Scroll Behavior */
 html {
     scroll-behavior: smooth;
 }
 
-/* Selection */
 ::selection {
     background: rgba(99, 102, 241, 0.3);
     color: var(--light);
 }
 
-/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -3142,7 +3102,6 @@ html {
     }
 }
 
-/* High contrast mode support */
 @media (prefers-contrast: high) {
     .nav-link,
     .btn,
@@ -3166,7 +3125,6 @@ html {
     }
 }
 
-/* Анимации для улучшенного UX */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -3218,7 +3176,6 @@ html {
     animation: slideInUp 0.3s ease forwards;
 }
 
-/* Улучшенная доступность */
 @media (max-width: 768px) {
     .nav-link:focus,
     .btn:focus,
@@ -3230,7 +3187,6 @@ html {
     }
 }
 
-/* Улучшенная читаемость текста на мобильных */
 @media (max-width: 768px) {
     p, li, .section-subtitle, .hero-subtitle {
         line-height: 1.7;
@@ -3245,7 +3201,6 @@ html {
     }
 }
 
-/* Оптимизация изображений для мобильных */
 @media (max-width: 768px) {
     .hero-visual {
         margin-top: 40px;
@@ -3278,7 +3233,6 @@ html {
     }
 }
 
-/* Улучшенные отступы для мобильных */
 @media (max-width: 768px) {
     .product-card,
     .audience-card,
@@ -3290,7 +3244,6 @@ html {
     }
 }
 
-/* Оптимизация для очень маленьких экранов */
 @media (max-width: 360px) {
     .hero-title {
         font-size: 1.75rem;

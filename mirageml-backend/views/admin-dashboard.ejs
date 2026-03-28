@@ -1,4 +1,3 @@
-<!-- Карточки статистики -->
 <div class="stats-grid">
     <div class="stat-card" style="border-left-color: #3498db;">
         <div class="stat-icon" style="background: rgba(52, 152, 219, 0.1);">
@@ -50,9 +49,7 @@
     </div>
 </div>
 
-<!-- Графики -->
 <div class="charts-grid">
-    <!-- Круговая диаграмма: Пользователи по ролям -->
     <div class="card chart-card">
         <div class="card-header">
             <h3><i class="fas fa-chart-pie"></i> Пользователи по ролям</h3>
@@ -60,7 +57,6 @@
         <canvas id="rolesChart"></canvas>
     </div>
 
-    <!-- Круговая диаграмма: Статус отзывов -->
     <div class="card chart-card">
         <div class="card-header">
             <h3><i class="fas fa-chart-pie"></i> Статус отзывов</h3>
@@ -69,7 +65,6 @@
     </div>
 </div>
 
-<!-- График активности -->
 <div class="card">
     <div class="card-header">
         <h3><i class="fas fa-chart-line"></i> Активность сессий</h3>
@@ -77,7 +72,6 @@
     <canvas id="sessionsChart" height="80"></canvas>
 </div>
 
-<!-- Дополнительная статистика -->
 <div class="info-grid">
     <div class="card info-card">
         <div class="info-header">
@@ -134,7 +128,6 @@
     </div>
 </div>
 
-<!-- Информация о системе -->
 <div class="card system-info">
     <div class="card-header">
         <h3><i class="fas fa-info-circle"></i> Информация о системе</h3>
@@ -154,25 +147,24 @@
         </div>
         <div class="info-row">
             <span class="info-label">Статус:</span>
-            <span class="info-value"><span class="status-badge">🟢 Работает</span></span>
+            <span class="info-value"><span class="status-badge">Работает</span></span>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-    // Данные из сервера
     const statsData = {
-        developerCount: <%= stats.developerCount %>,
-        moderatorCount: <%= stats.moderatorCount %>,
-        adminCount: <%= stats.adminCount %>,
-        userCount: <%= stats.userCount %>,
-        approvedReviews: <%= stats.approvedReviews %>,
-        pendingReviews: <%= stats.pendingReviews %>,
-        totalSessions: <%= stats.totalSessions %>
+        developerCount: <%= stats.developerCount || 0 %>,
+        moderatorCount: <%= stats.moderatorCount || 0 %>,
+        adminCount: <%= stats.adminCount || 0 %>,
+        userCount: <%= stats.userCount || 0 %>,
+        approvedReviews: <%= stats.approvedReviews || 0 %>,
+        pendingReviews: <%= stats.pendingReviews || 0 %>,
+        totalSessions: <%= stats.totalSessions || 0 %>,
+        totalProjects: <%= stats.totalProjects || 0 %>
     };
 
-    // Цветовая палитра
     const colors = {
         blue: '#3498db',
         green: '#27ae60',
@@ -185,7 +177,6 @@
         moderator: '#f5576c'
     };
 
-    // Диаграмма ролей пользователей
     const rolesCtx = document.getElementById('rolesChart').getContext('2d');
     new Chart(rolesCtx, {
         type: 'doughnut',
@@ -221,7 +212,6 @@
         }
     });
 
-    // Диаграмма статусов отзывов
     const reviewsCtx = document.getElementById('reviewsChart').getContext('2d');
     new Chart(reviewsCtx, {
         type: 'doughnut',
@@ -257,7 +247,6 @@
         }
     });
 
-    // График активности сессий
     const sessionsCtx = document.getElementById('sessionsChart').getContext('2d');
     new Chart(sessionsCtx, {
         type: 'bar',
@@ -267,7 +256,7 @@
                 label: 'Количество',
                 data: [
                     statsData.userCount + statsData.adminCount,
-                    <%= stats.totalProjects %>,
+                    statsData.totalProjects,
                     statsData.totalSessions,
                     statsData.approvedReviews + statsData.pendingReviews
                 ],
@@ -382,7 +371,6 @@
         color: #27ae60;
     }
 
-    /* Графики */
     .charts-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -416,7 +404,6 @@
         max-height: 300px;
     }
 
-    /* Дополнительная статистика */
     .info-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -456,7 +443,6 @@
         font-size: 13px;
     }
 
-    /* Информация о системе */
     .system-info {
         padding: 25px;
     }
@@ -495,7 +481,6 @@
         font-weight: 500;
     }
 
-    /* Адаптивность */
     @media (max-width: 768px) {
         .stats-grid {
             grid-template-columns: 1fr;

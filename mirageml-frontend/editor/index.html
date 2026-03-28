@@ -24,7 +24,6 @@
     </div>
 
     <div class="editor-container">
-        <!-- Верхний Toolbar -->
         <header class="editor-toolbar">
             <div class="toolbar-left">
                 <button class="toolbar-btn" id="toggle-sidebar-btn" title="Скрыть/показать панель">
@@ -96,13 +95,11 @@
             </div>
         </header>
 
-        <!-- Кнопка для показа скрытой панели -->
         <button class="sidebar-toggle-show" id="show-sidebar-btn" title="Показать панель">
             <i class="fas fa-chevron-right"></i>
         </button>
 
         <div class="editor-main">
-            <!-- Левая панель - Библиотека секций -->
             <aside class="sidebar left-sidebar">
                 <div class="sidebar-tabs">
                     <button class="sidebar-tab active" data-tab="sections">
@@ -120,7 +117,6 @@
                 </div>
                 
                 <div class="sidebar-content">
-                    <!-- Вкладка Секции -->
                     <div class="tab-panel active" id="sections-tab">
                         <div class="search-box">
                             <i class="fas fa-search"></i>
@@ -143,11 +139,9 @@
                         </div>
 
                         <div class="accordion-container" id="accordion-container">
-                            <!-- Аккордеон генерируется через JS -->
                         </div>
                     </div>
                     
-                    <!-- Вкладка Компоненты -->
                     <div class="tab-panel" id="components-tab">
                         <div class="components-grid">
                             <div class="component-item" data-type="h1">
@@ -200,23 +194,19 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Вкладка Галерея -->
+
                     <div class="tab-panel" id="gallery-tab">
                         <button class="btn btn-primary" id="upload-image-btn" style="width: 100%; margin-bottom: 16px;">
                             <i class="fas fa-upload"></i>
                             Загрузить изображение
                         </button>
                         <div class="images-grid" id="images-gallery">
-                            <!-- Изображения загружаются из JS -->
                         </div>
                     </div>
                 </div>
             </aside>
 
-            <!-- Центральная область - Холст -->
             <main class="canvas-area">
-                <!-- Навигация по секциям -->
                 <div class="sections-navigator" id="sections-navigator">
                     <button class="nav-btn" onclick="scrollToFirstSection()" title="В начало">
                         <i class="fas fa-angle-double-up"></i>
@@ -232,13 +222,11 @@
                         <i class="fas fa-angle-double-down"></i>
                     </button>
                 </div>
-                
-                <!-- Мини-карта -->
+
                 <div class="minimap" id="minimap">
                     <div class="minimap-viewport" id="minimap-viewport"></div>
                 </div>
-                
-                <!-- Линейки -->
+
                 <div class="rulers-container">
                     <div class="ruler ruler-horizontal" id="ruler-horizontal">
                         <div class="ruler-markings"></div>
@@ -249,7 +237,6 @@
                 </div>
                 
                 <div class="canvas-wrapper" id="canvas-wrapper">
-                    <!-- Направляющие -->
                     <div class="guides-overlay" id="guides-overlay"></div>
                     
                     <div class="canvas" id="canvas">
@@ -265,8 +252,7 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Плавающая панель инструментов секции -->
+
                 <div class="floating-toolbar" id="floating-toolbar" style="display: none;">
                     <button class="toolbar-btn" onclick="duplicateSelected()" title="Дублировать">
                         <i class="fas fa-copy"></i>
@@ -289,7 +275,6 @@
                 </div>
             </main>
 
-            <!-- Правая панель - Свойства -->
             <aside class="sidebar right-sidebar">
                 <div class="properties-header">
                     <i class="fas fa-sliders-h"></i>
@@ -304,8 +289,7 @@
                 </div>
             </aside>
         </div>
-        
-        <!-- Статус бар -->
+
         <div class="status-bar">
             <div class="status-left">
                 <span id="status-message">Готов к работе</span>
@@ -323,7 +307,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно экспорта -->
     <div class="modal" id="export-modal">
         <div class="modal-content modal-large">
             <span class="close-btn">&times;</span>
@@ -387,7 +370,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно предпросмотра -->
     <div class="modal" id="preview-modal">
         <div class="modal-content modal-full">
             <span class="close-btn">&times;</span>
@@ -412,7 +394,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно загрузки изображений -->
     <div class="modal" id="image-upload-modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
@@ -458,7 +439,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно добавления элемента -->
     <div class="modal" id="add-element-modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
@@ -467,12 +447,10 @@
                 <h2>Добавить элемент</h2>
             </div>
             <div class="elements-grid-modal">
-                <!-- Заполняется JS -->
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно выбора проекта -->
     <div class="modal" id="project-modal">
         <div class="modal-content modal-large">
             <span class="close-btn">&times;</span>
@@ -488,7 +466,6 @@
                 </button>
             </div>
             <div class="projects-list" id="projects-list">
-                <!-- Проекты загружаются через JS -->
             </div>
             <div class="auth-footer">
                 <p id="project-status">Выберите проект или создайте новый</p>
@@ -496,7 +473,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно помощи -->
     <div class="modal" id="help-modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
@@ -546,7 +522,6 @@
     <script src="js/editor.js?v=4"></script>
     <script src="js/editor-integration.js?v=1"></script>
     <script>
-        // Проверка загрузки секций
         window.addEventListener('DOMContentLoaded', () => {
             console.log('📦 SECTIONS_LIBRARY:', typeof SECTIONS_LIBRARY !== 'undefined' ? SECTIONS_LIBRARY.length + ' секций' : 'НЕ ЗАГРУЖЕН');
             console.log('📂 SECTION_CATEGORIES:', typeof SECTION_CATEGORIES !== 'undefined' ? Object.keys(SECTION_CATEGORIES).length + ' категорий' : 'НЕ ЗАГРУЖЕН');

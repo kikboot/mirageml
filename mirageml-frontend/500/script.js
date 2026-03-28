@@ -1,14 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Анимация появления элементов
     initAnimations();
 
-    // Обработчик кнопки повторной попытки
     const retryBtn = document.getElementById('retry-btn');
     if (retryBtn) {
         retryBtn.addEventListener('click', handleRetry);
     }
 
-    // Проверка авторизации
     checkAuthStatus();
 });
 
@@ -31,30 +28,26 @@ async function handleRetry() {
     const retryBtn = document.getElementById('retry-btn');
     const originalContent = retryBtn.innerHTML;
     
-    // Показываем состояние загрузки
     retryBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Проверка...</span>';
     retryBtn.disabled = true;
-    
+
     try {
-        // Проверяем доступность сервера
         const response = await fetch('../main/index.html', {
             method: 'HEAD',
             cache: 'no-cache'
         });
-        
+
         if (response.ok) {
-            // Сервер доступен, перенаправляем на главную
             retryBtn.innerHTML = '<i class="fas fa-check"></i><span>Сервер доступен!</span>';
             retryBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-            
+
             setTimeout(() => {
                 window.location.href = '../main/index.html';
             }, 1000);
         } else {
-            // Сервер всё ещё имеет проблемы
             retryBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i><span>Проблемы сохраняются</span>';
             retryBtn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
-            
+
             setTimeout(() => {
                 retryBtn.innerHTML = originalContent;
                 retryBtn.disabled = false;
@@ -62,10 +55,9 @@ async function handleRetry() {
             }, 2000);
         }
     } catch (error) {
-        // Ошибка соединения
         retryBtn.innerHTML = '<i class="fas fa-times"></i><span>Нет соединения</span>';
         retryBtn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
-        
+
         setTimeout(() => {
             retryBtn.innerHTML = originalContent;
             retryBtn.disabled = false;
@@ -74,7 +66,6 @@ async function handleRetry() {
     }
 }
 
-// Добавляем эффект параллакса при движении мыши
 document.addEventListener('mousemove', (e) => {
     const shapes = document.querySelectorAll('.shape');
     const mouseX = e.clientX / window.innerWidth;
@@ -89,24 +80,19 @@ document.addEventListener('mousemove', (e) => {
     });
 });
 
-// Обработка клавиатуры для быстрой навигации
 document.addEventListener('keydown', (e) => {
-    // Escape - вернуться на главную
     if (e.key === 'Escape') {
         window.location.href = '../main/index.html';
     }
-    
-    // H - главная
+
     if (e.key === 'h' || e.key === 'H') {
         window.location.href = '../main/index.html';
     }
-    
-    // S - поддержка
+
     if (e.key === 's' || e.key === 'S') {
         window.location.href = '../support/index.html';
     }
-    
-    // R - повторная попытка
+
     if (e.key === 'r' || e.key === 'R') {
         const retryBtn = document.getElementById('retry-btn');
         if (retryBtn && !retryBtn.disabled) {
@@ -114,10 +100,6 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
-
-// ==========================================
-// Управление авторизацией (из главной страницы)
-// ==========================================
 
 async function checkAuthStatus() {
     let token = localStorage.getItem('token');

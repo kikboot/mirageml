@@ -1,40 +1,29 @@
-/**
- * MirageML Database Module
- * Модуль для работы с базой данных PostgreSQL
- */
-
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// Конфигурация подключения к PostgreSQL
 const pool = new Pool({
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 5432,
     database: process.env.DB_NAME || 'mirageml',
     user: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD || 'postgres',
-    max: 20, // Максимальное количество подключений в пуле
+    max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
 });
 
-// Проверка подключения
 async function testConnection() {
     try {
         const client = await pool.connect();
         const result = await client.query('SELECT NOW()');
-        console.log('✅ PostgreSQL подключен:', result.rows[0].now);
+        console.log('PostgreSQL подключен:', result.rows[0].now);
         client.release();
         return true;
     } catch (error) {
-        console.error('❌ Ошибка подключения к PostgreSQL:', error.message);
+        console.error('Ошибка подключения к PostgreSQL:', error.message);
         return false;
     }
 }
-
-// =============================================
-// Пользователи
-// =============================================
 
 async function getAllUsers() {
     const result = await pool.query('SELECT * FROM users ORDER BY created_at DESC');
@@ -100,10 +89,6 @@ async function getUserCount() {
     return parseInt(result.rows[0].count);
 }
 
-// =============================================
-// Проекты
-// =============================================
-
 async function getAllProjects() {
     const result = await pool.query('SELECT * FROM projects ORDER BY updated_at DESC');
     return result.rows;
@@ -163,10 +148,6 @@ async function getProjectCount() {
     return parseInt(result.rows[0].count);
 }
 
-// =============================================
-// Сессии
-// =============================================
-
 async function getAllSessions() {
     const result = await pool.query('SELECT * FROM sessions ORDER BY last_active DESC');
     return result.rows;
@@ -225,10 +206,6 @@ async function getSessionCount() {
     const result = await pool.query('SELECT COUNT(*) FROM sessions');
     return parseInt(result.rows[0].count);
 }
-
-// =============================================
-// Отзывы
-// =============================================
 
 async function getAllReviews() {
     const result = await pool.query('SELECT * FROM reviews ORDER BY created_at DESC');
@@ -297,11 +274,6 @@ async function getPendingReviewCount() {
     return parseInt(result.rows[0].count);
 }
 
-// =============================================
-// Дополнительные функции для админ-панели
-// =============================================
-
-// Получить пользователей по ролям для статистики
 async function getUserRoleStats() {
     const result = await pool.query(`
         SELECT 
@@ -326,7 +298,6 @@ async function getUserRoleStats() {
     return stats;
 }
 
-// Обновить сессию (last_active)
 async function touchSession(sessionId) {
     const result = await pool.query(
         'UPDATE sessions SET last_active = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *',
@@ -335,7 +306,6 @@ async function touchSession(sessionId) {
     return result.rows[0] || null;
 }
 
-// Получить все сессии с информацией о пользователях
 async function getAllSessionsWithUsers() {
     const result = await pool.query(`
         SELECT 
@@ -348,10 +318,6 @@ async function getAllSessionsWithUsers() {
     `);
     return result.rows;
 }
-
-// =============================================
-// Статистика
-// =============================================
 
 async function getStats() {
     const [
@@ -368,7 +334,6 @@ async function getStats() {
     ] = await Promise.all([
         getUserCount(),
         getProjectCount(),
-        // Считаем только сессии за последние 24 часа (активные)
         pool.query("SELECT COUNT(*) FROM sessions WHERE last_active > NOW() - INTERVAL '24 hours'")
             .then(r => parseInt(r.rows[0].count)),
         getReviewCount(),
@@ -394,14 +359,9 @@ async function getStats() {
     };
 }
 
-// =============================================
-// Экспорт
-// =============================================
-
 module.exports = {
     pool,
     testConnection,
-    // Пользователи
     getAllUsers,
     getUserById,
     getUserByEmail,
@@ -411,7 +371,6 @@ module.exports = {
     getUsersByRole,
     getUserCount,
     getUserRoleStats,
-    // Проекты
     getAllProjects,
     getProjectById,
     getProjectsByUserId,
@@ -419,7 +378,6 @@ module.exports = {
     updateProject,
     deleteProject,
     getProjectCount,
-    // Сессии
     getAllSessions,
     getSessionById,
     getSessionByToken,
@@ -432,7 +390,6 @@ module.exports = {
     getSessionCount,
     getAllSessionsWithUsers,
     touchSession,
-    // Отзывы
     getAllReviews,
     getApprovedReviews,
     getReviewById,
@@ -442,6 +399,5 @@ module.exports = {
     getReviewCount,
     getApprovedReviewCount,
     getPendingReviewCount,
-    // Статистика
     getStats
 };

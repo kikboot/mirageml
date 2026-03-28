@@ -13,12 +13,10 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const JWT_SECRET = process.env.JWT_SECRET || '8ddfda05949bcc8057da59d2b7e62b4f3e12f00d6af892704d87530ae6731cab';
 
-// Настройка EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view cache', false);
 
-// Middleware для парсинга cookies
 app.use((req, res, next) => {
     const cookieHeader = req.headers.cookie;
     req.cookies = {};
@@ -34,7 +32,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// Инициализация сессии
 app.use(session({
     secret: process.env.SESSION_SECRET || JWT_SECRET,
     resave: false,
@@ -50,10 +47,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../mirageml-frontend')));
-
-// =============================================
-// Вспомогательные функции
-// =============================================
 
 const getDeviceInfo = (userAgent) => {
     const isMobile = /Mobile|Android|iPhone/i.test(userAgent);
@@ -82,7 +75,6 @@ const getLocationByIP = (ip) => {
     return 'Москва, Россия';
 };
 
-// Middleware для проверки JWT
 function authenticateToken(req, res, next) {
     let token = null;
     const authHeader = req.headers['authorization'];
@@ -101,9 +93,6 @@ function authenticateToken(req, res, next) {
     });
 }
 
-// =============================================
-// API: Регистрация
-// =============================================
 app.post('/api/register', async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -141,9 +130,6 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// =============================================
-// API: Вход
-// =============================================
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -204,9 +190,6 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// =============================================
-// API: Сессии
-// =============================================
 app.get('/api/sessions', authenticateToken, async (req, res) => {
     try {
         const sessions = await db.getSessionsByUserId(req.user.userId);
@@ -224,9 +207,6 @@ app.get('/api/sessions', authenticateToken, async (req, res) => {
     }
 });
 
-// =============================================
-// API: Профиль
-// =============================================
 app.get('/api/profile', authenticateToken, async (req, res) => {
     try {
         const user = await db.getUserById(req.user.userId);
@@ -256,9 +236,6 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
     }
 });
 
-// =============================================
-// API: Обновление профиля
-// =============================================
 app.put('/api/profile', authenticateToken, async (req, res) => {
     try {
         const { name, email, phone, country, theme } = req.body;
@@ -293,9 +270,6 @@ app.put('/api/profile', authenticateToken, async (req, res) => {
     }
 });
 
-// =============================================
-// API: Смена пароля
-// =============================================
 app.post('/api/change-password', authenticateToken, async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
@@ -320,9 +294,6 @@ app.post('/api/change-password', authenticateToken, async (req, res) => {
     }
 });
 
-// =============================================
-// API: Удаление аккаунта
-// =============================================
 app.delete('/api/account', authenticateToken, async (req, res) => {
     try {
         const { password } = req.body;
@@ -354,9 +325,6 @@ app.delete('/api/account', authenticateToken, async (req, res) => {
     }
 });
 
-// =============================================
-// API: Проекты
-// =============================================
 app.get('/api/projects', authenticateToken, async (req, res) => {
     try {
         const projects = await db.getProjectsByUserId(req.user.userId);
@@ -454,9 +422,6 @@ app.delete('/api/projects/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// =============================================
-// API: Завершение сессии
-// =============================================
 app.post('/api/sessions/terminate', authenticateToken, async (req, res) => {
     try {
         const { sessionToken } = req.body;
@@ -481,9 +446,6 @@ app.post('/api/sessions/terminate', authenticateToken, async (req, res) => {
     }
 });
 
-// =============================================
-// API: Выход
-// =============================================
 app.post('/api/logout', authenticateToken, async (req, res) => {
     try {
         const token = req.headers['authorization'].split(' ')[1];
@@ -496,9 +458,6 @@ app.post('/api/logout', authenticateToken, async (req, res) => {
     }
 });
 
-// =============================================
-// API: Отзывы
-// =============================================
 app.get('/api/reviews', async (req, res) => {
     try {
         const reviews = await db.getApprovedReviews();
@@ -533,11 +492,6 @@ app.post('/api/reviews', async (req, res) => {
     }
 });
 
-// =============================================
-// API: Админ-панель - Управление отзывами
-// =============================================
-
-// Получить все отзывы (для админ-панели)
 app.get('/api/admin/reviews', requireAdminAuth, async (req, res) => {
     try {
         const reviews = await db.getAllReviews();
@@ -548,7 +502,6 @@ app.get('/api/admin/reviews', requireAdminAuth, async (req, res) => {
     }
 });
 
-// Одобрить отзыв
 app.post('/api/admin/reviews/:id/approve', requireAdminAuth, async (req, res) => {
     try {
         const { id } = req.params;
@@ -560,7 +513,6 @@ app.post('/api/admin/reviews/:id/approve', requireAdminAuth, async (req, res) =>
     }
 });
 
-// Удалить отзыв
 app.delete('/api/admin/reviews/:id', requireAdminAuth, async (req, res) => {
     try {
         const { id } = req.params;
@@ -572,9 +524,6 @@ app.delete('/api/admin/reviews/:id', requireAdminAuth, async (req, res) => {
     }
 });
 
-// =============================================
-// Статические маршруты
-// =============================================
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../mirageml-frontend/main/index.html'));
 });
@@ -619,11 +568,6 @@ app.get('/500', (req, res) => {
     res.status(500).sendFile(path.join(__dirname, '../mirageml-frontend/500/index.html'));
 });
 
-// =============================================
-// Админ-панель
-// =============================================
-
-// Middleware для проверки авторизации администратора
 function requireAdminAuth(req, res, next) {
     if (req.session && req.session.adminId) {
         return next();
@@ -631,7 +575,6 @@ function requireAdminAuth(req, res, next) {
     res.redirect('/admin/login');
 }
 
-// Middleware для проверки прав доступа (RBAC)
 function requirePermission(resource, action) {
     return (req, res, next) => {
         const userRole = req.session.adminRole;
@@ -663,7 +606,6 @@ function requirePermission(resource, action) {
     };
 }
 
-// Middleware для проверки роли разработчика
 function requireDeveloper(req, res, next) {
     if (req.session.adminRole === USER_ROLES.DEVELOPER) {
         return next();
@@ -671,7 +613,6 @@ function requireDeveloper(req, res, next) {
     res.status(403).json({ error: 'Доступно только разработчикам' });
 }
 
-// Страница входа в админку
 app.get('/admin/login', (req, res) => {
     if (req.session && req.session.adminId) {
         return res.redirect('/admin');
@@ -718,13 +659,11 @@ app.post('/admin/login', async (req, res) => {
     }
 });
 
-// Выход из админки
 app.get('/admin/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/admin/login');
 });
 
-// Главная страница админ-панели
 app.get('/admin', requireAdminAuth, async (req, res) => {
     try {
         const stats = await db.getStats();
@@ -751,7 +690,6 @@ app.get('/admin', requireAdminAuth, async (req, res) => {
     }
 });
 
-// Пользователи - только для developer
 app.get('/admin/users', requireAdminAuth, async (req, res) => {
     try {
         const users = await db.getAllUsers();
@@ -842,7 +780,6 @@ app.get('/admin/users', requireAdminAuth, async (req, res) => {
     }
 });
 
-// API: Создание пользователя (только developer)
 app.post('/api/admin/users', requireAdminAuth, requireDeveloper, async (req, res) => {
     try {
         const { name, email, password, role, country } = req.body;
@@ -889,7 +826,6 @@ app.post('/api/admin/users', requireAdminAuth, requireDeveloper, async (req, res
     }
 });
 
-// Страница профиля администратора
 app.get('/admin/profile', requireAdminAuth, async (req, res) => {
     try {
         const admin = await db.getUserById(req.session.adminId);
@@ -933,15 +869,11 @@ app.get('/admin/profile', requireAdminAuth, async (req, res) => {
     }
 });
 
-// =============================================
-// Админ-панель - Проекты
-// =============================================
 app.get('/admin/projects', requireAdminAuth, async (req, res) => {
     try {
         const projects = await db.getAllProjects();
         const users = await db.getAllUsers();
-        
-        // Получаем имена пользователей для проектов
+
         const projectsWithUsers = projects.map(project => {
             const user = users.find(u => u.id === project.user_id);
             return {
@@ -1004,9 +936,6 @@ app.get('/admin/projects', requireAdminAuth, async (req, res) => {
     }
 });
 
-// =============================================
-// Админ-панель - Сессии
-// =============================================
 app.get('/admin/sessions', requireAdminAuth, async (req, res) => {
     try {
         const sessions = await db.getAllSessionsWithUsers();
@@ -1066,9 +995,6 @@ app.get('/admin/sessions', requireAdminAuth, async (req, res) => {
     }
 });
 
-// =============================================
-// Админ-панель - Отзывы
-// =============================================
 app.get('/admin/reviews', requireAdminAuth, async (req, res) => {
     try {
         const reviews = await db.getAllReviews();
@@ -1179,34 +1105,19 @@ app.get('/admin/reviews', requireAdminAuth, async (req, res) => {
     }
 });
 
-// =============================================
-// Запуск сервера и инициализация БД
-// =============================================
-
 async function startServer() {
     try {
-        // Проверка подключения к БД
         const dbConnected = await db.testConnection();
         
         if (!dbConnected) {
-            console.log('\n⚠️  PostgreSQL не подключен. Запуск без базы данных...\n');
+            console.log('\n PostgreSQL не подключен. Запуск без базы данных...\n');
         }
 
         app.listen(PORT, () => {
-            console.log('╔═══════════════════════════════════════════════════════════╗');
-            console.log('║                                                           ║');
-            console.log('║              🚀 MirageML Server запущен!                  ║');
-            console.log('║                                                           ║');
-            console.log('╠═══════════════════════════════════════════════════════════╣');
-            console.log(`║  📍 Локальный URL:  http://localhost:${PORT}                  ║`);
-            console.log(`║  🌐 Сетевой URL:    http://0.0.0.0:${PORT}                    ║`);
-            console.log('╠═══════════════════════════════════════════════════════════╣');
-            console.log('║  🔐 Админ-панель:   http://localhost:' + PORT + '/admin          ║');
-            console.log('║  ✏️  Редактор:       http://localhost:' + PORT + '/editor         ║');
-            console.log('║  👤 Профиль:        http://localhost:' + PORT + '/profile        ║');
-            console.log('╠═══════════════════════════════════════════════════════════╣');
-            console.log('║  📊 База данных:    ' + (dbConnected ? 'PostgreSQL ✅' : 'Не подключена ⚠️') + '                  ║');
-            console.log('╚═══════════════════════════════════════════════════════════╝');
+            console.log('MirageML Server запущен!');
+            console.log(`Локальный URL:  http://localhost:${PORT}`);
+            console.log('Админ-панель:   http://localhost:' + PORT + '/admin');
+            console.log('База данных:    ' + (dbConnected ? 'PostgreSQL ✅' : 'Не подключена ') + ' ');
             console.log('');
         });
     } catch (error) {

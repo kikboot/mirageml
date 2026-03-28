@@ -25,7 +25,6 @@
         </div>
     </div>
 
-    <!-- Мобильный хедер -->
     <header class="mobile-header">
         <div class="container">
             <div class="mobile-header-content">
@@ -47,7 +46,6 @@
         </div>
     </header>
 
-    <!-- Мобильное меню -->
     <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
     <div class="mobile-profile-menu" id="mobile-profile-menu-content">
         <div class="mobile-menu-header">
@@ -97,10 +95,8 @@
         </div>
     </div>
 
-    <!-- Основной контент для мобильных -->
     <div class="mobile-profile-container">
         <div class="container">
-            <!-- Мобильная панель вкладок -->
             <div class="mobile-tabs-container">
                 <div class="mobile-tabs">
                     <button class="mobile-tab active" data-tab="profile-tab">
@@ -118,7 +114,6 @@
                 </div>
             </div>
 
-            <!-- Вкладка профиля (мобильная) -->
             <div id="mobile-profile-tab" class="mobile-tab-content active">
                 <div class="mobile-tab-header">
                     <h2><i class="fas fa-user-cog"></i> Настройки профиля</h2>
@@ -176,7 +171,6 @@
                 </form>
             </div>
 
-            <!-- Вкладка безопасности (мобильная) -->
             <div id="mobile-security-tab" class="mobile-tab-content">
                 <div class="mobile-tab-header">
                     <h2><i class="fas fa-shield-alt"></i> Безопасность</h2>
@@ -184,7 +178,6 @@
                 </div>
 
                 <div class="mobile-security-sections">
-                    <!-- Смена пароля -->
                     <div class="mobile-security-section">
                         <div class="mobile-section-header">
                             <div class="mobile-section-icon">
@@ -201,7 +194,6 @@
                         </button>
                     </div>
 
-                    <!-- Активные сессии -->
                     <div class="mobile-security-section">
                         <div class="mobile-section-header">
                             <div class="mobile-section-icon">
@@ -213,13 +205,11 @@
                             </div>
                         </div>
                         <div class="mobile-sessions-list" id="mobile-sessions-list">
-                            <!-- Сессии будут загружены динамически -->
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Вкладка проектов (мобильная) -->
             <div id="mobile-projects-tab" class="mobile-tab-content">
                 <div class="mobile-tab-header">
                     <div class="mobile-projects-header">
@@ -243,9 +233,7 @@
         </div>
     </div>
 
-    <!-- Десктопный контент (скрыт на мобильных) -->
     <div class="desktop-profile-container">
-        <!-- Обновленный хедер в стиле главной страницы -->
         <header class="glass-header">
             <div class="container">
                 <div class="header-content">
@@ -273,11 +261,9 @@
             </div>
         </header>
 
-        <!-- Основной контент -->
         <div class="profile-modern-container">
             <div class="container">
                 <div class="profile-modern-content">
-                    <!-- Боковая панель -->
                     <aside class="profile-modern-sidebar">
                         <div class="user-card-modern">
                             <div class="user-avatar-modern-large" id="user-avatar">
@@ -324,9 +310,7 @@
                         </nav>
                     </aside>
 
-                    <!-- Основное содержимое -->
                     <main class="profile-modern-main">
-                        <!-- Вкладка профиля -->
                         <div id="profile-tab" class="profile-tab-modern active">
                             <div class="tab-header-modern">
                                 <div class="tab-title-section">
@@ -394,7 +378,6 @@
                             </form>
                         </div>
 
-                        <!-- Вкладка безопасности -->
                         <div id="security-tab" class="profile-tab-modern">
                             <div class="tab-header-modern">
                                 <div class="tab-title-section">
@@ -407,8 +390,7 @@
                             </div>
 
                             <div class="security-sections-modern">
-                                <!-- Смена пароля -->
-                                <div class="security-section-modern">
+                                            <div class="security-section-modern">
                                     <div class="section-header-modern">
                                         <div class="section-icon">
                                             <i class="fas fa-key"></i>
@@ -424,8 +406,7 @@
                                     </button>
                                 </div>
 
-                                <!-- Активные сессии -->
-                                <div class="security-section-modern">
+                                            <div class="security-section-modern">
                                     <div class="section-header-modern">
                                         <div class="section-icon">
                                             <i class="fas fa-laptop"></i>
@@ -436,11 +417,9 @@
                                         </div>
                                     </div>
                                     <div class="sessions-container-modern" id="sessions-container">
-                                        <!-- Сессии будут загружены динамически -->
-                                    </div>
+                                                </div>
                                 </div>
 
-                                <!-- Двухфакторная аутентификация -->
                                 <div class="security-section-modern">
                                     <div class="section-header-modern">
                                         <div class="section-icon">
@@ -459,7 +438,6 @@
                             </div>
                         </div>
 
-                        <!-- Вкладка проектов -->
                         <div id="projects-tab" class="profile-tab-modern">
                             <div class="tab-header-modern">
                                 <div class="tab-title-section">
@@ -478,7 +456,6 @@
                             </div>
 
                             <div class="projects-grid-modern" id="projects-container">
-                                <!-- Проекты будут загружаться динамически -->
                                 <div class="projects-loading">
                                     <i class="fas fa-spinner fa-spin"></i>
                                     <span>Загрузка проектов...</span>
@@ -491,8 +468,6 @@
         </div>
     </div>
 
-    <!-- Модальные окна -->
-    <!-- Модальное окно смены пароля -->
     <div class="modal" id="password-modal">
         <div class="modal-content modal-modern">
             <span class="close-btn">&times;</span>
@@ -524,7 +499,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно подтверждения удаления -->
     <div class="modal" id="delete-modal">
         <div class="modal-content modal-modern danger">
             <span class="close-btn">&times;</span>
@@ -551,7 +525,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно создания проекта -->
     <div class="modal" id="create-project-modal">
         <div class="modal-content modal-modern">
             <span class="close-btn">&times;</span>

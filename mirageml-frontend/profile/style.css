@@ -1,4 +1,3 @@
-/* Profile Page Modern Styles */
 :root {
     --primary: #6366f1;
     --primary-dark: #4f46e5;
@@ -53,11 +52,9 @@ body {
     padding: 0 20px;
 }
 
-/* ============================================
    МОБИЛЬНАЯ ВЕРСИЯ
    ============================================ */
 
-/* Мобильный хедер */
 .mobile-header {
     display: none;
     position: fixed;
@@ -142,7 +139,6 @@ body {
     background: rgba(255, 255, 255, 0.05);
 }
 
-/* Мобильное меню профиля */
 .mobile-menu-overlay {
     display: none;
     position: fixed;
@@ -324,14 +320,12 @@ body {
     justify-content: center;
 }
 
-/* Мобильный контейнер профиля */
 .mobile-profile-container {
     display: none;
     padding: 120px 0 80px;
     min-height: 100vh;
 }
 
-/* Мобильные табы */
 .mobile-tabs-container {
     position: fixed;
     bottom: 0;
@@ -387,7 +381,6 @@ body {
     font-weight: 600;
 }
 
-/* Мобильный контент табов */
 .mobile-tab-content {
     display: none;
 }
@@ -420,7 +413,6 @@ body {
     font-size: 0.95rem;
 }
 
-/* Мобильная форма профиля */
 .mobile-profile-form {
     display: flex;
     flex-direction: column;
@@ -478,7 +470,6 @@ body {
     margin-top: 30px;
 }
 
-/* Мобильная безопасность */
 .mobile-security-sections {
     display: flex;
     flex-direction: column;
@@ -523,7 +514,6 @@ body {
     font-size: 13px;
 }
 
-/* Мобильные сессии */
 .mobile-sessions-list {
     display: flex;
     flex-direction: column;
@@ -602,7 +592,6 @@ body {
     border-color: var(--danger);
 }
 
-/* Мобильные проекты */
 .mobile-projects-header {
     display: flex;
     justify-content: space-between;
@@ -739,7 +728,6 @@ body {
     color: var(--warning);
 }
 
-/* Кнопка создания проекта на пустом экране */
 .mobile-empty-projects {
     text-align: center;
     padding: 80px 20px;
@@ -764,16 +752,13 @@ body {
     font-size: 1rem;
 }
 
-/* Десктопный контейнер (скрыт на мобильных) */
 .desktop-profile-container {
     display: block;
 }
 
-/* ============================================
    ОСНОВНЫЕ СТИЛИ ДЛЯ ВСЕХ УСТРОЙСТВ
    ============================================ */
 
-/* Background Animations */
 .background-container {
     position: fixed;
     top: 0;
@@ -878,7 +863,6 @@ body {
     66% { transform: translateY(30px) rotate(240deg); }
 }
 
-/* Glass Header (десктоп) */
 .glass-header {
     position: sticky;
     top: 0;
@@ -928,7 +912,6 @@ body {
     align-items: center;
 }
 
-/* Buttons */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -1003,7 +986,6 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-/* Main Profile Container */
 .profile-modern-container {
     min-height: 100vh;
     padding: 120px 0 60px;
@@ -1017,7 +999,6 @@ body {
     margin: 0 auto;
 }
 
-/* Sidebar */
 .profile-modern-sidebar {
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
@@ -1112,7 +1093,6 @@ body {
     font-weight: 500;
 }
 
-/* Profile Navigation */
 .profile-nav-modern {
     display: flex;
     flex-direction: column;
@@ -1201,7 +1181,6 @@ body {
     opacity: 1;
 }
 
-/* Main Content */
 .profile-modern-main {
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
@@ -1231,7 +1210,6 @@ body {
     }
 }
 
-/* Tab Header */
 .tab-header-modern {
     display: flex;
     justify-content: space-between;
@@ -1273,7 +1251,6 @@ body {
     gap: 12px;
 }
 
-/* Forms */
 .profile-form-modern {
     max-width: 800px;
 }
@@ -1336,7 +1313,6 @@ body {
     margin-top: 6px;
 }
 
-/* Security Sections */
 .security-sections-modern {
     display: flex;
     flex-direction: column;
@@ -1388,7 +1364,6 @@ body {
     font-size: 0.9rem;
 }
 
-/* Sessions */
 .sessions-container-modern {
     display: flex;
     flex-direction: column;
@@ -1455,7 +1430,6 @@ body {
     padding: 8px 16px;
 }
 
-/* Projects Grid */
 .projects-grid-modern {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -1594,7 +1568,6 @@ body {
     color: var(--primary);
 }
 
-/* Modal Windows */
 .modal {
     display: none;
     position: fixed;
@@ -1691,7 +1664,6 @@ body {
     justify-content: flex-end;
 }
 
-/* Toast Notifications */
 .toast {
     position: fixed;
     bottom: 20px;
@@ -1731,9 +1703,6 @@ body {
     }
 }
 
-/* ============================================
-   АДАПТИВНОСТЬ
-   ============================================ */
 
 @media (max-width: 1024px) {
     .profile-modern-content {
@@ -1751,7 +1720,6 @@ body {
 }
 
 @media (max-width: 768px) {
-    /* Скрываем десктопную версию, показываем мобильную */
     .desktop-profile-container {
         display: none;
     }
@@ -1764,7 +1732,6 @@ body {
         display: block;
     }
     
-    /* Мобильные стили */
     .profile-modern-container {
         padding: 100px 0 40px;
     }
@@ -1830,7 +1797,6 @@ body {
         justify-content: center;
     }
     
-    /* Улучшенные стили для мобильных */
     .mobile-tab {
         font-size: 11px;
     }
@@ -1860,7 +1826,6 @@ body {
     }
 }
 
-/* Loading States */
 .loading-skeleton {
     background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
     background-size: 200% 100%;
@@ -1877,7 +1842,6 @@ body {
     }
 }
 
-/* Custom Scrollbar */
 .profile-modern-main::-webkit-scrollbar {
     width: 6px;
 }
@@ -1896,7 +1860,6 @@ body {
     background: var(--primary-dark);
 }
 
-/* Focus States for Accessibility */
 .btn:focus,
 .form-input-modern:focus,
 .form-select-modern:focus,
@@ -1906,7 +1869,6 @@ body {
     outline-offset: 2px;
 }
 
-/* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;
@@ -1915,7 +1877,6 @@ body {
     }
 }
 
-/* Анимация для мобильного меню */
 @keyframes slideInRight {
     from {
         transform: translateX(100%);
@@ -1942,7 +1903,6 @@ body {
     animation: slideOutRight 0.3s ease-out;
 }
 
-/* Стили для улучшенной читаемости на мобильных */
 @media (max-width: 768px) {
     body {
         font-size: 15px;
@@ -1961,7 +1921,6 @@ body {
     }
 }
 
-/* Оптимизация для тач-устройств */
 @media (hover: none) and (pointer: coarse) {
     .btn,
     .mobile-nav-item,

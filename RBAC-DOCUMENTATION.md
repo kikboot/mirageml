@@ -80,13 +80,10 @@ POST /api/admin/change-password → requireAdminAuth
 
 ### Middleware
 ```javascript
-// Проверка авторизации
 requireAdminAuth(req, res, next)
 
-// Проверка прав доступа
 requirePermission(resource, action)(req, res, next)
 
-// Только для разработчиков
 requireDeveloper(req, res, next)
 ```
 

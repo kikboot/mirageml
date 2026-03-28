@@ -1,7 +1,3 @@
-// MirageML Editor Pro - Professional Sections Library (Tilda-style)
-// Профессиональная библиотека секций уровня Tilda
-
-// Категории секций с иконками и названиями
 const SECTION_CATEGORIES = {
     cover: { icon: 'fa-star', name: 'Обложка (Hero)', expanded: false },
     about: { icon: 'fa-building', name: 'О проекте', expanded: false },
@@ -23,9 +19,6 @@ const SECTION_CATEGORIES = {
 };
 
 const SECTIONS_LIBRARY = [
-    // =============================================
-    // ОБЛОЖКА (HERO) - 10 вариантов премиум уровня
-    // =============================================
     {
         id: 'hero-1',
         name: 'Hero: Классический градиент',
@@ -333,7 +326,6 @@ const SECTIONS_LIBRARY = [
     }
 ];
 
-// Группировка секций по категориям
 function getSectionsByCategory() {
     const grouped = {};
     SECTIONS_LIBRARY.forEach(section => {
@@ -345,17 +337,14 @@ function getSectionsByCategory() {
     return grouped;
 }
 
-// Получить количество секций в категории
 function getSectionsCount(category) {
     return SECTIONS_LIBRARY.filter(s => s.category === category).length;
 }
 
-// Получить общее количество секций
 function getTotalSectionsCount() {
     return SECTIONS_LIBRARY.length;
 }
 
-// Экспорт
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { SECTIONS_LIBRARY, SECTION_CATEGORIES, getSectionsByCategory, getSectionsCount, getTotalSectionsCount };
 }

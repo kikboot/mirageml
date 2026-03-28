@@ -1,18 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Элементы DOM
     const startProjectBtn = document.getElementById('start-project-btn');
     const learnMoreBtn = document.getElementById('learn-more-btn');
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const mobileMenuContainer = document.querySelector('.mobile-menu-container');
     const mobileMenuClose = document.querySelector('.mobile-menu-close');
 
-    // Проверка авторизации при загрузке
     checkAuthStatus();
 
-    // Инициализация мобильного меню
     initMobileMenu();
 
-    // Кнопка начала создания проекта
     if (startProjectBtn) {
         startProjectBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -25,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Кнопка "Узнать больше"
     if (learnMoreBtn) {
         learnMoreBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -33,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Открытие/закрытие мобильного меню
     if (mobileMenuBtn) {
         mobileMenuBtn.addEventListener('click', openMobileMenu);
     }
@@ -42,16 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileMenuClose.addEventListener('click', closeMobileMenu);
     }
 
-    // Закрытие мобильного меню при клике на ссылку
     document.querySelectorAll('.mobile-nav .nav-link').forEach(link => {
         link.addEventListener('click', closeMobileMenu);
     });
 
-    // Инициализация анимаций
     initAnimations();
 });
 
-// Функции мобильного меню
 function openMobileMenu() {
     const mobileMenuContainer = document.querySelector('.mobile-menu-container');
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
@@ -121,7 +112,6 @@ function updateMobileMenuVisibility() {
     }
 }
 
-// Анимации
 function initAnimations() {
     requestAnimationFrame(() => {
         animateBackgroundGrid();
@@ -173,7 +163,6 @@ function animateFloatingElements() {
     });
 }
 
-// Обработка изменения размера окна
 window.addEventListener('resize', () => {
     clearTimeout(window.resizeTimer);
     window.resizeTimer = setTimeout(() => {
@@ -181,14 +170,12 @@ window.addEventListener('resize', () => {
     }, 250);
 });
 
-// Закрытие мобильного меню по клавише Escape
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && mobileMenuContainer && mobileMenuContainer.classList.contains('active')) {
         closeMobileMenu();
     }
 });
 
-// Закрытие мобильного меню при клике вне его
 if (mobileMenuContainer) {
     mobileMenuContainer.addEventListener('click', (e) => {
         if (e.target === mobileMenuContainer) {
@@ -197,9 +184,6 @@ if (mobileMenuContainer) {
     });
 }
 
-// ==========================================
-// Управление авторизацией (из main/script.js)
-// ==========================================
 
 async function checkAuthStatus() {
     let token = localStorage.getItem('token');
@@ -208,7 +192,6 @@ async function checkAuthStatus() {
     }
 
     if (!token) {
-        // Пользователь не авторизован - показываем кнопку Профиль
         showProfileButton();
         return;
     }
@@ -268,7 +251,6 @@ function updateAuthUI(user) {
 
     const userInitials = getInitials(user.name);
 
-    // Обновляем десктопную версию
     authButtons.innerHTML = `
         <div class="user-menu">
             <button class="user-avatar" aria-label="Меню пользователя" aria-haspopup="true" aria-expanded="false">
@@ -303,7 +285,6 @@ function updateAuthUI(user) {
         </div>
     `;
 
-    // Обновляем мобильную версию
     if (mobileAuthButtons) {
         mobileAuthButtons.innerHTML = `
             <div class="user-menu">
@@ -339,14 +320,12 @@ function updateAuthUI(user) {
             </div>
         `;
 
-        // Добавляем обработчик для мобильной кнопки выхода
         const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
         if (mobileLogoutBtn) {
             mobileLogoutBtn.addEventListener('click', logout);
         }
     }
 
-    // Инициализация пользовательского меню
     initUserMenu();
 
     document.getElementById('logout-btn')?.addEventListener('click', logout);
@@ -373,7 +352,6 @@ function initUserMenu() {
             avatarBtn.classList.add('active');
             isOpen = true;
 
-            // Фокус на первом элементе меню
             const firstMenuItem = dropdownContent.querySelector('a, button');
             if (firstMenuItem) {
                 setTimeout(() => firstMenuItem.focus(), 100);
@@ -391,7 +369,6 @@ function initUserMenu() {
             }, 300);
         };
 
-        // Открытие/закрытие по клику
         avatarBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             if (isOpen) {
@@ -401,14 +378,12 @@ function initUserMenu() {
             }
         });
 
-        // Закрытие при клике вне меню
         document.addEventListener('click', () => {
             if (isOpen) {
                 closeMenu();
             }
         });
 
-        // Обработка клавиатуры
         avatarBtn.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
@@ -419,7 +394,6 @@ function initUserMenu() {
             }
         });
 
-        // Управление фокусом в выпадающем меню
         dropdownContent.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeMenu();
@@ -439,7 +413,6 @@ function initUserMenu() {
             }
         });
 
-        // Предотвращаем закрытие при наведении на меню
         dropdownContent.addEventListener('mouseenter', () => {
             clearTimeout(closeTimeout);
         });
@@ -471,7 +444,6 @@ async function logout() {
     setTimeout(() => window.location.reload(), 1000);
 }
 
-// Вспомогательные функции
 function getInitials(name) {
     if (!name) return '??';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);

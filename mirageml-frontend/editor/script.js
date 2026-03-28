@@ -91,7 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     function init() {
-        // Проверяем авторизацию
         const token = localStorage.getItem('token');
         if (!token) {
             showToast('Требуется авторизация', 'error');
@@ -99,11 +98,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Получаем ID проекта из URL
         const urlParams = new URLSearchParams(window.location.search);
         state.currentProjectId = urlParams.get('project');
 
-        // Инициализация интерфейса
         setupDragAndDrop();
         setupEventListeners();
         setupElementTemplates();
@@ -113,10 +110,8 @@ document.addEventListener('DOMContentLoaded', function () {
         setupZoomControls();
         setupTabs();
 
-        // Устанавливаем размер холста по умолчанию
         setCanvasSize(state.canvasSize.width, state.canvasSize.height);
 
-        // Загружаем проект если есть ID
         if (state.currentProjectId) {
             loadProject(state.currentProjectId)
                 .catch(error => {
@@ -125,29 +120,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
         }
 
-        // Адаптация для 1366x768
         adaptForSmallScreens();
-        
-        // Инициализация переключателя сетки
+
         initializeGridToggle();
 
         console.log('MirageML Editor initialized');
     }
 
     function adaptForSmallScreens() {
-        // Проверяем размер экрана
         const isSmallScreen = window.innerWidth <= 1366 || window.innerHeight <= 768;
-        
+
         if (isSmallScreen) {
-            // Уменьшаем минимальные размеры холста
             DOM.canvasGrid.style.minWidth = '600px';
             DOM.canvasGrid.style.minHeight = '400px';
-            
-            // Адаптируем размеры для лучшего отображения
+
             document.documentElement.style.setProperty('--sidebar-width', '240px');
             document.documentElement.style.setProperty('--header-height', '60px');
-            
-            // Показываем подсказку об адаптации
+
             setTimeout(() => {
                 showToast('Режим адаптации для вашего разрешения экрана', 'info');
             }, 1000);
@@ -156,10 +145,8 @@ document.addEventListener('DOMContentLoaded', function () {
     
     function initializeGridToggle() {
         if (DOM.inputs.gridToggle) {
-            // Устанавливаем начальное состояние
             updateGridVisibility(DOM.inputs.gridToggle.checked);
-            
-            // Добавляем обработчик события
+
             DOM.inputs.gridToggle.addEventListener('change', function() {
                 updateGridVisibility(this.checked);
             });
@@ -168,7 +155,6 @@ document.addEventListener('DOMContentLoaded', function () {
     
     function updateGridVisibility(showGrid) {
         if (showGrid) {
-            // Возвращаем стили сетки
             DOM.canvasGrid.style.background = '#f0f0f0';
             DOM.canvasGrid.style.backgroundImage =
                 'linear-gradient(#cccccc 1px, transparent 1px), ' +
@@ -176,7 +162,6 @@ document.addEventListener('DOMContentLoaded', function () {
             DOM.canvasGrid.style.backgroundSize = '20px 20px';
             DOM.canvasGrid.style.backgroundPosition = '-1px -1px';
         } else {
-            // Убираем сетку, оставляя только светлый фон
             DOM.canvasGrid.style.background = '#f0f0f0';
             DOM.canvasGrid.style.backgroundImage = 'none';
         }
@@ -189,12 +174,10 @@ document.addEventListener('DOMContentLoaded', function () {
         tabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const tabId = btn.dataset.tab;
-                
-                // Убираем активные классы
+
                 tabBtns.forEach(b => b.classList.remove('active'));
                 tabContents.forEach(c => c.classList.remove('active'));
-                
-                // Добавляем активные классы
+
                 btn.classList.add('active');
                 document.getElementById(tabId).classList.add('active');
             });
@@ -221,8 +204,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function applyZoom() {
         DOM.canvasGrid.style.transform = `scale(${state.zoom})`;
         DOM.zoomLevel.textContent = `${Math.round(state.zoom * 100)}%`;
-        
-        // Обновляем позиции элементов при зуме
+
         state.elements.forEach(el => {
             const element = el.element;
             element.style.transform = `rotate(${el.rotation || 0}deg) scale(${1/state.zoom})`;
@@ -230,10 +212,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function setupCanvasSizeControls() {
-        // Обработчик изменения выбора размера холста
         DOM.inputs.canvasSizeSelect.addEventListener('change', function() {
             const value = this.value;
-            
+
             if (value === 'custom') {
                 DOM.inputs.canvasWidth.value = state.canvasSize.width;
                 DOM.inputs.canvasHeight.value = state.canvasSize.height;
@@ -247,7 +228,6 @@ document.addEventListener('DOMContentLoaded', function () {
             setCanvasSize(width, height);
         });
 
-        // Обработчик кнопки применения размера холста
         DOM.buttons.applyCanvasSize.addEventListener('click', function() {
             const width = parseInt(DOM.inputs.canvasWidth.value);
             const height = parseInt(DOM.inputs.canvasHeight.value);
@@ -268,38 +248,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function setCanvasSize(width, height) {
         state.canvasSize = { width, height };
-        
-        // Обновляем размеры холста
+
         DOM.canvasGrid.style.width = `${width}px`;
         DOM.canvasGrid.style.height = `${height}px`;
         DOM.canvasSizeDisplay.textContent = `${width}×${height}`;
-        
-        // Добавляем класс размера для правильного отображения
-        DOM.canvasGrid.className = 'canvas-grid-modern'; // сбрасываем классы
+
+        DOM.canvasGrid.className = 'canvas-grid-modern';
         DOM.canvasGrid.classList.add(`size-${width}x${height}`);
-        
-        // Обновляем селектор размера
+
         updateCanvasSizeSelector(width, height);
-        
-        // Обновляем позиции элементов относительно нового размера холста
+
         state.elements.forEach(el => {
             const element = el.element;
             const rect = element.getBoundingClientRect();
-            
-            // Проверяем, чтобы элемент не выходил за границы холста
+
             let left = parseInt(element.style.left) || 0;
             let top = parseInt(element.style.top) || 0;
-            
+
             if (left + rect.width > width) {
                 left = Math.max(0, width - rect.width);
                 element.style.left = `${left}px`;
             }
-            
+
             if (top + rect.height > height) {
                 top = Math.max(0, height - rect.height);
                 element.style.top = `${top}px`;
             }
-            
+
             el.x = left;
             el.y = top;
         });
@@ -311,8 +286,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const sizeString = `${width}x${height}`;
         const select = DOM.inputs.canvasSizeSelect;
         const customInputs = document.querySelector('.custom-size-inputs-modern');
-        
-        // Проверяем, есть ли такой размер в options
+
         let found = false;
         for (let option of select.options) {
             if (option.value === sizeString) {
@@ -322,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 break;
             }
         }
-        
+
         if (!found) {
             select.value = 'custom';
             customInputs.classList.add('active');
@@ -344,20 +318,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const project = await response.json();
 
-            // Очищаем текущий холст
             clearCanvas();
 
-            // Устанавливаем размер холста из проекта, если есть
             if (project.canvasSize) {
                 setCanvasSize(project.canvasSize.width, project.canvasSize.height);
             }
 
-            // Восстанавливаем элементы
             if (project.elements && Object.keys(project.elements).length > 0) {
                 Object.values(project.elements).forEach(elData => {
                     const element = createElement(elData.type, elData.x, elData.y);
 
-                    // Восстанавливаем свойства
                     element.element.style.width = `${elData.width}px`;
                     element.element.style.height = `${elData.height}px`;
                     element.element.style.left = `${elData.x}px`;
@@ -367,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     element.element.style.fontSize = elData.fontSize || '';
                     element.element.style.padding = elData.padding || '';
                     element.element.style.border = elData.border || '';
-                    
+
                     if (elData.rotation) {
                         element.element.style.transform = `rotate(${elData.rotation}deg)`;
                         element.rotation = elData.rotation;
@@ -385,7 +355,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         element.imageUrl = elData.imageUrl;
                     }
 
-                    // Обновляем данные элемента
                     element.x = elData.x;
                     element.y = elData.y;
                     element.width = elData.width;
@@ -421,10 +390,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 canvasSize: state.canvasSize
             };
 
-            // Собираем данные всех элементов
             state.elements.forEach(el => {
                 const rect = el.element.getBoundingClientRect();
-                
+
                 const layerItem = document.querySelector(`.layer-item-modern[data-id="${el.id}"]`);
                 const layerName = layerItem ?
                     (layerItem.querySelector('.layer-rename')?.value ||
@@ -450,7 +418,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 };
             });
 
-            // Отправляем на сервер
             const response = await fetch(`http://localhost:3001/api/projects/${state.currentProjectId}`, {
                 method: 'PUT',
                 headers: {
@@ -475,9 +442,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function showToast(message, type) {
-        // Удаляем старые уведомления
         document.querySelectorAll('.toast').forEach(toast => toast.remove());
-        
+
         const toast = document.createElement('div');
         toast.className = `toast ${type} fade-in`;
         toast.innerHTML = `
@@ -936,8 +902,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
     }
-    
-    // Функция автосохранения удалена, оставлено только ручное сохранение
 
     function setupHelpSystem() {
         DOM.buttons.showHelp.addEventListener('click', () => {
@@ -956,18 +920,15 @@ document.addEventListener('DOMContentLoaded', function () {
             const newLeft = state.dragState.startLeft + dx;
             const newTop = state.dragState.startTop + dy;
 
-            // Проверяем границы холста
             const canvasRect = DOM.canvasGrid.getBoundingClientRect();
             const elementRect = element.getBoundingClientRect();
-            
-            // Вычисляем смещение между глобальными координатами и координатами внутри холста
+
             const canvasOffset = DOM.canvasGrid.getBoundingClientRect();
             let boundedLeft = newLeft;
             let boundedTop = newTop;
-            
-            // Ограничиваем перемещение внутри холста (добавим небольшие отступы)
-            const padding = 5; // отступ от краев
-            
+
+            const padding = 5;
+
             if (boundedLeft < -padding) boundedLeft = -padding;
             if (boundedTop < -padding) boundedTop = -padding;
             if (boundedLeft + elementRect.width > canvasRect.width + padding*2)
@@ -981,7 +942,6 @@ document.addEventListener('DOMContentLoaded', function () {
             state.selectedElement.x = boundedLeft;
             state.selectedElement.y = boundedTop;
 
-            // Обновляем форму свойств только при значительном изменении
             if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
                 updatePropertiesForm(state.selectedElement);
             }
@@ -1029,9 +989,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     break;
             }
 
-            // Проверяем границы холста
             const canvasRect = DOM.canvasGrid.getBoundingClientRect();
-            
+
             if (newLeft + newWidth > canvasRect.width) {
                 newWidth = canvasRect.width - newLeft;
             }
@@ -1221,7 +1180,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function addToLayersList(elementData) {
-        // Убираем пустое состояние
         const emptyState = DOM.layersList.querySelector('.empty-layers-state');
         if (emptyState) {
             emptyState.remove();
@@ -1320,8 +1278,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (modal) {
             modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
-            
-            // Фокусируемся на первом поле ввода
+
             const firstInput = modal.querySelector('input');
             if (firstInput) {
                 setTimeout(() => firstInput.focus(), 100);
@@ -1334,8 +1291,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (modal) {
             modal.style.display = 'none';
             document.body.style.overflow = '';
-            
-            // Сбрасываем форму
+
             const form = modal.querySelector('form');
             if (form) {
                 form.reset();
@@ -1435,7 +1391,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Добавляем медиа-запросы для мобильной версии
         cssCode += `\n/* Мобильная версия */\n`;
         cssCode += `@media (max-width: 768px) {\n`;
         cssCode += `    .container {\n`;
@@ -1664,7 +1619,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Добавляем обработчики для перетаскивания слоев
     DOM.layersList.addEventListener('dragover', (e) => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
@@ -1695,7 +1649,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
-    // Автосохранение при закрытии
     window.addEventListener('beforeunload', (e) => {
         if (state.currentProjectId && state.elements.length > 0) {
             saveProject().catch(console.error);

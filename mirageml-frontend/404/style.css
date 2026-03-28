@@ -61,7 +61,6 @@ body {
     padding: 0 20px;
 }
 
-/* Background Animations */
 .background-container {
     position: fixed;
     top: 0;
@@ -166,7 +165,6 @@ body {
     66% { transform: translateY(30px) rotate(240deg); }
 }
 
-/* Glass Header */
 .glass-header {
     position: fixed;
     top: 0;
@@ -319,7 +317,6 @@ body {
     font-size: 16px;
 }
 
-/* User Menu Styles */
 .user-menu {
     position: relative;
     display: inline-block;
@@ -540,7 +537,6 @@ body {
     color: var(--light);
 }
 
-/* Error Section */
 .error-section {
     min-height: 100vh;
     display: flex;
@@ -714,7 +710,6 @@ body {
     color: var(--primary);
 }
 
-/* Footer */
 .error-footer {
     background: rgba(15, 23, 42, 0.8);
     backdrop-filter: blur(20px);
@@ -775,7 +770,6 @@ body {
     font-size: 0.875rem;
 }
 
-/* Responsive */
 @media (max-width: 1024px) {
     .main-nav {
         display: none;

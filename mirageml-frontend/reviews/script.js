@@ -1,9 +1,7 @@
-// Функция для получения инициалов имени
 function getInitials(name) {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
 }
 
-// Проверка статуса авторизации при загрузке
 async function checkAuthStatus() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -33,17 +31,15 @@ async function checkAuthStatus() {
     }
 }
 
-// Обновление интерфейса авторизации
 function updateAuthUI(user) {
     const authButtons = document.querySelector('.auth-buttons');
     const mainNavLink = document.querySelector('.main-link');
-    
+
     if (!authButtons) return;
 
     if (user) {
-        // Пользователь авторизован
         const userInitials = getInitials(user.name);
-        
+
         authButtons.innerHTML = `
             <div class="user-menu">
                 <button class="user-avatar" aria-label="Меню пользователя" aria-haspopup="true" aria-expanded="false">
@@ -72,22 +68,15 @@ function updateAuthUI(user) {
                 </div>
             </div>
         `;
-        
-        // Скрываем ссылку "Главная" для авторизованных пользователей
-        if (mainNavLink) {
-            mainNavLink.style.display = 'none';
-        }
-        
-        // Добавляем обработчик для кнопки выхода
+
+        mainNavLink && (mainNavLink.style.display = 'none');
+
         document.getElementById('logout-btn')?.addEventListener('click', logout);
-        
-        // Инициализируем пользовательское меню
+
         initUserMenu();
-        
-        // Обновляем форму отзыва для авторизованных пользователей
+
         updateReviewFormForAuthorizedUser(user);
     } else {
-        // Пользователь не авторизован
         authButtons.innerHTML = `
             <button class="btn btn-ghost" id="login-btn">
                 <i class="fas fa-sign-in-alt"></i>
@@ -99,46 +88,38 @@ function updateAuthUI(user) {
             </button>
         `;
         
-        // Показываем ссылку "Главная" для неавторизованных пользователей
-        if (mainNavLink) {
-            mainNavLink.style.display = 'flex';
-        }
-        
-        // Добавляем обработчики для кнопок авторизации
+        mainNavLink && (mainNavLink.style.display = 'flex');
+
         document.getElementById('login-btn')?.addEventListener('click', () => {
             showModal(document.getElementById('login-modal'));
             hideNotification('login-notification');
         });
-        
+
         document.getElementById('register-btn')?.addEventListener('click', () => {
             showModal(document.getElementById('register-modal'));
             hideNotification('register-notification');
         });
-        
-        // Обновляем форму отзыва для неавторизованных пользователей
+
         updateReviewFormForUnauthorizedUser();
     }
 }
 
-// Инициализация пользовательского меню
 function initUserMenu() {
     const userMenus = document.querySelectorAll('.user-menu');
-    
+
     userMenus.forEach(menu => {
         const button = menu.querySelector('.user-avatar');
         const dropdown = menu.querySelector('.dropdown-content');
-        
+
         if (!button || !dropdown) return;
-        
-        // Переключение видимости меню
+
         button.addEventListener('click', (e) => {
             e.stopPropagation();
             const isExpanded = button.getAttribute('aria-expanded') === 'true';
             button.setAttribute('aria-expanded', !isExpanded);
             dropdown.style.display = isExpanded ? 'none' : 'block';
         });
-        
-        // Закрытие меню при клике вне его
+
         document.addEventListener('click', (e) => {
             if (!menu.contains(e.target)) {
                 button.setAttribute('aria-expanded', 'false');
@@ -148,24 +129,20 @@ function initUserMenu() {
     });
 }
 
-// Функция выхода
 function logout() {
     localStorage.removeItem('token');
     updateAuthUI(null);
-    
-    // Закрываем все открытые модальные окна
+
     document.querySelectorAll('.modal').forEach(modal => {
         modal.style.display = 'none';
     });
 }
 
-// Функция показа модального окна
 function showModal(modal) {
     if (modal) {
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-        
-        // Фокусируем на первом поле ввода
+
         const firstInput = modal.querySelector('input');
         if (firstInput) {
             setTimeout(() => {
@@ -176,14 +153,12 @@ function showModal(modal) {
     }
 }
 
-// Функция скрытия модального окна
 function hideModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
         modal.style.display = 'none';
         document.body.style.overflow = '';
-        
-        // Сбрасываем форму
+
         const form = modal.querySelector('form');
         if (form) {
             form.reset();
@@ -191,7 +166,6 @@ function hideModal(modalId) {
     }
 }
 
-// Функция скрытия уведомлений
 function hideNotification(notificationId) {
     const notification = document.getElementById(notificationId);
     if (notification) {
@@ -200,7 +174,6 @@ function hideNotification(notificationId) {
     }
 }
 
-// Обработчик входа
 async function handleLogin(e) {
     e.preventDefault();
     
@@ -240,7 +213,6 @@ async function handleLogin(e) {
     }
 }
 
-// Обработчик регистрации
 async function handleRegister(e) {
     e.preventDefault();
     
@@ -280,7 +252,6 @@ async function handleRegister(e) {
         const data = await response.json();
         
         if (data.success) {
-            // Автоматический вход после регистрации
             const loginResponse = await fetch('/api/login', {
                 method: 'POST',
                 headers: {
@@ -310,14 +281,12 @@ async function handleRegister(e) {
     }
 }
 
-// Функция переключения между модальными окнами
 function switchModals(fromModal, toModal) {
     if (fromModal) fromModal.style.display = 'none';
     if (toModal) {
         toModal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-        
-        // Фокусируем на первом поле ввода
+
         const firstInput = toModal.querySelector('input');
         if (firstInput) {
             setTimeout(() => {
@@ -328,13 +297,11 @@ function switchModals(fromModal, toModal) {
     }
 }
 
-// Функция обновления формы для авторизованных пользователей
 function updateReviewFormForAuthorizedUser(user) {
     const formContainer = document.querySelector('.form-container');
-    
+
     if (!formContainer) return;
-    
-    // Восстанавливаем оригинальную форму или создаем заново
+
     formContainer.innerHTML = `
         <div class="form-header">
             <h2><i class="fas fa-edit"></i> Оставить отзыв</h2>
@@ -397,7 +364,6 @@ function updateReviewFormForAuthorizedUser(user) {
         </form>
     `;
     
-    // Добавляем скрытые поля с информацией пользователя
     const reviewForm = document.getElementById('reviewForm');
     if (reviewForm) {
         const hiddenNameInput = document.createElement('input');
@@ -414,7 +380,6 @@ function updateReviewFormForAuthorizedUser(user) {
         hiddenEmailInput.value = user.email;
         reviewForm.appendChild(hiddenEmailInput);
         
-        // Обработчик для новой формы
         reviewForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -429,7 +394,6 @@ function updateReviewFormForAuthorizedUser(user) {
             submitReview(reviewData);
         });
         
-        // Обработчик счетчика символов
         const commentTextarea = document.getElementById('comment');
         const charCounter = document.querySelector('.char-counter');
         
@@ -448,13 +412,11 @@ function updateReviewFormForAuthorizedUser(user) {
     }
 }
 
-// Функция обновления формы для неавторизованных пользователей
 function updateReviewFormForUnauthorizedUser() {
     const formContainer = document.querySelector('.form-container');
     
     if (!formContainer) return;
     
-    // Показываем сообщение вместо формы
     formContainer.innerHTML = `
         <div class="auth-required-message">
             <h3><i class="fas fa-lock"></i> Чтобы оставить отзыв</h3>
@@ -472,7 +434,6 @@ function updateReviewFormForUnauthorizedUser() {
         </div>
     `;
     
-    // Добавляем обработчики для кнопок
     document.getElementById('show-login-modal')?.addEventListener('click', () => {
         showModal(document.getElementById('login-modal'));
     });
@@ -482,9 +443,7 @@ function updateReviewFormForUnauthorizedUser() {
     });
 }
 
-// Настройка обработчиков закрытия модальных окон
 function setupModalCloseHandlers() {
-    // Закрытие по кнопке закрытия
     document.querySelectorAll('.close-btn').forEach(btn => {
         btn.addEventListener('click', function () {
             const modal = this.closest('.modal');
@@ -494,7 +453,6 @@ function setupModalCloseHandlers() {
         });
     });
 
-    // Закрытие по клику вне модального окна
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', function (e) {
             if (e.target === this) {
@@ -503,7 +461,6 @@ function setupModalCloseHandlers() {
         });
     });
 
-    // Закрытие по ESC
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             document.querySelectorAll('.modal').forEach(modal => {
@@ -516,26 +473,19 @@ function setupModalCloseHandlers() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Инициализация анимаций
     initAnimations();
 
-    // Проверка авторизации при загрузке
     checkAuthStatus();
 
-    // Обработчики фильтров по рейтингу
     const ratingFilterButtons = document.querySelectorAll('.rating-filter-btn');
     ratingFilterButtons.forEach(button => {
         button.addEventListener('click', function() {
-            // Удаляем активный класс у всех кнопок
             ratingFilterButtons.forEach(btn => btn.classList.remove('active'));
-            // Добавляем активный класс текущей кнопке
             this.classList.add('active');
-            // Перезагружаем отзывы с новыми фильтрами
             loadReviews();
         });
     });
     
-    // Обработчик селекта сортировки
     const sortSelect = document.getElementById('sortSelect');
     if (sortSelect) {
         sortSelect.addEventListener('change', function() {
@@ -543,7 +493,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Обработчик кнопки "Загрузить еще" (если нужен в будущем)
     const loadMoreBtn = document.getElementById('loadMoreBtn');
     if (loadMoreBtn) {
         loadMoreBtn.addEventListener('click', function() {
@@ -551,13 +500,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Загрузка отзывов
     loadReviews();
     
-    // Проверка авторизации при загрузке и обновление интерфейса
     const token = localStorage.getItem('token');
     if (token) {
-        // Если пользователь авторизован, проверим его данные и обновим интерфейс
         fetch('/api/profile', {
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -575,25 +521,20 @@ document.addEventListener('DOMContentLoaded', function() {
             updateAuthUI(user);
         })
         .catch(() => {
-            // Если токен недействителен, очищаем его и обновляем интерфейс
             localStorage.removeItem('token');
             updateAuthUI(null);
         });
     } else {
-        // Пользователь не авторизован
         updateAuthUI(null);
     }
     
-    // Обработка формы
     const reviewForm = document.getElementById('reviewForm');
     if (reviewForm) {
         reviewForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Проверяем, авторизован ли пользователь
             const token = localStorage.getItem('token');
             if (!token) {
-                // Если не авторизован, показываем окно входа
                 showModal(document.getElementById('login-modal'));
                 return;
             }
@@ -610,7 +551,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Обработчик счетчика символов
     const commentTextarea = document.getElementById('comment');
     const charCounter = document.querySelector('.char-counter');
     
@@ -627,22 +567,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Закрытие модалок
     setupModalCloseHandlers();
 
-    // Обработка формы входа
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', handleLogin);
     }
 
-    // Обработка формы регистрации
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
         registerForm.addEventListener('submit', handleRegister);
     }
 
-    // Переключение между формами
     document.getElementById('switch-to-register')?.addEventListener('click', () => {
         switchModals(
             document.getElementById('login-modal'), 
@@ -657,7 +593,6 @@ document.addEventListener('DOMContentLoaded', function() {
         );
     });
     
-    // Обработчики отмены
     document.getElementById('cancel-login')?.addEventListener('click', () => {
         hideModal('login-modal');
     });
@@ -667,15 +602,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Функция для обновления статистики отзывов
 function updateReviewsStats(reviews) {
     const totalReviewsEl = document.getElementById('totalReviews');
     const averageRatingEl = document.getElementById('averageRating');
-    
+
     if (totalReviewsEl) {
         totalReviewsEl.textContent = reviews.length;
     }
-    
+
     if (reviews.length > 0) {
         const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
         const averageRating = (totalRating / reviews.length).toFixed(1);
@@ -689,20 +623,16 @@ function updateReviewsStats(reviews) {
     }
 }
 
-// Функция для фильтрации и сортировки отзывов
 function filterAndSortReviews(reviews) {
-    // Получаем выбранные фильтры
     const selectedRating = document.querySelector('.rating-filter-btn.active')?.dataset.rating || 'all';
     const sortValue = document.getElementById('sortSelect')?.value || 'newest';
     
-    // Фильтруем по рейтингу
     let filteredReviews = reviews;
     if (selectedRating !== 'all') {
         const rating = parseInt(selectedRating);
         filteredReviews = reviews.filter(review => review.rating === rating);
     }
     
-    // Сортируем
     filteredReviews.sort((a, b) => {
         const dateA = new Date(a.createdAt || a.date || a.updatedAt || a.timestamp || new Date());
         const dateB = new Date(b.createdAt || b.date || b.updatedAt || b.timestamp || new Date());
@@ -726,7 +656,6 @@ function filterAndSortReviews(reviews) {
     return filteredReviews;
 }
 
-// Обновляем функцию загрузки отзывов с учетом фильтрации
 function loadReviews() {
     fetch('/api/reviews')
         .then(response => response.json())
@@ -740,15 +669,12 @@ function loadReviews() {
                     </div>
                 `;
                 
-                // Обновляем статистику
                 updateReviewsStats([]);
                 return;
             }
             
-            // Фильтруем и сортируем отзывы
             const filteredReviews = filterAndSortReviews(reviews);
             
-            // Обновляем статистику
             updateReviewsStats(filteredReviews);
             
             if (filteredReviews.length === 0) {
@@ -790,7 +716,6 @@ function createReviewCard(review) {
     const card = document.createElement('div');
     card.className = 'review-card-modern'; // Обновляем класс для соответствия стилям
     
-    // Создаем звезды рейтинга
     let stars = '';
     for (let i = 0; i < 5; i++) {
         if (i < review.rating) {
@@ -800,10 +725,8 @@ function createReviewCard(review) {
         }
     }
     
-    // Получаем инициалы для аватара
     const initials = review.name.split(' ').map(n => n[0]).join('').toUpperCase();
     
-    // Форматируем дату
     const reviewDate = review.createdAt || review.date || new Date().toISOString();
     const date = new Date(reviewDate);
     const formattedDate = date.toLocaleDateString('ru-RU', {
@@ -837,13 +760,11 @@ function createReviewCard(review) {
 }
 
 function submitReview(reviewData) {
-    // Добавляем дату создания отзыва
     const reviewWithDate = {
         ...reviewData,
         createdAt: new Date().toISOString()
     };
     
-    // Получаем токен пользователя
     const token = localStorage.getItem('token');
     if (!token) {
         alert('Для отправки отзыва необходимо авторизоваться');
@@ -875,9 +796,7 @@ function submitReview(reviewData) {
     });
 }
 
-// Упрощенная функция инициализации анимаций
 function initAnimations() {
-    // Анимация появления элементов при загрузке
     setTimeout(() => {
         document.body.classList.add('loaded');
     }, 100);
