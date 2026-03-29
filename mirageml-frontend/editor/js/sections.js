@@ -440,7 +440,7 @@ window.SECTIONS_LIBRARY = [
         css: `.form-register { min-height: 600px; }`
     },
 
-    { КНОПКА (BUTTON) - 4 варианта    {
+    {
         id: 'button-1', name: 'Кнопка: CTA', category: 'button', icon: 'fa-hand-pointer',
         html: `<section class="section button-cta" style="padding: 100px 20px; background: #ffffff; text-align: center;"><div style="max-width: 800px; margin: 0 auto;"><h2 style="font-size: 36px; color: #1a202c; margin-bottom: 32px;">Готовы начать?</h2><button style="padding: 20px 48px; font-size: 18px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600;">Начать бесплатно</button></div></section>`,
         css: `.button-cta { min-height: 300px; }`
@@ -482,7 +482,7 @@ window.SECTIONS_LIBRARY = [
         css: `.footer-dark { min-height: 350px; }`
     },
 
-    { ВИДЕО (VIDEO) - 4 варианта    {
+    {
         id: 'video-1', name: 'Видео: На фоне', category: 'video', icon: 'fa-film',
         html: `<section class="section video-background" style="padding: 140px 20px; text-align: center; min-height: 700px; display: flex; align-items: center; position: relative; overflow: hidden;"><video autoplay muted loop style="position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); z-index: 0;"><source src="https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-1610-large.mp4" type="video/mp4"></video><div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 1;"></div><div style="position: relative; z-index: 2;"><h2 style="font-size: 48px; color: #ffffff; margin-bottom: 24px;">Видео презентация</h2></div></section>`,
         css: `.video-background { min-height: 700px; }`
@@ -586,7 +586,7 @@ window.SECTIONS_LIBRARY = [
         css: `.faq-list{min-height:650px;}`
     },
 
-    { CTA (CALL TO ACTION) - 6 премиум вариантов    {
+    {
         id: 'cta-1', name: 'CTA: Призыв', category: 'cta', icon: 'fa-bullhorn',
         html: `<section class="section cta-classic-premium" style="padding:100px 20px;text-align:center;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);position:relative;overflow:hidden;"><div style="position:absolute;top:-50%;right:-10%;width:600px;height:600px;background:rgba(255,255,255,0.1);border-radius:50%;filter:blur(60px);"></div><div style="max-width:800px;margin:0 auto;position:relative;z-index:2;"><span style="display:inline-block;padding:8px 20px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);border-radius:50px;color:#fff;font-size:13px;font-weight:600;margin-bottom:24px;backdrop-filter:blur(10px);">⚡ ОГРАНИЧЕННОЕ ПРЕДЛОЖЕНИЕ</span><h2 style="font-size:48px;color:#ffffff;margin-bottom:24px;font-weight:800;">Готовы начать проект?</h2><p style="font-size:20px;color:rgba(255,255,255,0.9);margin-bottom:40px;max-width:600px;margin-left:auto;margin-right:auto;">Оставьте заявку сейчас и получите скидку 20% на первый проект</p><div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;"><button style="padding:18px 42px;font-size:18px;background:#ffffff;color:#667eea;border:none;border-radius:12px;cursor:pointer;font-weight:700;box-shadow:0 10px 40px rgba(0,0,0,0.2);">Оставить заявку</button><button style="padding:18px 42px;font-size:18px;background:transparent;color:#ffffff;border:2px solid rgba(255,255,255,0.5);border-radius:12px;cursor:pointer;font-weight:600;backdrop-filter:blur(10px);">Узнать больше</button></div></div></section>`,
         css: `.cta-classic-premium{min-height:500px;}`

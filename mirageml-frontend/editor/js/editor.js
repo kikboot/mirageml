@@ -614,7 +614,6 @@ window.switchBgTab = function(type) {
     document.getElementById('bg-image-panel').style.display = type === 'image' ? 'block' : 'none';
     document.getElementById('bg-video-panel').style.display = type === 'video' ? 'block' : 'none';
 
- Сохраняем текущий фон при переключении
     if (type === 'gradient' && !state.selectedSection.element.style.background.includes('gradient')) {
         updateGradient();
     }
@@ -654,7 +653,6 @@ window.updateGradient = function() {
     
     state.selectedSection.element.style.background = gradient;
     
- Обновляем значения
     document.getElementById('gradient-angle-value').textContent = `${angle}°`;
 };
 
@@ -823,7 +821,6 @@ window.updateBgVideo = function(url) {
             section.style.overflow = 'hidden';
             section.insertBefore(video, section.firstChild);
             
-         Создаём overlay
             overlay = document.createElement('div');
             overlay.className = 'video-overlay';
             overlay.style.cssText = 'position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1; pointer-events: none;';
@@ -1117,7 +1114,6 @@ window.updateSectionPadding = function(side, value) {
 window.updateSectionBgColor = function(value) {
     if (state.selectedSection) {
         state.selectedSection.element.style.backgroundColor = value;
-     Синхронизируем color picker и text input
         const colorInput = document.getElementById('prop-bg-color');
         const colorText = document.getElementById('prop-bg-color-text');
         if (colorInput && colorText) {
@@ -1339,12 +1335,10 @@ function setupToolbar() {
 
 function setupCanvasInteractions() {
     DOM.canvas?.addEventListener('click', (e) => {
-     Игнорируем клики по контролам
         if (e.target.closest('.section-controls') || e.target.closest('.resize-handle') || e.target.closest('.rotate-handle')) {
             return;
         }
         
-     Проверяем клик по элементу внутри секции
         const textElement = e.target.closest('h1, h2, h3, h4, p, button, a, img, div');
         if (textElement && !e.target.closest('.canvas-section')) {
             const section = state.sections.find(s => s.element.contains(textElement));
@@ -1372,7 +1366,6 @@ function setupCanvasInteractions() {
         }
     });
     
- Клик по секции для выделения
     DOM.canvas?.addEventListener('click', (e) => {
         const sectionEl = e.target.closest('.canvas-section');
         if (sectionEl && !e.target.closest('.section-controls')) {
@@ -1384,7 +1377,6 @@ function setupCanvasInteractions() {
         }
     });
     
- Двойной клик для быстрого редактирования текста
     DOM.canvas?.addEventListener('dblclick', (e) => {
         const textElement = e.target.closest('h1, h2, h3, h4, p, button, a');
         if (textElement && !e.target.closest('.section-controls')) {
@@ -1393,7 +1385,6 @@ function setupCanvasInteractions() {
                 const element = section.elements.find(el => el.element === textElement);
                 if (element) {
                     selectElement(section.id, element.id);
-                 Открываем prompt для быстрого редактирования
                     const newText = prompt('Введите текст:', textElement.textContent);
                     if (newText !== null) {
                         textElement.textContent = newText;
@@ -1414,7 +1405,6 @@ function setupCanvasInteractions() {
         if (DOM.cursorPosition) DOM.cursorPosition.textContent = `X: ${Math.round(x)}, Y: ${Math.round(y)}`;
     });
     
- Обновление мини-карты при скролле
     DOM.canvasWrapper?.addEventListener('scroll', () => {
         updateMinimap();
     });
@@ -1567,7 +1557,6 @@ function resetImageUpload() {
 }
 
 function setupEventListeners() {
- Скрытие/показ левой панели
     document.getElementById('toggle-sidebar-btn')?.addEventListener('click', () => {
         const leftSidebar = document.querySelector('.left-sidebar');
         const editorContainer = document.querySelector('.editor-container');
@@ -1576,7 +1565,6 @@ function setupEventListeners() {
             leftSidebar.classList.toggle('collapsed');
             editorContainer.classList.toggle('sidebar-hidden');
             
-         Сохраняем состояние
             const isCollapsed = leftSidebar.classList.contains('collapsed');
             localStorage.setItem('sidebarCollapsed', isCollapsed);
             
@@ -1584,7 +1572,6 @@ function setupEventListeners() {
         }
     });
 
- Восстанавливаем состояние панели при загрузке
     const wasCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
     if (wasCollapsed) {
         const leftSidebar = document.querySelector('.left-sidebar');
@@ -1593,7 +1580,6 @@ function setupEventListeners() {
         editorContainer?.classList.add('sidebar-hidden');
     }
 
- Кнопка для показа панели
     document.getElementById('show-sidebar-btn')?.addEventListener('click', () => {
         const leftSidebar = document.querySelector('.left-sidebar');
         const editorContainer = document.querySelector('.editor-container');
@@ -1606,13 +1592,11 @@ function setupEventListeners() {
         }
     });
 
- Поиск секций в аккордеоне
     DOM.sectionSearch?.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase();
         renderAccordion(query);
     });
 
- Кнопки развернуть/свернуть все
     document.getElementById('expand-all-btn')?.addEventListener('click', expandAllCategories);
     document.getElementById('collapse-all-btn')?.addEventListener('click', collapseAllCategories);
 
@@ -1681,11 +1665,9 @@ function generateCSS() {
 }
 
 function saveProject() {
- Используем интеграцию с бекендом если доступна
     if (typeof handleSaveProject === 'function') {
         handleSaveProject();
     } else {
-     Fallback на localStorage
         localStorage.setItem('mirageml-project', JSON.stringify({
             sections: state.sections.map(s => ({ id: s.id, name: s.name })),
             savedAt: new Date().toISOString()
@@ -1720,7 +1702,6 @@ function redo() {
 
 function setupKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
-     Ctrl+B - скрыть/показать панель
         if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
             e.preventDefault();
             const leftSidebar = document.querySelector('.left-sidebar');
@@ -1789,10 +1770,8 @@ function updateMinimap() {
     const viewport = document.getElementById('minimap-viewport');
     if (!minimap || !viewport || state.sections.length === 0) return;
     
- Очищаем мини-карту
     minimap.innerHTML = '';
     
- Добавляем блоки для каждой секции
     const canvasHeight = DOM.canvas.scrollHeight;
     const sectionHeight = 100 / state.sections.length;
     
@@ -1813,10 +1792,8 @@ function updateMinimap() {
         minimap.appendChild(block);
     });
     
- Добавляем viewport индикатор
     minimap.appendChild(viewport);
     
- Обновляем позицию viewport
     const wrapper = DOM.canvasWrapper;
     const scrollTop = wrapper.scrollTop;
     const scrollHeight = wrapper.scrollHeight - wrapper.clientHeight;

@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('[Main] DOM загружен');
+    
     const loginBtn = document.getElementById('login-btn');
     const registerBtn = document.getElementById('register-btn');
     const createProjectBtn = document.getElementById('create-project-btn');
@@ -14,27 +16,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileLoginBtn = document.getElementById('mobile-login-btn');
     const mobileRegisterBtn = document.getElementById('mobile-register-btn');
 
+    console.log('[Main] loginBtn:', loginBtn);
+    console.log('[Main] registerBtn:', registerBtn);
+    console.log('[Main] loginModal:', loginModal);
+    console.log('[Main] registerModal:', registerModal);
+
     initAnimations();
 
     checkAuthStatus();
 
     const rememberedEmail = localStorage.getItem('rememberedEmail');
     if (rememberedEmail) {
-        document.getElementById('login-email').value = rememberedEmail;
-        document.getElementById('remember-me').checked = true;
+        const emailInput = document.getElementById('login-email');
+        if (emailInput) {
+            emailInput.value = rememberedEmail;
+        }
+        const rememberMe = document.getElementById('remember-me');
+        if (rememberMe) {
+            rememberMe.checked = true;
+        }
     }
 
     initMobileMenu();
 
-    if (loginBtn) loginBtn.addEventListener('click', () => {
-        showModal(loginModal);
-        hideNotification('login-notification');
-    });
+    if (loginBtn) {
+        console.log('[Main] Добавляю обработчик для loginBtn');
+        loginBtn.addEventListener('click', () => {
+            console.log('[Main] Клик на loginBtn');
+            showModal(loginModal);
+            hideNotification('login-notification');
+        });
+    } else {
+        console.error('[Main] loginBtn не найден!');
+    }
 
-    if (registerBtn) registerBtn.addEventListener('click', () => {
-        showModal(registerModal);
-        hideNotification('register-notification');
-    });
+    if (registerBtn) {
+        console.log('[Main] Добавляю обработчик для registerBtn');
+        registerBtn.addEventListener('click', () => {
+            console.log('[Main] Клик на registerBtn');
+            showModal(registerModal);
+            hideNotification('register-notification');
+        });
+    } else {
+        console.error('[Main] registerBtn не найден!');
+    }
 
     if (mobileLoginBtn) {
         mobileLoginBtn.addEventListener('click', () => {
@@ -626,7 +651,10 @@ function initSmoothScroll() {
 }
 
 function showModal(modal) {
+    console.log('[Main] showModal вызвана с modal:', modal);
+    
     if (modal) {
+        console.log('[Main] Устанавливаю modal.style.display = flex');
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
 
@@ -636,6 +664,8 @@ function showModal(modal) {
         }
 
         modal.addEventListener('keydown', handleModalKeyboard);
+    } else {
+        console.error('[Main] modal не передан в showModal!');
     }
 }
 
@@ -732,7 +762,7 @@ function showNotification(notificationId, message, type = 'error') {
     }
 }
 
-function handleLogin(e) {
+async function handleLogin(e) {
     e.preventDefault();
 
     const emailInput = document.getElementById('login-email');

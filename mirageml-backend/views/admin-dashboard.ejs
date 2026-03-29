@@ -1,3 +1,22 @@
+<% if (!stats) { stats = {}; %>
+    <div class="error-message" style="padding: 20px; background: #fee; color: #c00; border-radius: 8px; margin: 20px;">
+        Ошибка: stats не передан в шаблон
+    </div>
+<% } %>
+
+<% const safeStats = {
+    totalUsers: stats.totalUsers || 0,
+    totalProjects: stats.totalProjects || 0,
+    totalSessions: stats.totalSessions || 0,
+    totalReviews: stats.totalReviews || 0,
+    developerCount: stats.developerCount || 0,
+    moderatorCount: stats.moderatorCount || 0,
+    adminCount: stats.adminCount || 0,
+    userCount: stats.userCount || 0,
+    approvedReviews: stats.approvedReviews || 0,
+    pendingReviews: stats.pendingReviews || 0
+}; %>
+
 <div class="stats-grid">
     <div class="stat-card" style="border-left-color: #3498db;">
         <div class="stat-icon" style="background: rgba(52, 152, 219, 0.1);">
@@ -5,9 +24,9 @@
         </div>
         <div class="stat-content">
             <h3>Пользователей</h3>
-            <div class="value"><%= stats.totalUsers %></div>
+            <div class="value"><%= safeStats.totalUsers %></div>
             <div class="stat-change positive">
-                <i class="fas fa-arrow-up"></i> Активных: <%= stats.userCount %>
+                <i class="fas fa-arrow-up"></i> Активных: <%= safeStats.userCount %>
             </div>
         </div>
     </div>
@@ -17,7 +36,7 @@
         </div>
         <div class="stat-content">
             <h3>Проектов</h3>
-            <div class="value"><%= stats.totalProjects %></div>
+            <div class="value"><%= safeStats.totalProjects %></div>
             <div class="stat-change">
                 <i class="fas fa-database"></i> Всего создано
             </div>
@@ -29,7 +48,7 @@
         </div>
         <div class="stat-content">
             <h3>Сессий</h3>
-            <div class="value"><%= stats.totalSessions %></div>
+            <div class="value"><%= safeStats.totalSessions %></div>
             <div class="stat-change">
                 <i class="fas fa-globe"></i> Активных сейчас
             </div>
@@ -41,9 +60,9 @@
         </div>
         <div class="stat-content">
             <h3>Отзывов</h3>
-            <div class="value"><%= stats.totalReviews %></div>
+            <div class="value"><%= safeStats.totalReviews %></div>
             <div class="stat-change positive">
-                <i class="fas fa-check"></i> Одобрено: <%= stats.approvedReviews %>
+                <i class="fas fa-check"></i> Одобрено: <%= safeStats.approvedReviews %>
             </div>
         </div>
     </div>
@@ -78,7 +97,7 @@
             <i class="fas fa-code" style="color: #667eea;"></i>
             <h4>Разработчики</h4>
         </div>
-        <div class="info-value"><%= stats.developerCount %></div>
+        <div class="info-value"><%= safeStats.developerCount %></div>
         <p class="info-desc">Полный доступ к системе</p>
     </div>
 
@@ -87,7 +106,7 @@
             <i class="fas fa-user-shield" style="color: #f5576c;"></i>
             <h4>Модераторы</h4>
         </div>
-        <div class="info-value"><%= stats.moderatorCount %></div>
+        <div class="info-value"><%= safeStats.moderatorCount %></div>
         <p class="info-desc">Ограниченный доступ</p>
     </div>
 
@@ -96,7 +115,7 @@
             <i class="fas fa-shield-alt" style="color: #e74c3c;"></i>
             <h4>Админы</h4>
         </div>
-        <div class="info-value"><%= stats.adminCount %></div>
+        <div class="info-value"><%= safeStats.adminCount %></div>
         <p class="info-desc">Пользователей с правами админа</p>
     </div>
 
@@ -105,7 +124,7 @@
             <i class="fas fa-user" style="color: #3498db;"></i>
             <h4>Пользователи</h4>
         </div>
-        <div class="info-value"><%= stats.userCount %></div>
+        <div class="info-value"><%= safeStats.userCount %></div>
         <p class="info-desc">Зарегистрированных пользователей</p>
     </div>
 
@@ -114,7 +133,7 @@
             <i class="fas fa-check-circle" style="color: #27ae60;"></i>
             <h4>Одобренные отзывы</h4>
         </div>
-        <div class="info-value"><%= stats.approvedReviews %></div>
+        <div class="info-value"><%= safeStats.approvedReviews %></div>
         <p class="info-desc">Прошли модерацию</p>
     </div>
 
@@ -123,7 +142,7 @@
             <i class="fas fa-hourglass-half" style="color: #f39c12;"></i>
             <h4>На модерации</h4>
         </div>
-        <div class="info-value"><%= stats.pendingReviews %></div>
+        <div class="info-value"><%= safeStats.pendingReviews %></div>
         <p class="info-desc">Ожидают проверки</p>
     </div>
 </div>
@@ -152,17 +171,31 @@
     </div>
 </div>
 
+<!-- Передаём данные из сервера в JavaScript -->
+<div id="stats-data" 
+     data-developer="<%= safeStats.developerCount || 0 %>"
+     data-moderator="<%= safeStats.moderatorCount || 0 %>"
+     data-admin="<%= safeStats.adminCount || 0 %>"
+     data-user="<%= safeStats.userCount || 0 %>"
+     data-approved="<%= safeStats.approvedReviews || 0 %>"
+     data-pending="<%= safeStats.pendingReviews || 0 %>"
+     data-sessions="<%= safeStats.totalSessions || 0 %>"
+     data-projects="<%= safeStats.totalProjects || 0 %>"
+     style="display: none;">
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
+    const statsDataElement = document.getElementById('stats-data');
     const statsData = {
-        developerCount: <%= stats.developerCount || 0 %>,
-        moderatorCount: <%= stats.moderatorCount || 0 %>,
-        adminCount: <%= stats.adminCount || 0 %>,
-        userCount: <%= stats.userCount || 0 %>,
-        approvedReviews: <%= stats.approvedReviews || 0 %>,
-        pendingReviews: <%= stats.pendingReviews || 0 %>,
-        totalSessions: <%= stats.totalSessions || 0 %>,
-        totalProjects: <%= stats.totalProjects || 0 %>
+        developerCount: parseInt(statsDataElement.dataset.developer),
+        moderatorCount: parseInt(statsDataElement.dataset.moderator),
+        adminCount: parseInt(statsDataElement.dataset.admin),
+        userCount: parseInt(statsDataElement.dataset.user),
+        approvedReviews: parseInt(statsDataElement.dataset.approved),
+        pendingReviews: parseInt(statsDataElement.dataset.pending),
+        totalSessions: parseInt(statsDataElement.dataset.sessions),
+        totalProjects: parseInt(statsDataElement.dataset.projects)
     };
 
     const colors = {
