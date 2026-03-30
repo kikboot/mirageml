@@ -76,6 +76,10 @@
             </div>
 
             <div class="toolbar-right">
+                <button class="toolbar-btn" id="templates-btn" title="Шаблоны проектов">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Шаблоны</span>
+                </button>
                 <div class="user-info" id="user-info-btn" title="Профиль">
                     <div class="user-avatar" id="user-avatar">??</div>
                     <span class="user-name" id="user-name">Гость</span>
@@ -528,9 +532,30 @@
         </div>
     </div>
 
+    <div class="modal" id="templates-modal">
+        <div class="modal-content modal-large">
+            <span class="close-btn">&times;</span>
+            <div class="modal-header">
+                <i class="fas fa-layer-group"></i>
+                <h2>Готовые шаблоны проектов</h2>
+            </div>
+            <div class="templates-intro">
+                <p>Выберите готовый шаблон для быстрого создания проекта</p>
+            </div>
+            <div class="templates-grid" id="templates-grid">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="document.getElementById('templates-modal').style.display='none'">
+                    <i class="fas fa-times"></i> Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="js/api.js?v=1"></script>
-    <script src="js/sections.js?v=3"></script>
+    <script src="js/sections.js?v=4"></script>
+    <script src="js/templates.js?v=1"></script>
     <script src="js/editor.js?v=4"></script>
     <script src="js/editor-integration.js?v=1"></script>
     <script>
@@ -538,6 +563,7 @@
             console.log('📦 SECTIONS_LIBRARY:', typeof SECTIONS_LIBRARY !== 'undefined' ? SECTIONS_LIBRARY.length + ' секций' : 'НЕ ЗАГРУЖЕН');
             console.log('📂 SECTION_CATEGORIES:', typeof SECTION_CATEGORIES !== 'undefined' ? Object.keys(SECTION_CATEGORIES).length + ' категорий' : 'НЕ ЗАГРУЖЕН');
             console.log('🔧 getSectionsByCategory:', typeof getSectionsByCategory !== 'undefined' ? 'доступна' : 'НЕ доступна');
+            console.log('📋 PROJECT_TEMPLATES:', typeof PROJECT_TEMPLATES !== 'undefined' ? PROJECT_TEMPLATES.length + ' шаблонов' : 'НЕ ЗАГРУЖЕН');
         });
     </script>
 </body>

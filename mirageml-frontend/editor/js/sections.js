@@ -631,6 +631,77 @@ window.getTotalSectionsCount = function() {
     return window.SECTIONS_LIBRARY.length;
 }
 
+window.PROJECT_TEMPLATES = [
+    {
+        id: 'template-landing',
+        name: 'Лендинг для продукта',
+        description: 'Классический лендинг с Hero, преимуществами, отзывами и контактами',
+        icon: 'fa-rocket',
+        sections: ['header-1', 'hero-1', 'features-1', 'about-1', 'testimonials-1', 'cta-1', 'contact-1', 'footer-1'],
+        preview: '🚀'
+    },
+    {
+        id: 'template-portfolio',
+        name: 'Портфолио студии',
+        description: 'Современное портфолио с галереей, командой и контактами',
+        icon: 'fa-palette',
+        sections: ['header-3', 'hero-4', 'gallery-1', 'features-4', 'team-1', 'contact-2', 'footer-2'],
+        preview: '🎨'
+    },
+    {
+        id: 'template-business',
+        name: 'Бизнес сайт',
+        description: 'Корпоративный сайт компании с услугами и формой заявки',
+        icon: 'fa-building',
+        sections: ['header-5', 'hero-7', 'about-2', 'features-3', 'pricing-1', 'form-1', 'footer-3'],
+        preview: '💼'
+    },
+    {
+        id: 'template-startup',
+        name: 'Сайт стартапа',
+        description: 'Инновационный сайт для технологического стартапа',
+        icon: 'fa-lightbulb',
+        sections: ['header-2', 'hero-3', 'features-2', 'testimonials-2', 'pricing-2', 'cta-2', 'footer-4'],
+        preview: '💡'
+    },
+    {
+        id: 'template-agency',
+        name: 'Digital-агентство',
+        description: 'Стильный сайт маркетингового или digital-агентства',
+        icon: 'fa-bullhorn',
+        sections: ['header-4', 'hero-10', 'about-4', 'features-5', 'team-2', 'testimonials-3', 'contact-3', 'footer-1'],
+        preview: '📢'
+    }
+];
+
+window.loadProjectTemplate = function(templateId) {
+    const template = window.PROJECT_TEMPLATES.find(t => t.id === templateId);
+    if (!template) {
+        console.error('Шаблон не найден:', templateId);
+        return;
+    }
+
+    console.log('Загрузка шаблона:', template.name);
+    
+    state.sections = [];
+    if (DOM.canvas) {
+        DOM.canvas.innerHTML = '';
+        if (DOM.canvasPlaceholder) DOM.canvasPlaceholder.style.display = 'none';
+    }
+
+    template.sections.forEach(sectionId => {
+        const section = SECTIONS_LIBRARY.find(s => s.id === sectionId);
+        if (section) {
+            addSectionToCanvas(section);
+        } else {
+            console.warn('Секция не найдена:', sectionId);
+        }
+    });
+
+    showToast(`Шаблон "${template.name}" загружен`, 'success');
+    updateStatus(`Загружен шаблон: ${template.name}`);
+};
+
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { SECTIONS_LIBRARY, SECTION_CATEGORIES, getSectionsByCategory, getSectionsCount, getTotalSectionsCount };
+    module.exports = { SECTIONS_LIBRARY, SECTION_CATEGORIES, getSectionsByCategory, getSectionsCount, getTotalSectionsCount, PROJECT_TEMPLATES };
 }
