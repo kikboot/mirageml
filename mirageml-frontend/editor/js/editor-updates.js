@@ -356,11 +356,21 @@ window.updateElementText = function(value) {
 
 window.updateElementHref = function(value) {
     if (state.selectedElement) {
-        if (value) {
-            state.selectedElement.element.setAttribute('href', value);
-            state.selectedElement.element.target = '_blank';
+        const el = state.selectedElement.element;
+        if (value && value.trim() !== '') {
+            // Для кнопок используем data-href (валидный HTML)
+            // Для <a> используем обычный href
+            if (state.selectedElement.tag === 'button') {
+                el.setAttribute('data-href', value);
+                el.removeAttribute('href');
+            } else {
+                el.setAttribute('href', value);
+                el.setAttribute('target', '_blank');
+                el.removeAttribute('data-href');
+            }
         } else {
-            state.selectedElement.element.removeAttribute('href');
+            el.removeAttribute('href');
+            el.removeAttribute('data-href');
         }
     }
 };

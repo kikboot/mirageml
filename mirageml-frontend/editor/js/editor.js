@@ -1834,7 +1834,7 @@ ${cssContent.split('\n').map(line => '        ' + line).join('\n')}
 
     sections.forEach((section, index) => {
         const clone = section.element.cloneNode(true);
-        
+
         clone.querySelector('.section-controls')?.remove();
         clone.querySelectorAll('.resize-handle, .rotate-handle, .rotate-line').forEach(el => el.remove());
         clone.classList.remove('selected', 'canvas-section');
@@ -1845,13 +1845,31 @@ ${cssContent.split('\n').map(line => '        ' + line).join('\n')}
         clone.style.width = '100%';
         clone.style.outline = 'none';
         clone.style.outlineOffset = '0';
-        
+
+        clone.querySelectorAll('button').forEach(btn => {
+            const href = btn.getAttribute('href') || btn.getAttribute('data-href');
+            if (href && href.trim() !== '') {
+                const a = document.createElement('a');
+                a.href = href;
+                a.target = '_blank';
+                a.style.cssText = btn.style.cssText;
+                a.className = btn.className;
+                a.innerHTML = btn.innerHTML;
+                for (const attr of btn.attributes) {
+                    if (!['type', 'href', 'data-href', 'style', 'class'].includes(attr.name)) {
+                        a.setAttribute(attr.name, attr.value);
+                    }
+                }
+                btn.replaceWith(a);
+            }
+        });
+
         html += `    <section class="section-${index + 1}">\n`;
-        
+
         const innerHTML = clone.innerHTML.trim();
         const formattedInner = formatHTML(innerHTML);
         html += formattedInner.split('\n').map(line => '        ' + line).join('\n');
-        
+
         html += `\n    </section>\n`;
     });
 

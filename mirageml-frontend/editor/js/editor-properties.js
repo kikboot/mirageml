@@ -373,7 +373,7 @@ window.renderElementPropertiesEnhanced = function(element) {
                     ${isButton ? `
                     <div class="property-item">
                         <label><i class="fas fa-link"></i> Ссылка (href)</label>
-                        <input type="text" id="el-href" value="${el.getAttribute('href') || ''}" onchange="updateElementHref(this.value)" placeholder="https://...">
+                        <input type="text" id="el-href" value="${el.getAttribute('data-href') || el.getAttribute('href') || ''}" onchange="updateElementHref(this.value)" placeholder="https://...">
                     </div>
                     ` : ''}
                     ${isImage ? `
