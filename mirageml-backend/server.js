@@ -871,7 +871,7 @@ app.get('/admin/profile', requireAdminAuth, async (req, res) => {
 
 app.get('/admin/projects', requireAdminAuth, async (req, res) => {
     try {
-        const projects = await db.getAllProjects();
+        const projects = await db.getAllProjectsAdmin();
         const users = await db.getAllUsers();
 
         const projectsWithUsers = projects.map(project => {

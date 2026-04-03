@@ -94,6 +94,15 @@ async function getAllProjects() {
     return result.rows;
 }
 
+async function getAllProjectsAdmin() {
+    const result = await pool.query(
+        `SELECT id, user_id, name, created_at, updated_at
+         FROM projects
+         ORDER BY updated_at DESC`
+    );
+    return result.rows;
+}
+
 async function getProjectById(id) {
     const result = await pool.query('SELECT * FROM projects WHERE id = $1', [id]);
     return result.rows[0] || null;
@@ -372,6 +381,7 @@ module.exports = {
     getUserCount,
     getUserRoleStats,
     getAllProjects,
+    getAllProjectsAdmin,
     getProjectById,
     getProjectsByUserId,
     createProject,
