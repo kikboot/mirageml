@@ -269,16 +269,8 @@ async function renderMobileProjects() {
                     <i class="fas fa-folder-open"></i>
                     <h3>Проектов пока нет</h3>
                     <p>Создайте свой первый проект</p>
-                    <button class="btn btn-primary mobile-full-btn" id="mobile-create-project-empty">
-                        <i class="fas fa-plus"></i>
-                        Создать проект
-                    </button>
                 </div>
             `;
-
-            document.getElementById('mobile-create-project-empty')?.addEventListener('click', () => {
-                showModal('create-project-modal');
-            });
 
             return;
         }
@@ -299,12 +291,9 @@ async function renderMobileProjects() {
                     </div>
                 </div>
                 <div class="mobile-project-title">${project.name || 'Без названия'}</div>
-                <div class="mobile-project-description">
-                    ${project.description || 'Описание проекта отсутствует'}
-                </div>
                 <div class="mobile-project-meta">
                     <div class="mobile-project-date">
-                        ${project.createdAt ? new Date(project.createdAt).toLocaleDateString('ru-RU') : 'Дата неизвестна'}
+                        ${project.created_at || project.createdAt ? new Date(project.created_at || project.createdAt).toLocaleDateString('ru-RU') : 'Дата неизвестна'}
                     </div>
                     <div class="mobile-project-status ${project.status === 'active' ? 'mobile-status-active' : 'mobile-status-draft'}">
                         ${project.status === 'active' ? 'Активен' : 'Черновик'}
@@ -847,16 +836,8 @@ async function renderProjects() {
                     <i class="fas fa-folder-open fa-3x"></i>
                     <h3>Проектов пока нет</h3>
                     <p>Создайте свой первый проект чтобы начать работу</p>
-                    <button class="btn btn-primary" id="create-project-empty-btn">
-                        <i class="fas fa-plus"></i>
-                        Создать проект
-                    </button>
                 </div>
             `;
-
-            document.getElementById('create-project-empty-btn')?.addEventListener('click', () => {
-                showModal('create-project-modal');
-            });
 
             return;
         }
@@ -877,12 +858,9 @@ async function renderProjects() {
                     </div>
                 </div>
                 <div class="project-title-modern">${project.name || 'Без названия'}</div>
-                <div class="project-description-modern">
-                    ${project.description || 'Описание проекта отсутствует'}
-                </div>
                 <div class="project-meta-modern">
                     <div class="project-date-modern">
-                        Создан ${project.createdAt ? new Date(project.createdAt).toLocaleDateString('ru-RU') : 'Дата неизвестна'}
+                        Создан ${project.created_at || project.createdAt ? new Date(project.created_at || project.createdAt).toLocaleDateString('ru-RU') : 'Дата неизвестна'}
                     </div>
                     <div class="project-status-modern ${project.status === 'active' ? 'status-active' : 'status-draft'}">
                         ${project.status === 'active' ? 'Активен' : 'Черновик'}
@@ -1117,10 +1095,6 @@ function initModalHandlers() {
         document.getElementById('delete-password').value = '';
     });
 
-    document.getElementById('create-project-btn')?.addEventListener('click', () => {
-        showModal('create-project-modal');
-    });
-
     document.getElementById('create-project-main-btn')?.addEventListener('click', () => {
         showModal('create-project-modal');
     });
@@ -1165,14 +1139,13 @@ function initModalCloseHandlers() {
 
     const mobileCreateProjectBtn = document.getElementById('mobile-create-project-btn');
     const mobileCreateProject = document.getElementById('mobile-create-project');
-    const mobileCreateProjectEmpty = document.getElementById('mobile-create-project-empty');
-    
+
     if (mobileCreateProjectBtn) {
         mobileCreateProjectBtn.addEventListener('click', () => {
             showModal('create-project-modal');
         });
     }
-    
+
     if (mobileCreateProject) {
         mobileCreateProject.addEventListener('click', () => {
             showModal('create-project-modal');
@@ -1369,18 +1342,12 @@ async function handleProjectCreate(e) {
 
         hideModal('create-project-modal');
 
-        const projectsTabLink = document.querySelector('[data-tab="projects-tab"]');
-        if (projectsTabLink) {
-            projectsTabLink.click();
+        const isMobile = window.innerWidth <= 768;
+
+        if (isMobile) {
+            renderMobileProjects();
         } else {
-            const mobileProjectsTab = document.querySelector('.mobile-tab[data-tab="projects-tab"]');
-            if (mobileProjectsTab) {
-                mobileProjectsTab.click();
-            } else {
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
-            }
+            renderProjects();
         }
         
     } catch (error) {
@@ -1855,10 +1822,8 @@ const additionalStyles = `
     transform: scale(1.1);
 }
 
-#create-project-form button[type="submit"],
-#create-project-empty-btn,
-#mobile-create-project-empty {
-    min-width: 120px;
+.btn .fa-plus {
+    font-size: 0.85em;
 }
 
 .modal.modern {
