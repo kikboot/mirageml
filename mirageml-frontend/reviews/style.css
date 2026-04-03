@@ -178,6 +178,13 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.logo-wrapper:hover {
+    opacity: 0.8;
 }
 
 .logo-icon {

@@ -220,6 +220,13 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.logo-wrapper:hover {
+    opacity: 0.8;
 }
 
 .logo-icon {
@@ -606,6 +613,19 @@ body {
     align-items: center;
     gap: 12px;
     background: rgba(30, 41, 59, 0.5);
+}
+
+.mobile-logo a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-logo a:hover {
+    opacity: 0.8;
 }
 
 .mobile-menu-content {
@@ -1229,6 +1249,19 @@ body {
     align-items: center;
     gap: 12px;
     margin-bottom: 20px;
+}
+
+.footer-logo a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.footer-logo a:hover {
+    opacity: 0.8;
 }
 
 .footer-description {

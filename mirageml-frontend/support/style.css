@@ -208,6 +208,13 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.logo-wrapper:hover {
+    opacity: 0.8;
 }
 
 .logo-icon {
@@ -368,6 +375,19 @@ body {
     padding: 20px 0;
     border-bottom: 1px solid var(--glass-border);
     margin-bottom: 20px;
+}
+
+.mobile-logo a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-logo a:hover {
+    opacity: 0.8;
 }
 
 .mobile-nav {
