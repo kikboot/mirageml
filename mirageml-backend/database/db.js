@@ -218,12 +218,18 @@ async function getSessionCount() {
 
 async function getAllReviews() {
     const result = await pool.query('SELECT * FROM reviews ORDER BY created_at DESC');
-    return result.rows;
+    return result.rows.map(row => ({
+        ...row,
+        createdAt: row.created_at
+    }));
 }
 
 async function getApprovedReviews() {
     const result = await pool.query('SELECT * FROM reviews WHERE approved = true ORDER BY created_at DESC');
-    return result.rows;
+    return result.rows.map(row => ({
+        ...row,
+        createdAt: row.created_at
+    }));
 }
 
 async function getReviewById(id) {
@@ -239,7 +245,8 @@ async function createReview(review) {
          RETURNING *`,
         [id, name, email, rating, comment || null, approved || false]
     );
-    return result.rows[0];
+    const row = result.rows[0];
+    return { ...row, createdAt: row.created_at };
 }
 
 async function updateReview(id, data) {

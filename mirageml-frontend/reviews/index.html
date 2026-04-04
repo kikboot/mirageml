@@ -31,85 +31,16 @@
                     <img src="../logo/logo3.svg" alt="MirageML Logo" class="logo-icon">
                     <span class="logo-text">MirageML</span>
                 </a>
-                
-                <nav class="main-nav">
-                    <a href="../main/index.html" class="nav-link main-link">
-                        <i class="fas fa-home nav-icon"></i>
-                        Главная
-                    </a>
-                </nav>
-                
+
                 <div class="auth-buttons">
-                    <button class="btn btn-ghost" id="login-btn">
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>Войти</span>
-                    </button>
-                    <button class="btn btn-primary" id="register-btn">
-                        <i class="fas fa-user-plus"></i>
-                        <span>Регистрация</span>
-                    </button>
+                    <span class="auth-status" id="auth-status">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="auth-status-text">Загрузка...</span>
+                    </span>
                 </div>
             </div>
         </div>
     </header>
-    
-    <div class="modal" id="login-modal">
-        <div class="modal-content modal-modern">
-            <span class="close-btn">&times;</span>
-            <h2>Вход в аккаунт</h2>
-            <div class="notification error" id="login-notification"></div>
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="login-email">Email</label>
-                    <input type="email" id="login-email" required placeholder="Введите ваш email">
-                </div>
-                <div class="form-group">
-                    <label for="login-password">Пароль</label>
-                    <input type="password" id="login-password" required placeholder="Введите пароль">
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-ghost" id="cancel-login">Отмена</button>
-                    <button type="submit" class="btn btn-primary">Войти</button>
-                </div>
-            </form>
-            <div class="switch-form">
-                Нет аккаунта? <a id="switch-to-register">Зарегистрироваться</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="register-modal">
-        <div class="modal-content modal-modern">
-            <span class="close-btn">&times;</span>
-            <h2>Регистрация</h2>
-            <div class="notification error" id="register-notification"></div>
-            <form id="register-form">
-                <div class="form-group">
-                    <label for="register-name">Имя</label>
-                    <input type="text" id="register-name" required placeholder="Как вас зовут?">
-                </div>
-                <div class="form-group">
-                    <label for="register-email">Email</label>
-                    <input type="email" id="register-email" required placeholder="Введите ваш email">
-                </div>
-                <div class="form-group">
-                    <label for="register-password">Пароль</label>
-                    <input type="password" id="register-password" required placeholder="Придумайте пароль">
-                </div>
-                <div class="form-group">
-                    <label for="register-confirm">Подтвердите пароль</label>
-                    <input type="password" id="register-confirm" required placeholder="Повторите пароль">
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-ghost" id="cancel-register">Отмена</button>
-                    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
-                </div>
-            </form>
-            <div class="switch-form">
-                Уже есть аккаунт? <a id="switch-to-login">Войти</a>
-            </div>
-        </div>
-    </div>
 
     <main>
         <div class="container">

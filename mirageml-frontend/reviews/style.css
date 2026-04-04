@@ -248,6 +248,21 @@ body {
 .auth-buttons {
     display: flex;
     gap: 12px;
+    align-items: center;
+}
+
+.auth-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--gray-light);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.auth-status i {
+    font-size: 18px;
+    color: var(--primary);
 }
 
 .user-menu {

@@ -1646,12 +1646,49 @@ function getInitials(name) {
 }
 
 function formatDate(dateString) {
-    try {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString('ru-RU', options);
-    } catch (error) {
-        return dateString;
+    if (!dateString) return 'Неизвестно';
+
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Неизвестно';
+
+    const now = new Date();
+    const diffMs = now - date;
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHour = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHour / 24);
+    const diffMonth = Math.floor(diffDay / 30);
+    const diffYear = Math.floor(diffDay / 365);
+
+    if (diffSec < 60) return 'только что';
+    if (diffMin < 60) {
+        const n = diffMin;
+        if (n === 1) return '1 минуту назад';
+        if (n >= 2 && n <= 4) return `${n} минуты назад`;
+        return `${n} минут назад`;
     }
+    if (diffHour < 24) {
+        const n = diffHour;
+        if (n === 1) return '1 час назад';
+        if (n >= 2 && n <= 4) return `${n} часа назад`;
+        return `${n} часов назад`;
+    }
+    if (diffDay < 30) {
+        const n = diffDay;
+        if (n === 1) return 'вчера';
+        if (n >= 2 && n <= 4) return `${n} дня назад`;
+        return `${n} дней назад`;
+    }
+    if (diffMonth < 12) {
+        const n = diffMonth;
+        if (n === 1) return 'месяц назад';
+        if (n >= 2 && n <= 4) return `${n} месяца назад`;
+        return `${n} месяцев назад`;
+    }
+    const n = diffYear;
+    if (n === 1) return 'год назад';
+    if (n >= 2 && n <= 4) return `${n} года назад`;
+    return `${n} лет назад`;
 }
 
 function renderStars(rating) {
