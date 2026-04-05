@@ -93,11 +93,6 @@ function authenticateToken(req, res, next) {
     });
 }
 
-// ==========================================
-// Google OAuth 2.0 Endpoints
-// ==========================================
-
-// Endpoint для получения Google Client ID
 app.get('/api/config/google-client-id', (req, res) => {
     const clientId = process.env.GOOGLE_CLIENT_ID;
 
@@ -110,7 +105,6 @@ app.get('/api/config/google-client-id', (req, res) => {
     res.json({ clientId });
 });
 
-// Проверка существования пользователя по Google credential
 app.post('/api/auth/google/check', async (req, res) => {
     try {
         const { OAuth2Client } = require('google-auth-library');
@@ -135,7 +129,6 @@ app.post('/api/auth/google/check', async (req, res) => {
     }
 });
 
-// Проверка существования пользователя по email
 app.post('/api/auth/google/check-email', async (req, res) => {
     try {
         const { email } = req.body;
@@ -149,7 +142,6 @@ app.post('/api/auth/google/check-email', async (req, res) => {
     }
 });
 
-// Endpoint для авторизации через Google
 app.post('/api/auth/google', async (req, res) => {
     try {
         const { OAuth2Client } = require('google-auth-library');
@@ -165,7 +157,6 @@ app.post('/api/auth/google', async (req, res) => {
 
         let payload;
 
-        // Проверяем credential (ID token)
         if (req.body.credential) {
             const ticket = await client.verifyIdToken({
                 idToken: req.body.credential,
@@ -173,9 +164,7 @@ app.post('/api/auth/google', async (req, res) => {
             });
             payload = ticket.getPayload();
         }
-        // Проверяем access_token
         else if (req.body.access_token) {
-            // Получаем информацию о пользователе из Google API
             const https = require('https');
 
             const userInfo = await new Promise((resolve, reject) => {
@@ -211,7 +200,6 @@ app.post('/api/auth/google', async (req, res) => {
             return res.status(400).json({ error: 'Не удалось получить email из Google аккаунта' });
         }
 
-        // Ищем пользователя в базе
         let user = await db.getUserByEmail(email);
 
         if (!user) {
@@ -224,7 +212,6 @@ app.post('/api/auth/google', async (req, res) => {
                 });
             }
 
-            // Создаём нового пользователя
             const newUser = {
                 id: 'google_' + Date.now().toString(),
                 name: name || email.split('@')[0],
@@ -709,6 +696,230 @@ app.post('/api/reviews', async (req, res) => {
     }
 });
 
+app.get('/api/templates', async (req, res) => {
+    try {
+        const templates = await db.getPublicTemplates();
+        res.json(templates);
+    } catch (error) {
+        console.error('[Get Templates] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка загрузки шаблонов' });
+    }
+});
+
+app.get('/api/templates/all', authenticateToken, async (req, res) => {
+    try {
+        const templates = await db.getAllTemplates();
+        res.json(templates);
+    } catch (error) {
+        console.error('[Get All Templates] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка загрузки шаблонов' });
+    }
+});
+
+app.get('/api/templates/:id', async (req, res) => {
+    try {
+        const template = await db.getTemplateById(req.params.id);
+        if (!template) return res.status(404).json({ error: 'Шаблон не найден' });
+        res.json(template);
+    } catch (error) {
+        console.error('[Get Template] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка загрузки шаблона' });
+    }
+});
+
+app.post('/api/templates', authenticateToken, async (req, res) => {
+    try {
+        const { name, description, preview_image, elements, canvas_size, category, is_public } = req.body;
+        const newTemplate = {
+            id: Date.now().toString(),
+            name,
+            description,
+            preview_image,
+            elements: elements || {},
+            canvas_size,
+            category,
+            is_public: is_public || false,
+            created_by: req.user.userId
+        };
+
+        const template = await db.createTemplate(newTemplate);
+        res.status(201).json({ success: true, template });
+    } catch (error) {
+        console.error('[Create Template] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка создания шаблона' });
+    }
+});
+
+app.put('/api/templates/:id', authenticateToken, async (req, res) => {
+    try {
+        const templates = await db.getAllTemplates();
+        const template = templates.find(t => t.id === req.params.id);
+        if (!template) return res.status(404).json({ error: 'Шаблон не найден' });
+
+        const allowedRoles = ['admin', 'developer'];
+        if (!allowedRoles.includes(req.user.role) && template.created_by !== req.user.userId) {
+            return res.status(403).json({ error: 'Недостаточно прав' });
+        }
+
+        const updated = await db.updateTemplate(req.params.id, req.body);
+        res.json({ success: true, template: updated });
+    } catch (error) {
+        console.error('[Update Template] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка обновления шаблона' });
+    }
+});
+
+app.delete('/api/templates/:id', authenticateToken, async (req, res) => {
+    try {
+        const template = await db.getTemplateById(req.params.id);
+        if (!template) return res.status(404).json({ error: 'Шаблон не найден' });
+
+        const allowedRoles = ['admin', 'developer'];
+        if (!allowedRoles.includes(req.user.role) && template.created_by !== req.user.userId) {
+            return res.status(403).json({ error: 'Недостаточно прав' });
+        }
+
+        await db.deleteTemplate(req.params.id);
+        res.json({ success: true, message: 'Шаблон удален' });
+    } catch (error) {
+        console.error('[Delete Template] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка удаления шаблона' });
+    }
+});
+
+app.get('/api/settings', authenticateToken, async (req, res) => {
+    try {
+        let settings = await db.getUserSettings(req.user.userId);
+        if (!settings) {
+            settings = await db.createUserSettings({
+                id: Date.now().toString(),
+                user_id: req.user.userId
+            });
+        }
+        res.json(settings);
+    } catch (error) {
+        console.error('[Get Settings] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка загрузки настроек' });
+    }
+});
+
+app.put('/api/settings', authenticateToken, async (req, res) => {
+    try {
+        let settings = await db.getUserSettings(req.user.userId);
+        if (!settings) {
+            settings = await db.createUserSettings({
+                id: Date.now().toString(),
+                user_id: req.user.userId
+            });
+        }
+
+        const updated = await db.updateUserSettings(req.user.userId, req.body);
+        res.json({ success: true, settings: updated });
+    } catch (error) {
+        console.error('[Update Settings] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка обновления настроек' });
+    }
+});
+
+app.get('/api/projects/:id/versions', authenticateToken, async (req, res) => {
+    try {
+        const projects = await db.getProjectsByUserId(req.user.userId);
+        const project = projects.find(p => p.id === req.params.id);
+        if (!project) return res.status(404).json({ error: 'Проект не найден' });
+
+        const versions = await db.getProjectVersions(req.params.id);
+        res.json(versions);
+    } catch (error) {
+        console.error('[Get Project Versions] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка загрузки версий проекта' });
+    }
+});
+
+app.post('/api/projects/:id/versions', authenticateToken, async (req, res) => {
+    try {
+        const projects = await db.getProjectsByUserId(req.user.userId);
+        const project = projects.find(p => p.id === req.params.id);
+        if (!project) return res.status(404).json({ error: 'Проект не найден' });
+
+        const latest = await db.getLatestProjectVersion(req.params.id);
+        const nextVersion = latest ? latest.version + 1 : 1;
+
+        const newVersion = {
+            id: Date.now().toString(),
+            project_id: req.params.id,
+            version: nextVersion,
+            elements: project.elements,
+            comment: req.body.comment || `Версия ${nextVersion}`
+        };
+
+        const version = await db.createProjectVersion(newVersion);
+        res.status(201).json({ success: true, version });
+    } catch (error) {
+        console.error('[Create Project Version] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка создания версии проекта' });
+    }
+});
+
+app.get('/api/projects/:projectId/versions/:versionId', authenticateToken, async (req, res) => {
+    try {
+        const projects = await db.getProjectsByUserId(req.user.userId);
+        const project = projects.find(p => p.id === req.params.projectId);
+        if (!project) return res.status(404).json({ error: 'Проект не найден' });
+
+        const version = await db.getProjectVersionById(req.params.versionId);
+        if (!version) return res.status(404).json({ error: 'Версия не найдена' });
+
+        if (version.project_id !== req.params.projectId) {
+            return res.status(404).json({ error: 'Версия не принадлежит проекту' });
+        }
+
+        res.json(version);
+    } catch (error) {
+        console.error('[Get Project Version] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка загрузки версии проекта' });
+    }
+});
+
+app.post('/api/projects/:projectId/versions/:versionId/restore', authenticateToken, async (req, res) => {
+    try {
+        const projects = await db.getProjectsByUserId(req.user.userId);
+        const project = projects.find(p => p.id === req.params.projectId);
+        if (!project) return res.status(404).json({ error: 'Проект не найден' });
+
+        const version = await db.getProjectVersionById(req.params.versionId);
+        if (!version) return res.status(404).json({ error: 'Версия не найдена' });
+
+        if (version.project_id !== req.params.projectId) {
+            return res.status(404).json({ error: 'Версия не принадлежит проекту' });
+        }
+
+        const updated = await db.updateProject(req.params.projectId, { elements: version.elements });
+        res.json({ success: true, message: 'Версия восстановлена', project: updated });
+    } catch (error) {
+        console.error('[Restore Project Version] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка восстановления версии проекта' });
+    }
+});
+
+app.delete('/api/projects/:projectId/versions/:versionId', authenticateToken, async (req, res) => {
+    try {
+        const projects = await db.getProjectsByUserId(req.user.userId);
+        const project = projects.find(p => p.id === req.params.projectId);
+        if (!project) return res.status(404).json({ error: 'Проект не найден' });
+
+        const version = await db.getProjectVersionById(req.params.versionId);
+        if (!version || version.project_id !== req.params.projectId) {
+            return res.status(404).json({ error: 'Версия не найдена' });
+        }
+
+        await db.deleteProjectVersion(req.params.versionId);
+        res.json({ success: true, message: 'Версия удалена' });
+    } catch (error) {
+        console.error('[Delete Project Version] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка удаления версии проекта' });
+    }
+});
+
 app.get('/api/admin/reviews', requireAdminAuth, async (req, res) => {
     try {
         const reviews = await db.getAllReviews();
@@ -999,7 +1210,6 @@ app.get('/admin/users', requireAdminAuth, async (req, res) => {
     }
 });
 
-// Удаление пользователя из админки (POST)
 app.post('/admin/users/delete/:id', requireAdminAuth, requireDeveloper, async (req, res) => {
     try {
         const { id } = req.params;
@@ -1009,12 +1219,10 @@ app.post('/admin/users/delete/:id', requireAdminAuth, requireDeveloper, async (r
             return res.status(404).json({ error: 'Пользователь не найден' });
         }
 
-        // Нельзя удалить самого себя
         if (id === req.session.adminId) {
             return res.status(403).json({ error: 'Нельзя удалить свой аккаунт' });
         }
 
-        // Нельзя удалить разработчика (защита от случайного удаления)
         if (user.role === 'developer') {
             return res.status(403).json({ error: 'Нельзя удалить аккаунт разработчика' });
         }
@@ -1371,7 +1579,7 @@ async function startServer() {
             console.log('');
         });
     } catch (error) {
-        console.error('❌ Ошибка запуска сервера:', error);
+        console.error('Ошибка запуска сервера:', error);
         process.exit(1);
     }
 }

@@ -57,9 +57,15 @@ async function createDatabase(pool, dbName) {
 }
 
 async function runMigrations(pool) {
-    const schemaPath = path.join(__dirname, '001_schema.sql');
-    const schema = fs.readFileSync(schemaPath, 'utf-8');
-    await pool.query(schema);
+    const files = ['001_schema.sql', '003_add_terms_accepted_at.sql', '004_add_new_tables.sql', '005_add_reviews_user_id.sql'];
+    for (const file of files) {
+        const filePath = path.join(__dirname, file);
+        if (fs.existsSync(filePath)) {
+            const sql = fs.readFileSync(filePath, 'utf-8');
+            await pool.query(sql);
+            console.log(`  Применён: ${file}`);
+        }
+    }
 }
 
 async function loadInitialData(pool) {

@@ -25,10 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     checkAuthStatus();
 
-    // Инициализация Google OAuth
     initGoogleAuth();
 
-    // Инициализация обработчиков пользовательского соглашения
     initTermsHandlers();
 
     const rememberedEmail = localStorage.getItem('rememberedEmail');
@@ -880,7 +878,6 @@ async function handleRegister(e) {
         return;
     }
 
-    // Сохраняем данные и показываем пользовательское соглашение
     pendingRegistration = { name, email, password };
     hideModal(document.getElementById('register-modal'));
     showTermsModal();
@@ -913,10 +910,6 @@ function handleRegisterError(status, error) {
         showNotification('register-notification', error || 'Ошибка регистрации');
     }
 }
-
-// ==========================================
-// Google OAuth 2.0
-// ==========================================
 
 function initGoogleAuth() {
     const googleLoginBtn = document.getElementById('google-login-btn');
@@ -955,7 +948,6 @@ async function handleGoogleLogin(mode) {
         callback: async (response) => {
             console.log('[Google OAuth] Получен credential от Google');
 
-            // Проверяем существует ли пользователь
             try {
                 const existsResult = await checkGoogleUserExists(response.credential);
                 console.log('[Google OAuth] Проверка пользователя:', existsResult);
@@ -980,7 +972,6 @@ async function handleGoogleLogin(mode) {
         cancel_on_tap_outside: true
     });
 
-    // Показываем Google One Tap или popup
     google.accounts.id.prompt((notification) => {
         console.log('[Google OAuth] Prompt notification:', notification);
         if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
@@ -1088,8 +1079,10 @@ async function fetchGoogleProfile(accessToken, mode) {
             await submitGoogleAuthDirect({ access_token: accessToken }, mode);
         } else {
             pendingGoogleData = { access_token: accessToken, mode };
-            hideModal(loginModal);
-            hideModal(registerModal);
+            const loginModalEl = document.getElementById('login-modal');
+            const registerModalEl = document.getElementById('register-modal');
+            hideModal(loginModalEl);
+            hideModal(registerModalEl);
             showTermsModal();
         }
     } catch (error) {
@@ -1140,10 +1133,6 @@ function resetGoogleButtons() {
     }
 }
 
-// ==========================================
-// Пользовательское соглашение
-// ==========================================
-
 let pendingRegistration = null;
 let pendingGoogleData = null;
 
@@ -1154,26 +1143,22 @@ function initTermsHandlers() {
     const termsModal = document.getElementById('terms-modal');
     const closeBtn = termsModal?.querySelector('.close-btn');
 
-    // Включаем/выключаем кнопку принятия
     if (acceptCheckbox && acceptBtn) {
         acceptCheckbox.addEventListener('change', () => {
             acceptBtn.disabled = !acceptCheckbox.checked;
         });
     }
 
-    // Кнопка "Принять и продолжить"
     if (acceptBtn) {
         acceptBtn.addEventListener('click', async () => {
             if (!acceptCheckbox.checked) return;
 
-            // Обычная регистрация
             if (pendingRegistration) {
                 const { name, email, password } = pendingRegistration;
                 pendingRegistration = null;
                 hideModal(termsModal);
                 await submitRegistration(name, email, password);
             }
-            // Google OAuth
             else if (pendingGoogleData) {
                 const { credential, access_token } = pendingGoogleData;
                 pendingGoogleData = null;
@@ -1183,7 +1168,6 @@ function initTermsHandlers() {
         });
     }
 
-    // Кнопка "Отклонить"
     if (declineBtn) {
         declineBtn.addEventListener('click', () => {
             pendingRegistration = null;
@@ -1193,7 +1177,6 @@ function initTermsHandlers() {
         });
     }
 
-    // Крестик закрытия
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
             pendingRegistration = null;
@@ -1202,7 +1185,6 @@ function initTermsHandlers() {
         });
     }
 
-    // Закрытие по клику вне модалки
     if (termsModal) {
         termsModal.addEventListener('click', (e) => {
             if (e.target === termsModal) {
