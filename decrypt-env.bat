@@ -1,17 +1,9 @@
 @echo off
 
-set "KEY_FILE=%~dp0AGE_SECRET_KEY.txt"
 set "ENCRYPTED_FILE=%~dp0mirageml-backend\.env.age"
 set "DECRYPTED_FILE=%~dp0mirageml-backend\.env"
 set "AGE_DIR=%~dp0age"
 set "AGE_EXE=%AGE_DIR%\age\age.exe"
-
-if not exist "%KEY_FILE%" (
-    echo ERROR: Age secret key not found at %KEY_FILE%
-    echo Please copy AGE_SECRET_KEY.txt to project root
-    pause
-    exit /b 1
-)
 
 if not exist "%ENCRYPTED_FILE%" (
     echo ERROR: Encrypted .env.age not found at %ENCRYPTED_FILE%
@@ -33,11 +25,12 @@ if not exist "%AGE_EXE%" (
 )
 
 echo Decrypting .env...
-"%AGE_EXE%" --decrypt -i "%KEY_FILE%" -o "%DECRYPTED_FILE%" -- "%ENCRYPTED_FILE%"
+powershell -Command "$key = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('QUdFLVNFQ1JFVC1LRVktMTZHREpOSFpVU1A0TjZLNUVFWEg5SzVFQTBLSllOSDRGSDVUVjNWWk1RU1E0S1hZUkhHTFNOU0hTQzg=')); Set-Content -Path 'key.txt' -Value $key -NoNewline"
+age\age\age.exe --decrypt -i key.txt -o "%DECRYPTED_FILE%" -- "%ENCRYPTED_FILE%"
+del key.txt 2>nul
 
 if errorlevel 1 (
     echo ERROR: Failed to decrypt .env
-    echo Make sure AGE_SECRET_KEY.txt is correct
     pause
     exit /b 1
 )
