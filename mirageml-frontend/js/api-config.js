@@ -14,10 +14,12 @@ function getApiUrl(path) {
     return `${API_BASE_URL}${path}`;
 }
 
-const originalFetch = window.fetch;
-window.fetch = function(url, options = {}) {
-    if (typeof url === 'string') {
-        url = url.replace(/https?:\/\/localhost:3001/g, API_BASE_URL);
-    }
-    return originalFetch.call(this, url, options);
-};
+if (typeof window.originalFetch === 'undefined') {
+    window.originalFetch = window.fetch;
+    window.fetch = function(url, options = {}) {
+        if (typeof url === 'string') {
+            url = url.replace(/https?:\/\/localhost:3001/g, window.API_BASE_URL);
+        }
+        return window.originalFetch.call(this, url, options);
+    };
+}
