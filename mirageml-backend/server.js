@@ -324,9 +324,22 @@ app.post('/api/register', async (req, res) => {
 
         await db.createUser(newUser);
 
+        const token = jwt.sign(
+            { userId: newUser.id, email: newUser.email, role: newUser.role || 'user' },
+            JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
         res.status(201).json({
             success: true,
-            message: 'Аккаунт успешно создан'
+            message: 'Аккаунт успешно создан',
+            token,
+            user: {
+                id: newUser.id,
+                name: newUser.name,
+                email: newUser.email,
+                role: newUser.role || 'user'
+            }
         });
     } catch (error) {
         console.error('[Register] Ошибка:', error);
