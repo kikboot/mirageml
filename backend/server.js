@@ -1576,6 +1576,23 @@ app.get('/admin/reviews', requireAdminAuth, async (req, res) => {
     }
 });
 
+app.get('/api/health', async (req, res) => {
+    try {
+        const dbConnected = await db.testConnection();
+        res.json({
+            status: 'ok',
+            timestamp: Date.now(),
+            database: dbConnected ? 'connected' : 'disconnected'
+        });
+    } catch (error) {
+        res.json({
+            status: 'ok',
+            timestamp: Date.now(),
+            database: 'unknown'
+        });
+    }
+});
+
 async function startServer() {
     try {
         const dbConnected = await db.testConnection();
