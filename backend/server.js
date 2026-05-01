@@ -50,8 +50,16 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../frontend'), {
-    maxAge: '1d',
-    etag: true
+    maxAge: 0,
+    etag: false,
+    lastModified: false,
+    setHeaders: (res, path) => {
+        if (path.endsWith('.css') || path.endsWith('.js')) {
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+            res.setHeader('Pragma', 'no-cache');
+            res.setHeader('Expires', '0');
+        }
+    }
 }));
 
 const getDeviceInfo = (userAgent) => {

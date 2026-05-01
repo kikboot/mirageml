@@ -4,7 +4,7 @@
     --primary-light: #8b5cf6;
     --secondary: #06d6a0;
     --accent: #f59e0b;
-    --dark: #1e293b;
+    --dark: #222222;
     --darker: #0f172a;
     --light: #f8fafc;
     --gray: #64748b;
@@ -12,23 +12,26 @@
     --success: #10b981;
     --danger: #ef4444;
     --warning: #f59e0b;
-
+    
     --border-radius: 12px;
     --border-radius-lg: 16px;
     --border-radius-xl: 24px;
-
+    
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
     --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.12);
     --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
     --shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.25);
-
+    
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
+    
     --glass-bg: rgba(255, 255, 255, 0.08);
     --glass-border: rgba(255, 255, 255, 0.12);
-
+    
     --toolbar-height: 70px;
     --sidebar-width: 280px;
+    
+    --editor-color: #141414;
+    --modal-color: #222222;
 }
 
 * {
@@ -39,7 +42,7 @@
 }
 
 body {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    background: linear-gradient(135deg, #141414 0%, #141414 100%);
     color: var(--light);
     overflow: hidden;
     height: 100vh;
@@ -396,7 +399,7 @@ body {
 }
 
 .accordion-header-title i {
-    color: var(--primary);
+    color: white;
 }
 
 .accordion-actions {
@@ -491,10 +494,15 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(99, 102, 241, 0.15);
+    background: rgba(20, 20, 20, 0.15);
     border-radius: 8px;
-    color: var(--primary);
+    color: white;
     font-size: 14px;
+}
+
+.accordion-item.expanded .accordion-icon {
+    background: rgba(20, 20, 20, 0.25);
+    color: white;
 }
 
 .accordion-item.expanded .accordion-icon {
@@ -578,6 +586,7 @@ body {
 
 .accordion-item.expanded .accordion-chevron {
     transform: rotate(90deg);
+    color: white;
 }
 
 .accordion-icon {
@@ -1199,7 +1208,7 @@ body {
 }
 
 .status-item i {
-    color: var(--primary);
+    color: white;
 }
 
 .modal {
@@ -1209,7 +1218,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(15, 23, 42, 0.9);
+    background: rgba(34, 34, 34, 0.9);
     backdrop-filter: blur(10px);
     z-index: 2000;
     justify-content: center;
@@ -1218,7 +1227,7 @@ body {
 }
 
 .modal-content {
-    background: var(--dark);
+    background: var(--modal-color);
     border-radius: var(--border-radius-lg);
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-xl);
@@ -1244,6 +1253,7 @@ body {
     justify-content: space-between;
     padding: 20px 24px;
     border-bottom: 1px solid var(--glass-border);
+    background: var(--modal-color);
 }
 
 .modal-header h2 {
@@ -1255,7 +1265,7 @@ body {
 }
 
 .modal-header i {
-    color: var(--primary);
+    color: white;
     font-size: 20px;
 }
 
@@ -1285,6 +1295,7 @@ body {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
+    background: var(--modal-color);
 }
 
 .export-settings {
@@ -1425,7 +1436,7 @@ body {
 
 .upload-area i {
     font-size: 64px;
-    color: var(--primary);
+    color: white;
     margin-bottom: 16px;
     opacity: 0.5;
 }
@@ -1495,7 +1506,7 @@ kbd {
 
 .empty-state i {
     font-size: 64px;
-    color: var(--primary);
+    color: white;
     opacity: 0.2;
     margin-bottom: 16px;
 }

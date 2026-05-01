@@ -29,6 +29,11 @@
     --glass-bg: rgba(255, 255, 255, 0.08);
     --glass-border: rgba(255, 255, 255, 0.12);
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    
+    --bg-primary: #000000;
+    --bg-secondary: #0a0a0a;
+    --text-primary: var(--light);
+    --text-secondary: var(--gray-light);
 }
 
 * {
@@ -45,8 +50,8 @@ html {
 }
 
 body {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    color: var(--light);
+    background: transparent;
+    color: var(--text-primary);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
@@ -54,15 +59,22 @@ body {
     position: relative;
 }
 
-.background-container {
+.bg-static {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100vw;
     height: 100vh;
     z-index: -1;
-    overflow: hidden;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    background: linear-gradient(135deg, #000000, #0a0a0a, #1a1a2e, #0f172a);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .animated-grid {
@@ -2133,7 +2145,7 @@ body {
 }
 
 .footer-modern {
-    background: var(--darker);
+    background: #141414;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding: 40px 0 20px;
     width: 100%;

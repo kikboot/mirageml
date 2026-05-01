@@ -15,9 +15,6 @@
     <div class="editor-container">
         <header class="editor-toolbar">
             <div class="toolbar-left">
-                <button class="toolbar-btn" id="toggle-sidebar-btn" title="Скрыть/показать панель">
-                    <i class="fas fa-bars"></i>
-                </button>
                 <div class="logo">
                     <a href="../main/index.html">
                         <img src="../logo/logo3.svg" alt="MiruFlow Logo" class="logo-icon">
@@ -56,22 +53,6 @@
                     </button>
                 </div>
                 
-                <div class="toolbar-divider"></div>
-                 
-                <div class="toolbar-group">
-                    <button class="toolbar-btn" id="grid-btn" title="Сетка">
-                        <i class="fas fa-th"></i>
-                    </button>
-                    <button class="toolbar-btn" id="guides-btn" title="Направляющие">
-                        <i class="fas fa-ruler-horizontal"></i>
-                    </button>
-                    <button class="toolbar-btn" id="snap-btn" title="Привязка" class="active">
-                        <i class="fas fa-magnet"></i>
-                    </button>
-                </div>
-                
-                <div class="toolbar-divider"></div>
-                
                 <div class="toolbar-group">
                     <button class="toolbar-btn" id="zoom-out" title="Уменьшить">
                         <i class="fas fa-search-minus"></i>
@@ -109,10 +90,6 @@
                 </button>
             </div>
         </header>
-
-        <button class="sidebar-toggle-show" id="show-sidebar-btn" title="Показать панель">
-            <i class="fas fa-chevron-right"></i>
-        </button>
 
         <div class="editor-main">
             <aside class="sidebar left-sidebar">
@@ -249,11 +226,7 @@
                         <i class="fas fa-angle-double-down"></i>
                     </button>
                 </div>
-
-                <div class="minimap" id="minimap">
-                    <div class="minimap-viewport" id="minimap-viewport"></div>
-                </div>
-
+                
                 <div class="rulers-container">
                     <div class="ruler ruler-horizontal" id="ruler-horizontal">
                         <div class="ruler-markings"></div>
@@ -296,21 +269,7 @@
             </aside>
         </div>
 
-        <div class="status-bar">
-            <div class="status-left">
-                <span id="status-message">Готов к работе</span>
-            </div>
-            <div class="status-right">
-                <span class="status-item">
-                    <i class="fas fa-mouse-pointer"></i>
-                    <span id="cursor-position">X: 0, Y: 0</span>
-                </span>
-                <span class="status-item">
-                    <i class="fas fa-layer-group"></i>
-                    <span id="elements-count">0 секций</span>
-                </span>
-            </div>
-        </div>
+
     </div>
 
     <div class="modal" id="export-modal">

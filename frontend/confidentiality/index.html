@@ -10,37 +10,46 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #f8fafc;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            background: linear-gradient(135deg, #000000, #0a0a0a, #1a1a2e, #0f172a);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         h1, h2 {
-            color: #2c3e50;
+            color: #f8fafc;
         }
         h1 {
-            border-bottom: 2px solid #4a6bff;
+            border-bottom: 2px solid #6366f1;
             padding-bottom: 10px;
             margin-top: 40px;
         }
         h2 {
             margin-top: 30px;
-            color: #3498db;
+            color: #cbd5e1;
         }
         a {
-            color: #4a6bff;
+            color: #6366f1;
             text-decoration: none;
         }
         .last-updated {
             font-style: italic;
-            color: #7f8c8d;
+            color: #cbd5e1;
             margin-bottom: 30px;
         }
         .back-link {
             display: inline-block;
             margin-top: 40px;
             padding: 8px 15px;
-            background: #4a6bff;
+            background: #6366f1;
             color: white !important;
             border-radius: 4px;
         }
