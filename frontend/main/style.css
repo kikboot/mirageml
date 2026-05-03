@@ -2235,6 +2235,29 @@ body {
     padding: 0 16px;
 }
 
+.forgot-password {
+    text-align: center;
+    margin-top: 12px;
+}
+
+.forgot-password a {
+    color: var(--primary);
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.forgot-password a:hover {
+    color: var(--primary-hover);
+}
+
+.recovery-info {
+    font-size: 13px;
+    color: var(--gray);
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
 /* Terms Modal Styles */
 .terms-modal .modal-content {
     max-width: 700px;

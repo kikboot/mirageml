@@ -588,6 +588,31 @@
             <div class="switch-form">
                 Нет аккаунта? <a id="switch-to-register">Зарегистрироваться</a>
             </div>
+            <div class="forgot-password">
+                <a id="switch-to-recovery">Забыли пароль?</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="recovery-modal">
+        <div class="modal-content modal-modern">
+            <span class="close-btn">&times;</span>
+            <h2>Восстановление пароля</h2>
+            <div class="notification" id="recovery-notification"></div>
+            <form id="recovery-form">
+                <div class="form-group">
+                    <label for="recovery-email">Email</label>
+                    <input type="email" id="recovery-email" required placeholder="Введите ваш email">
+                </div>
+                <p class="recovery-info">На указанный email будет отправлена ссылка для сброса пароля.</p>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost" id="cancel-recovery">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Отправить</button>
+                </div>
+            </form>
+            <div class="switch-form">
+                Вспомнили пароль? <a id="switch-to-login-from-recovery">Войти</a>
+            </div>
         </div>
     </div>
 
@@ -818,5 +843,82 @@
     </footer>
 
     <script src="../main/script.js"></script>
+
+    <div class="modal" id="reset-password-modal">
+        <div class="modal-content modal-modern">
+            <span class="close-btn" id="close-reset">&times;</span>
+            <h2>Новый пароль</h2>
+            <div class="notification" id="reset-notification"></div>
+            <form id="reset-password-form">
+                <div class="form-group">
+                    <label for="new-password">Новый пароль</label>
+                    <input type="password" id="new-password" required placeholder="Придумайте новый пароль">
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Подтвердите пароль</label>
+                    <input type="password" id="confirm-password" required placeholder="Повторите пароль">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Сохранить пароль</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('token');
+            
+            if (token) {
+                const resetModal = document.getElementById('reset-password-modal');
+                const resetForm = document.getElementById('reset-password-form');
+                
+                resetModal.style.display = 'flex';
+                
+                resetForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const newPassword = document.getElementById('new-password').value;
+                    const confirmPassword = document.getElementById('confirm-password').value;
+                    
+                    if (newPassword !== confirmPassword) {
+                        showNotification('reset-notification', 'Пароли не совпадают', 'error');
+                        return;
+                    }
+                    
+                    if (newPassword.length < 6) {
+                        showNotification('reset-notification', 'Пароль должен быть не менее 6 символов', 'error');
+                        return;
+                    }
+                    
+                    try {
+                        const response = await fetch('/api/reset-password', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ token, password: newPassword })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok) {
+                            showNotification('reset-notification', 'Пароль успешно изменён!', 'success');
+                            setTimeout(() => {
+                                window.location.href = '/?password-reset=success';
+                            }, 2000);
+                        } else {
+                            showNotification('reset-notification', data.error || 'Ошибка', 'error');
+                        }
+                    } catch (error) {
+                        showNotification('reset-notification', 'Ошибка соединения', 'error');
+                    }
+                });
+                
+                document.getElementById('close-reset').addEventListener('click', () => {
+                    window.location.href = '/';
+                });
+            }
+        });
+    </script>
 </body>
 </html>

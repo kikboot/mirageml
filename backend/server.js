@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 const session = require('express-session');
 const { USER_ROLES, ROLE_PERMISSIONS, hasPermission, isOwner } = require('./models/user-roles');
 const db = require('./database/db');
@@ -418,6 +419,91 @@ app.post('/api/login', async (req, res) => {
     } catch (error) {
         console.error('[Login] Ошибка:', error);
         res.status(500).json({ error: 'Ошибка при входе' });
+    }
+});
+
+const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: process.env.SMTP_PORT || 587,
+    secure: process.env.SMTP_PORT == 465,
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+    }
+});
+
+app.post('/api/recovery', async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ error: 'Email обязателен' });
+        }
+
+        const user = await db.getUserByEmail(email);
+        if (!user) {
+            return res.json({ success: true, message: 'Если email существует, ссылка для сброса будет отправлена' });
+        }
+
+        const resetToken = jwt.sign(
+            { userId: user.id, type: 'password-reset' },
+            JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+
+        const mailOptions = {
+            from: `"MiruFlow" <${process.env.SMTP_USER}>`,
+            to: email,
+            subject: 'Восстановление пароля MiruFlow',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <h2 style="color: #4f46e5;">Восстановление пароля</h2>
+                    <p>Вы запросили сброс пароля для аккаунта <strong>${email}</strong>.</p>
+                    <p>Нажмите кнопку ниже для создания нового пароля:</p>
+                    <a href="${resetUrl}" style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 20px 0;">Сбросить пароль</a>
+                    <p>Ссылка действительна в течение 1 часа.</p>
+                    <p style="color: #666; font-size: 12px;">Если вы не запрашивали сброс пароля, просто проигнорируйте это письмо.</p>
+                </div>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.json({ success: true, message: 'Если email существует, ссылка для сброса будет отправлена' });
+    } catch (error) {
+        console.error('[Recovery] Ошибка:', error);
+        res.json({ success: true, message: 'Если email существует, ссылка для сброса будет отправлена' });
+    }
+});
+
+app.post('/api/reset-password', async (req, res) => {
+    try {
+        const { token, password } = req.body;
+
+        if (!token || !password) {
+            return res.status(400).json({ error: 'Токен и пароль обязательны' });
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET);
+
+        if (decoded.type !== 'password-reset') {
+            return res.status(400).json({ error: 'Неверный токен' });
+        }
+
+        const user = await db.getUserById(decoded.userId);
+        if (!user) {
+            return res.status(404).json({ error: 'Пользователь не найден' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await db.updateUser(user.id, { password: hashedPassword });
+
+        res.json({ success: true, message: 'Пароль успешно обновлён' });
+    } catch (error) {
+        console.error('[Reset Password] Ошибка:', error);
+        res.status(400).json({ error: 'Ссылка для сброса пароля истекла или недействительна' });
     }
 });
 

@@ -121,6 +121,37 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const recoveryModal = document.getElementById('recovery-modal');
+    const recoveryForm = document.getElementById('recovery-form');
+    const switchToRecovery = document.getElementById('switch-to-recovery');
+    const switchToLoginFromRecovery = document.getElementById('switch-to-login-from-recovery');
+    const cancelRecovery = document.getElementById('cancel-recovery');
+
+    if (switchToRecovery) {
+        switchToRecovery.addEventListener('click', () => {
+            hideModal(loginModal);
+            showModal(recoveryModal);
+        });
+    }
+
+    if (switchToLoginFromRecovery) {
+        switchToLoginFromRecovery.addEventListener('click', () => {
+            hideModal(recoveryModal);
+            showModal(loginModal);
+        });
+    }
+
+    if (cancelRecovery) {
+        cancelRecovery.addEventListener('click', () => {
+            hideModal(recoveryModal);
+            showModal(loginModal);
+        });
+    }
+
+    if (recoveryForm) {
+        recoveryForm.addEventListener('submit', handleRecovery);
+    }
+
     setupModalCloseHandlers();
 
     if (loginForm) {
@@ -801,6 +832,59 @@ function showNotification(notificationId, message, type = 'error') {
         }
 
         notification.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+}
+
+async function handleRecovery(e) {
+    e.preventDefault();
+
+    const emailInput = document.getElementById('recovery-email');
+    const email = emailInput.value.trim();
+
+    if (!email) {
+        showNotification('recovery-notification', 'Введите email', 'error');
+        return;
+    }
+
+    const isEmailValid = validateInput(emailInput);
+    if (!isEmailValid) {
+        return;
+    }
+
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    try {
+        submitBtn.innerHTML = '<span class="spinner"></span> Отправка...';
+        submitBtn.disabled = true;
+
+        const response = await fetch('/api/recovery', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+
+        if (response.ok) {
+            showNotification('recovery-notification', 'Ссылка для сброса пароля отправлена на ваш email', 'success');
+            emailInput.value = '';
+            setTimeout(() => {
+                hideModal(document.getElementById('recovery-modal'));
+                showModal(document.getElementById('login-modal'));
+            }, 3000);
+        } else {
+            showNotification('recovery-notification', data.error || 'Ошибка при отправке', 'error');
+        }
+    } catch (error) {
+        if (submitBtn) {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+        showNotification('recovery-notification', 'Ошибка соединения', 'error');
     }
 }
 
