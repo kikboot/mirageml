@@ -250,8 +250,8 @@ body {
 
 .main-nav {
     display: flex;
-    gap: 24px;
-    flex: 2;
+    gap: 32px;
+    flex: 1;
     justify-content: center;
 }
 
@@ -262,11 +262,15 @@ body {
     color: var(--gray-light);
     text-decoration: none;
     font-weight: 500;
-    padding: 8px 16px;
+    padding: 6px 12px;
     border-radius: var(--border-radius);
     transition: var(--transition);
     position: relative;
     overflow: hidden;
+}
+
+.nav-text {
+    white-space: nowrap;
 }
 
 .nav-link::before {
@@ -287,6 +291,10 @@ body {
 .nav-link:hover {
     color: var(--light);
     background: var(--glass-bg);
+}
+
+.nav-text {
+    font-size: 14px;
 }
 
 .nav-icon {
@@ -1045,7 +1053,7 @@ body {
     border: 1px solid rgba(99, 102, 241, 0.3);
     border-radius: var(--border-radius-lg);
     color: var(--text-primary);
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -1068,12 +1076,13 @@ body {
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 18px;
+    font-size: 14px;
 }
 
 .mobile-profile-text {
     flex: 1;
     text-align: left;
+    font-size: 14px;
 }
 
 .mobile-profile-arrow {

@@ -7,6 +7,7 @@
     <title>О проекте MiruFlow - Визуальный редактор сайтов</title>
     <meta name="description" content="Узнайте историю создания MiruFlow, нашу миссию и команду разработчиков">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../main/style.css">
     <link rel="stylesheet" href="../about/style.css">
     <script src="../js/api-config.js"></script>
     <link type="image/x-icon" href="../logo/logo3.svg" rel="shortcut icon">
@@ -25,7 +26,6 @@
                     </button>
                     <div class="logo">
                         <div class="logo-wrapper">
-                            <a href="../main/index.html" class="logo-wrapper">
                             <img src="../logo/logo3.svg" alt="MiruFlow Logo" class="logo-icon">
                             <span class="logo-text">MiruFlow</span>
                             </a>
@@ -34,17 +34,25 @@
                 </div>
                 
                 <nav class="main-nav">
-                    <a href="../about/index.html" class="nav-link">
+                    <a href="../main/index.html" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-home"></i></span>
+                        <span class="nav-text">Главная</span>
+                    </a>
+                    <a href="../about/index.html" class="nav-link active">
                         <span class="nav-icon"><i class="fas fa-info-circle"></i></span>
                         <span class="nav-text">О проекте</span>
                     </a>
-                    <a href="../main/index.html#reviews" class="nav-link">
+                    <a href="../reviews/index.html" class="nav-link">
                         <span class="nav-icon"><i class="fas fa-comment"></i></span>
                         <span class="nav-text">Отзывы</span>
                     </a>
                     <a href="../support/index.html" class="nav-link">
                         <span class="nav-icon"><i class="fas fa-headset"></i></span>
                         <span class="nav-text">Поддержка</span>
+                    </a>
+                    <a href="../docs/index.html" class="nav-link">
+                        <span class="nav-icon"><i class="fas fa-book"></i></span>
+                        <span class="nav-text">Документация</span>
                     </a>
                 </nav>
                 <div class="auth-buttons">
@@ -71,17 +79,25 @@
         </div>
         <div class="mobile-menu-content">
             <nav class="mobile-nav">
-                <a href="../about/index.html" class="nav-link">
-                    <span class="nav-icon"><i class="fas fa-info-circle"></i></span>
-                    <span class="nav-text">О проекте</span>
+                <a href="../main/index.html" class="nav-link">
+                    <span class="nav-icon"><i class="fas fa-home"></i></span>
+                    <span class="nav-text">Главная</span>
                 </a>
-                <a href="../main/index.html#reviews" class="nav-link">
+<a href="../about/index.html" class="nav-link active">
+                        <span class="nav-icon"><i class="fas fa-info-circle"></i></span>
+                        <span class="nav-text">О проекте</span>
+                    </a>
+                    <a href="../reviews/index.html" class="nav-link">
                     <span class="nav-icon"><i class="fas fa-comment"></i></span>
                     <span class="nav-text">Отзывы</span>
                 </a>
                 <a href="../support/index.html" class="nav-link">
                     <span class="nav-icon"><i class="fas fa-headset"></i></span>
                     <span class="nav-text">Поддержка</span>
+                </a>
+                <a href="../docs/index.html" class="nav-link">
+                    <span class="nav-icon"><i class="fas fa-book"></i></span>
+                    <span class="nav-text">Документация</span>
                 </a>
             </nav>
             <div class="mobile-profile-section">
@@ -634,6 +650,7 @@
         </div>
     </footer>
 
+    <script src="../main/script.js"></script>
     <script src="../about/script.js"></script>
 </body>
 

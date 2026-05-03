@@ -195,6 +195,7 @@ body {
     display: flex;
     align-items: center;
     gap: 16px;
+    flex: 1;
 }
 
 .mobile-menu-btn {
@@ -259,7 +260,9 @@ body {
 
 .main-nav {
     display: flex;
-    gap: 24px;
+    gap: 32px;
+    flex: 1;
+    justify-content: center;
     align-items: center;
 }
 
@@ -270,9 +273,14 @@ body {
     color: var(--gray-light);
     text-decoration: none;
     font-weight: 500;
-    padding: 8px 12px;
+    padding: 6px 12px;
     border-radius: var(--border-radius);
     transition: var(--transition);
+}
+
+.nav-text {
+    white-space: nowrap;
+    font-size: 14px;
 }
 
 .nav-link:hover, .nav-link.active {
@@ -291,16 +299,21 @@ body {
 .auth-buttons {
     display: flex;
     gap: 12px;
-    align-items: center;
+    flex: 1;
+    justify-content: flex-end;
+    position: relative;
+    z-index: 1001;
+    pointer-events: auto;
 }
 
 .btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 16px;
+    padding: 12px 24px;
     border-radius: var(--border-radius);
     font-weight: 600;
+    font-size: 14px;
     font-size: 14px;
     text-decoration: none;
     border: none;
@@ -566,6 +579,10 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
     background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+}
+
+.mobile-profile-text {
+    font-size: 14px;
 }
 
 .docs-hero {
@@ -1015,16 +1032,15 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(20, 20, 20, 0.8);
     backdrop-filter: blur(10px);
     z-index: 2000;
     justify-content: center;
     align-items: center;
-    padding: 20px;
 }
 
 .modal-modern {
-    background: var(--dark);
+    background: #141414;
     border-radius: var(--border-radius-xl);
     padding: 40px;
     width: 100%;
