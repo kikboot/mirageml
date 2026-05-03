@@ -494,6 +494,14 @@ app.post('/api/recovery', async (req, res) => {
     }
 });
 
+app.get('/reset-password', (req, res) => {
+    const token = req.query.token;
+    if (!token) {
+        return res.redirect('/');
+    }
+    res.sendFile(path.join(__dirname, '../frontend/main/index.html'));
+});
+
 app.post('/api/reset-password', async (req, res) => {
     try {
         const { token, password } = req.body;
