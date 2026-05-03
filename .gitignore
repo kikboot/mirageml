@@ -6,6 +6,7 @@
 .env.development
 .env.backup
 .env
+get-token.js
 
 # ==========================================
 # Node.js

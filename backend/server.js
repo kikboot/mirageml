@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
+const { google } = require('googleapis');
 const session = require('express-session');
 const { USER_ROLES, ROLE_PERMISSIONS, hasPermission, isOwner } = require('./models/user-roles');
 const db = require('./database/db');
@@ -423,15 +423,17 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: process.env.SMTP_PORT || 587,
-    secure: process.env.SMTP_PORT == 465,
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-    }
+const oauth2Client = new google.auth.OAuth2(
+  process.env.GMAIL_CLIENT_ID,
+  process.env.GMAIL_CLIENT_SECRET,
+  process.env.FRONTEND_URL + '/oauth2callback'
+);
+
+oauth2Client.setCredentials({
+  refresh_token: process.env.GMAIL_REFRESH_TOKEN
 });
+
+const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
 
 app.post('/api/recovery', async (req, res) => {
     try {
@@ -454,23 +456,36 @@ app.post('/api/recovery', async (req, res) => {
 
         const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
 
-        const mailOptions = {
-            from: `"MiruFlow" <${process.env.SMTP_USER}>`,
-            to: email,
-            subject: 'Восстановление пароля MiruFlow',
-            html: `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                    <h2 style="color: #4f46e5;">Восстановление пароля</h2>
-                    <p>Вы запросили сброс пароля для аккаунта <strong>${email}</strong>.</p>
-                    <p>Нажмите кнопку ниже для создания нового пароля:</p>
-                    <a href="${resetUrl}" style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 20px 0;">Сбросить пароль</a>
-                    <p>Ссылка действительна в течение 1 часа.</p>
-                    <p style="color: #666; font-size: 12px;">Если вы не запрашивали сброс пароля, просто проигнорируйте это письмо.</p>
-                </div>
-            `
-        };
+        const subject = 'Восстановление пароля MiruFlow';
+        const encodedSubject = `=?UTF-8?B?${Buffer.from(subject).toString('base64')}?=`;
 
-        await transporter.sendMail(mailOptions);
+        const emailContent = [
+            `To: ${email}`,
+            `Subject: ${encodedSubject}`,
+            `Content-Type: text/html; charset=utf-8`,
+            ``,
+            `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">`,
+            `<h2 style="color: #4f46e5;">Восстановление пароля</h2>`,
+            `<p>Вы запросили сброс пароля для аккаунта <strong>${email}</strong>.</p>`,
+            `<p>Нажмите кнопку ниже для создания нового пароля:</p>`,
+            `<a href="${resetUrl}" style="display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 20px 0;">Сбросить пароль</a>`,
+            `<p>Ссылка действительна в течение 1 часа.</p>`,
+            `<p style="color: #666; font-size: 12px;">Если вы не запрашивали сброс пароля, просто проигнорируйте это письмо.</p>`,
+            `</div>`
+        ].join('\n');
+
+        const encodedEmail = Buffer.from(emailContent)
+            .toString('base64')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=+$/, '');
+
+        await gmail.users.messages.send({
+            userId: 'me',
+            requestBody: {
+                raw: encodedEmail
+            }
+        });
 
         res.json({ success: true, message: 'Если email существует, ссылка для сброса будет отправлена' });
     } catch (error) {
