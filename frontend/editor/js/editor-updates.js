@@ -2,6 +2,7 @@ window.updateSectionName = function(value) {
     if (state.selectedSection) {
         state.selectedSection.name = value;
         updateElementsCount();
+        saveToHistory();
     }
 };
 
@@ -59,6 +60,7 @@ window.updateSectionSize = function(width, height) {
     if (state.selectedSection) {
         state.selectedSection.element.style.width = `${width}px`;
         state.selectedSection.element.style.height = `${height}px`;
+        saveToHistory();
     }
 };
 
@@ -66,6 +68,7 @@ window.updateSectionRotation = function(value) {
     if (state.selectedSection) {
         state.selectedSection.element.style.transform = `rotate(${value}deg)`;
         state.selectedSection.rotation = parseInt(value);
+        saveToHistory();
     }
 };
 
@@ -89,6 +92,7 @@ window.updateSectionPadding = function(side, value) {
         if (side === 'bottom') state.selectedSection.element.style.paddingBottom = `${value}px`;
         if (side === 'left') state.selectedSection.element.style.paddingLeft = `${value}px`;
         if (side === 'right') state.selectedSection.element.style.paddingRight = `${value}px`;
+        saveToHistory();
     }
 };
 
@@ -108,6 +112,7 @@ window.updateSectionBgColor = function(value) {
             if (colorInput.value !== value) colorInput.value = value;
             if (colorText.value !== value) colorText.value = value;
         }
+        saveToHistory();
     }
 };
 
@@ -122,6 +127,7 @@ window.updateBgOpacity = function(value) {
             const b = parseInt(hex.substring(4, 6), 16);
             state.selectedSection.element.style.background = `rgba(${r}, ${g}, ${b}, ${value/100})`;
         }
+        saveToHistory();
     }
 };
 
@@ -180,6 +186,7 @@ window.updateGradient = function() {
     state.selectedSection.element.style.background = gradient;
     document.getElementById('gradient-angle-value').textContent = `${angle}°`;
     updateGradientPreview();
+    saveToHistory();
 };
 
 function updateGradientPreview() {
@@ -218,6 +225,7 @@ window.updateBgImage = function(url) {
     } else {
         state.selectedSection.element.style.background = '';
     }
+    saveToHistory();
 };
 
 window.setBgImage = function(url) {
@@ -238,12 +246,14 @@ window.updateBgSize = function(value) {
     if (state.selectedSection) {
         state.selectedSection.element.style.backgroundSize = value;
         state.selectedSection.element.style.backgroundRepeat = value === 'repeat' ? 'repeat' : 'no-repeat';
+        saveToHistory();
     }
 };
 
 window.updateBgPosition = function(value) {
     if (state.selectedSection) {
         state.selectedSection.element.style.backgroundPosition = value;
+        saveToHistory();
     }
 };
 
@@ -251,6 +261,7 @@ window.updateBgImageOpacity = function(value) {
     if (state.selectedSection) {
         document.getElementById('bg-image-opacity-value').textContent = `${value}%`;
         state.selectedSection.element.style.opacity = value / 100;
+        saveToHistory();
     }
 };
 
@@ -268,6 +279,7 @@ window.updateBgOverlay = function() {
         state.selectedSection.element.style.backgroundSize = 'cover';
         state.selectedSection.element.style.backgroundPosition = 'center';
     }
+    saveToHistory();
 };
 
 window.updateBgVideo = function(url) {
@@ -362,6 +374,7 @@ window.updateBgFilter = function() {
         document.getElementById('bg-invert-value').textContent = `${invert}%`;
 
         applyBgFilters();
+        saveToHistory();
     }
 };
 
@@ -381,12 +394,14 @@ function applyBgFilters() {
 window.updateElementName = function(value) {
     if (state.selectedElement) {
         state.selectedElement.name = value;
+        saveToHistory();
     }
 };
 
 window.updateElementText = function(value) {
     if (state.selectedElement) {
         state.selectedElement.element.textContent = value;
+        saveToHistory();
     }
 };
 
@@ -394,8 +409,6 @@ window.updateElementHref = function(value) {
     if (state.selectedElement) {
         const el = state.selectedElement.element;
         if (value && value.trim() !== '') {
-            // Для кнопок используем data-href (валидный HTML)
-            // Для <a> используем обычный href
             if (state.selectedElement.tag === 'button') {
                 el.setAttribute('data-href', value);
                 el.removeAttribute('href');
@@ -408,12 +421,14 @@ window.updateElementHref = function(value) {
             el.removeAttribute('href');
             el.removeAttribute('data-href');
         }
+        saveToHistory();
     }
 };
 
 window.updateElementSrc = function(value) {
     if (state.selectedElement && state.selectedElement.tag === 'img') {
         state.selectedElement.element.src = value;
+        saveToHistory();
     }
 };
 
@@ -430,6 +445,7 @@ window.updateElementStyleWithFormula = function(property, value) {
 window.updateElementStyle = function(property, value) {
     if (state.selectedElement) {
         state.selectedElement.element.style[property] = value;
+        saveToHistory();
     }
 };
 
@@ -442,6 +458,7 @@ window.updateElementColor = function(value) {
             if (colorInput.value !== value) colorInput.value = value;
             if (colorText.value !== value) colorText.value = value;
         }
+        saveToHistory();
     }
 };
 
@@ -454,6 +471,7 @@ window.updateElementBgColor = function(value) {
             if (bgInput.value !== value) bgInput.value = value;
             if (bgText.value !== value) bgText.value = value;
         }
+        saveToHistory();
     }
 };
 
@@ -461,6 +479,7 @@ window.updateElementOpacity = function(value) {
     if (state.selectedElement) {
         document.getElementById('el-opacity-value').textContent = `${value}%`;
         state.selectedElement.element.style.opacity = value / 100;
+        saveToHistory();
     }
 };
 
@@ -479,6 +498,7 @@ window.updateElementBorder = function() {
         if (colorInput.value !== color) colorInput.value = color;
         if (colorText.value !== color) colorText.value = color;
     }
+    saveToHistory();
 };
 
 window.updateElementFilters = function() {
@@ -499,6 +519,7 @@ window.updateElementFilters = function() {
     document.getElementById('el-blur-value').textContent = `${blur}px`;
     
     state.selectedElement.element.style.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) sepia(${sepia}%) invert(${invert}%) blur(${blur}px)`;
+    saveToHistory();
 };
 
 function setupColorPicker(colorId, textId) {

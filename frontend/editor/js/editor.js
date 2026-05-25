@@ -219,7 +219,6 @@ function addSectionToCanvas(sectionData, isImage = false, imageData = null) {
         <button onclick="duplicateSelected('${sectionId}')" title="Дублировать"><i class="fas fa-copy"></i></button>
         <button onclick="moveSectionUp('${sectionId}')" title="Вверх"><i class="fas fa-arrow-up"></i></button>
         <button onclick="moveSectionDown('${sectionId}')" title="Вниз"><i class="fas fa-arrow-down"></i></button>
-        <button onclick="showAddElementModal('${sectionId}')" title="Добавить элемент"><i class="fas fa-plus"></i></button>
         <button onclick="deleteSelected('${sectionId}')" title="Удалить"><i class="fas fa-trash"></i></button>
     `;
     sectionContainer.appendChild(controls);
@@ -366,9 +365,7 @@ function renderSectionPropertiesLegacy(section) {
                     <span style="font-size:11px;color:var(--primary);background:rgba(99,102,241,0.2);padding:2px 6px;border-radius:4px;">${el.tag}</span>
                 </div>
             `).join('') : '<p style="padding:0 20px;color:var(--gray);">Нет элементов</p>'}
-            <button class="btn btn-ghost" onclick="showAddElementModal('${section.id}')" style="width:calc(100% - 40px);margin:12px 20px;">
-                <i class="fas fa-plus"></i> Добавить элемент
-            </button>
+
         </div>
 
         <div class="property-group">
@@ -1604,6 +1601,7 @@ function enableInlineEditing(element) {
         const ta = document.getElementById('el-text');
         if (ta) ta.value = el.textContent;
         element.name = getElementName(el);
+        saveToHistory();
     };
 
     const cancel = () => {
@@ -2369,40 +2367,123 @@ function exportAsSeparateFiles() {
     };
 }
 
-function saveToHistory() {
-    if (typeof handleSaveProject === 'function') {
-        handleSaveProject();
-    } else {
-        localStorage.setItem('miruflow-project', JSON.stringify({
-            sections: state.sections.map(s => ({ id: s.id, name: s.name })),
-            savedAt: new Date().toISOString()
-        }));
-        showToast('Проект сохранён', 'success');
-        updateStatus('Проект сохранён');
+function getCleanSectionHTML(section) {
+    const clone = section.element.cloneNode(true);
+    clone.querySelector('.section-controls')?.remove();
+    clone.querySelectorAll('.resize-handle, .rotate-handle, .rotate-line').forEach(el => el.remove());
+    clone.classList.remove('selected', 'canvas-section');
+    clone.style.border = '';
+    clone.style.boxShadow = '';
+    return clone.outerHTML;
+}
+
+function restoreSectionsFromHistory(historyEntry) {
+    DOM.canvas.innerHTML = '';
+    if (DOM.canvasPlaceholder) DOM.canvasPlaceholder.style.display = state.sections.length ? 'none' : '';
+
+    state.sections = [];
+
+    for (const entry of historyEntry.sections) {
+        const sectionId = `section-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        const sectionContainer = document.createElement('div');
+        sectionContainer.className = 'canvas-section';
+        sectionContainer.id = sectionId;
+        sectionContainer.innerHTML = entry.html;
+
+        ['nw','n','ne','e','se','s','sw','w'].forEach(dir => {
+            const handle = document.createElement('div');
+            handle.className = `resize-handle ${dir}`;
+            handle.dataset.direction = dir;
+            sectionContainer.appendChild(handle);
+        });
+
+        const rotateHandle = document.createElement('div');
+        rotateHandle.className = 'rotate-handle';
+        rotateHandle.innerHTML = '<i class="fas fa-sync-alt"></i>';
+        sectionContainer.appendChild(rotateHandle);
+
+        const rotateLine = document.createElement('div');
+        rotateLine.className = 'rotate-line';
+        sectionContainer.appendChild(rotateLine);
+
+        const controls = document.createElement('div');
+        controls.className = 'section-controls';
+        controls.innerHTML = `
+            <button onclick="duplicateSelected('${sectionId}')" title="Дублировать"><i class="fas fa-copy"></i></button>
+            <button onclick="moveSectionUp('${sectionId}')" title="Вверх"><i class="fas fa-arrow-up"></i></button>
+            <button onclick="moveSectionDown('${sectionId}')" title="Вниз"><i class="fas fa-arrow-down"></i></button>
+            <button onclick="deleteSelected('${sectionId}')" title="Удалить"><i class="fas fa-trash"></i></button>
+        `;
+        sectionContainer.appendChild(controls);
+
+        DOM.canvas.appendChild(sectionContainer);
+
+        const section = {
+            id: sectionId,
+            sectionId: entry.sectionId || '',
+            name: entry.name,
+            element: sectionContainer,
+            html: entry.html,
+            css: entry.css || '',
+            isImage: entry.isImage || false,
+            imageData: entry.imageData || null,
+            rotation: entry.rotation || 0,
+            elements: []
+        };
+        parseSectionElements(section);
+        state.sections.push(section);
     }
+
+    if (DOM.canvasPlaceholder) {
+        DOM.canvasPlaceholder.style.display = state.sections.length ? 'none' : '';
+    }
+    state.selectedSection = null;
+    state.selectedElement = null;
+    updateElementsCount();
 }
 
 function saveToHistory() {
     state.history = state.history.slice(0, state.historyIndex + 1);
-    state.history.push({ sections: state.sections.map(s => ({ id: s.id, name: s.name })) });
+    state.history.push({
+        sections: state.sections.map(s => ({
+            id: s.id,
+            sectionId: s.sectionId,
+            name: s.name,
+            html: getCleanSectionHTML(s),
+            css: s.css,
+            isImage: s.isImage,
+            imageData: s.imageData ? { ...s.imageData } : null,
+            rotation: s.rotation,
+            elements: s.elements ? [...s.elements] : []
+        }))
+    });
     state.historyIndex++;
-    if (state.history.length > 50) { state.history.shift(); state.historyIndex--; }
+    if (state.history.length > 50) {
+        state.history.shift();
+        state.historyIndex--;
+    }
 }
 
-function undo() { 
-    if (state.historyIndex > 0) { 
-        state.historyIndex--; 
-        showToast('Отменено', 'info'); 
+function undo() {
+    if (state.historyIndex > 0) {
+        state.historyIndex--;
+        restoreSectionsFromHistory(state.history[state.historyIndex]);
+        showToast('Отменено', 'info');
         updateStatus('Отменено действие');
-    } 
+    } else {
+        showToast('Нет действий для отмены', 'info');
+    }
 }
 
-function redo() { 
-    if (state.historyIndex < state.history.length - 1) { 
-        state.historyIndex++; 
+function redo() {
+    if (state.historyIndex < state.history.length - 1) {
+        state.historyIndex++;
+        restoreSectionsFromHistory(state.history[state.historyIndex]);
         showToast('Повторено', 'info');
         updateStatus('Повторено действие');
-    } 
+    } else {
+        showToast('Нет действий для повтора', 'info');
+    }
 }
 
 function setupKeyboardShortcuts() {

@@ -38,15 +38,6 @@
                     <button class="toolbar-btn" onclick="duplicateSelected()" title="Дублировать">
                         <i class="fas fa-copy"></i>
                     </button>
-                    <button class="toolbar-btn" onclick="moveSectionUp()" title="Вверх">
-                        <i class="fas fa-arrow-up"></i>
-                    </button>
-                    <button class="toolbar-btn" onclick="moveSectionDown()" title="Вниз">
-                        <i class="fas fa-arrow-down"></i>
-                    </button>
-                    <button class="toolbar-btn" onclick="showAddElementModal()" title="Добавить элемент">
-                        <i class="fas fa-plus"></i>
-                    </button>
                     <button class="toolbar-btn toolbar-btn-danger" onclick="deleteSelected()" title="Удалить">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -97,14 +88,6 @@
                         <i class="fas fa-th-large"></i>
                         <span>Секции</span>
                     </button>
-                    <button class="sidebar-tab" data-tab="components">
-                        <i class="fas fa-puzzle-piece"></i>
-                        <span>Компоненты</span>
-                    </button>
-                    <button class="sidebar-tab" data-tab="gallery">
-                        <i class="fas fa-images"></i>
-                        <span>Галерея</span>
-                    </button>
                 </div>
                 
                 <div class="sidebar-content">
@@ -130,80 +113,6 @@
                         </div>
 
                         <div class="accordion-container" id="accordion-container">
-                        </div>
-                    </div>
-                    
-                    <div class="tab-panel" id="components-tab">
-                        <div class="components-grid">
-                            <div class="component-item" data-type="h1">
-                                <i class="fas fa-heading"></i>
-                                <span>H1 Заголовок</span>
-                            </div>
-                            <div class="component-item" data-type="h2">
-                                <i class="fas fa-heading"></i>
-                                <span>H2 Заголовок</span>
-                            </div>
-                            <div class="component-item" data-type="h3">
-                                <i class="fas fa-heading"></i>
-                                <span>H3 Заголовок</span>
-                            </div>
-                            <div class="component-item" data-type="p">
-                                <i class="fas fa-paragraph"></i>
-                                <span>Текст</span>
-                            </div>
-                            <div class="component-item" data-type="button">
-                                <i class="fas fa-square"></i>
-                                <span>Кнопка</span>
-                            </div>
-                            <div class="component-item" data-type="img">
-                                <i class="fas fa-image"></i>
-                                <span>Изображение</span>
-                            </div>
-                            <div class="component-item" data-type="div">
-                                <i class="fas fa-square"></i>
-                                <span>Блок</span>
-                            </div>
-                            <div class="component-item" data-type="hr">
-                                <i class="fas fa-minus"></i>
-                                <span>Линия</span>
-                            </div>
-                            <div class="component-item" data-type="video">
-                                <i class="fas fa-video"></i>
-                                <span>Видео</span>
-                            </div>
-                            <div class="component-item" data-type="form">
-                                <i class="fas fa-envelope"></i>
-                                <span>Форма</span>
-                            </div>
-                            <div class="component-item" data-type="map">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>Карта</span>
-                            </div>
-                            <div class="component-item" data-type="social">
-                                <i class="fas fa-share-alt"></i>
-                                <span>Соцсети</span>
-                            </div>
-                            <div class="component-item" data-type="icon">
-                                <i class="fas fa-icons"></i>
-                                <span>Иконка</span>
-                            </div>
-                            <div class="component-item" data-type="badge">
-                                <i class="fas fa-tag"></i>
-                                <span>Бейдж</span>
-                            </div>
-                            <div class="component-item" data-type="card">
-                                <i class="fas fa-id-card"></i>
-                                <span>Карточка</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab-panel" id="gallery-tab">
-                        <button class="btn btn-primary" id="upload-image-btn" style="width: 100%; margin-bottom: 16px;">
-                            <i class="fas fa-upload"></i>
-                            Загрузить изображение
-                        </button>
-                        <div class="images-grid" id="images-gallery">
                         </div>
                     </div>
                 </div>

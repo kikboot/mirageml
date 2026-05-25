@@ -28,9 +28,7 @@ window.renderSectionPropertiesEnhanced = function(section) {
                             <span style="font-size:11px;color:var(--primary);background:rgba(99,102,241,0.2);padding:2px 6px;border-radius:4px;">${el.tag}</span>
                         </div>
                     `).join('') : '<p style="padding:0 20px;color:var(--gray);">Нет элементов</p>'}
-                    <button class="btn btn-ghost" onclick="showAddElementModal('${section.id}')" style="width:calc(100% - 40px);margin:12px 20px;">
-                        <i class="fas fa-plus"></i> Добавить элемент
-                    </button>
+
                 </div>
             </div>
         </div>
