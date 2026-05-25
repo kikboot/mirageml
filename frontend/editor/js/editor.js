@@ -1514,9 +1514,13 @@ function setupCanvasInteractions() {
         if (sectionEl) {
             const section = state.sections.find(s => s.id === sectionEl.id);
             if (section) {
-                const interactiveElement = e.target.closest('h1, h2, h3, h4, p, button, img, a, i, svg, video, .logo');
+                const interactiveElement = e.target.closest('h1, h2, h3, h4, p, button, img, a, i, svg, video, .logo, span, div');
                 
                 if (interactiveElement) {
+                    if (interactiveElement.tagName === 'DIV' && [...interactiveElement.children].some(c => ['H1','H2','H3','H4','P','BUTTON','IMG','DIV'].includes(c.tagName))) {
+                        selectSection(section.id);
+                        return;
+                    }
                     const element = section.elements.find(el => el.element === interactiveElement);
                     if (element) {
                         selectElement(section.id, element.id, e);
@@ -1542,23 +1546,24 @@ function setupCanvasInteractions() {
     });
 
     DOM.canvas?.addEventListener('dblclick', (e) => {
-        const textElement = e.target.closest('h1, h2, h3, h4, p, button, a');
-        if (textElement && !e.target.closest('.section-controls')) {
-            const section = state.sections.find(s => s.element.contains(textElement));
-            if (section) {
-                const element = section.elements.find(el => el.element === textElement);
-                if (element) {
-                    selectElement(section.id, element.id);
-                    return;
-                }
-            }
-            const sectionEl = textElement.closest('.canvas-section');
-            if (sectionEl) {
-                const section = state.sections.find(s => s.id === sectionEl.id);
-                if (section) {
-                    selectSection(section.id);
-                }
-            }
+        const textElement = e.target.closest('h1, h2, h3, h4, p, button, a, span, div');
+        if (!textElement || e.target.closest('.section-controls, .resize-handle, .rotate-handle')) return;
+
+        if (textElement.tagName === 'DIV' && [...textElement.children].some(c => ['H1','H2','H3','H4','P','BUTTON','IMG','DIV'].includes(c.tagName))) {
+            return;
+        }
+
+        const sectionEl = textElement.closest('.canvas-section');
+        if (!sectionEl) return;
+        const section = state.sections.find(s => s.id === sectionEl.id);
+        if (!section) return;
+
+        const element = section.elements.find(el => el.element === textElement);
+        if (element) {
+            selectElement(section.id, element.id);
+            enableInlineEditing(element);
+        } else {
+            selectSection(section.id);
         }
     });
 
@@ -1572,6 +1577,55 @@ function setupCanvasInteractions() {
     DOM.canvasWrapper?.addEventListener('scroll', () => {
         updateMinimap();
     });
+}
+
+function enableInlineEditing(element) {
+    const el = element.element;
+    if (!el || el.isContentEditable) return;
+
+    el.contentEditable = 'plaintext-only';
+    if (!el.isContentEditable) el.contentEditable = true;
+    el.classList.add('canvas-element-highlight', 'inline-editing');
+    el.focus();
+
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    el.dataset.originalText = el.textContent;
+
+    const commit = () => {
+        if (!el.isContentEditable) return;
+        el.contentEditable = 'false';
+        el.classList.remove('canvas-element-highlight', 'inline-editing');
+        el.dataset.originalText = '';
+        const ta = document.getElementById('el-text');
+        if (ta) ta.value = el.textContent;
+        element.name = getElementName(el);
+    };
+
+    const cancel = () => {
+        if (!el.isContentEditable) return;
+        el.textContent = el.dataset.originalText || '';
+        el.contentEditable = 'false';
+        el.classList.remove('canvas-element-highlight', 'inline-editing');
+        el.dataset.originalText = '';
+    };
+
+    const onBlur = () => { cleanup(); commit(); };
+    const onKeydown = (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); cleanup(); commit(); }
+        else if (e.key === 'Escape') { e.preventDefault(); cleanup(); cancel(); }
+    };
+    const cleanup = () => {
+        el.removeEventListener('blur', onBlur);
+        el.removeEventListener('keydown', onKeydown);
+    };
+
+    el.addEventListener('blur', onBlur);
+    el.addEventListener('keydown', onKeydown);
 }
 
 function renderRulers() {
@@ -1815,7 +1869,6 @@ function setupEventListeners() {
 
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).catch(() => {
-        // Fallback для старых браузеров
         const textarea = document.createElement('textarea');
         textarea.value = text;
         document.body.appendChild(textarea);
@@ -1948,6 +2001,7 @@ function generateHTML(includeInlineCSS = false, cssContent = '') {
     <title>MiruFlow Project</title>
     <meta name="generator" content="MiruFlow Editor">
     <meta name="description" content="Project created with MiruFlow visual editor">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 `;
 
     if (includeInlineCSS) {
@@ -1995,6 +2049,29 @@ ${cssContent.split('\n').map(line => '        ' + line).join('\n')}
                 btn.replaceWith(a);
             }
         });
+
+        if (!clone.querySelector('.burger-checkbox')) {
+            const headerEl = clone.querySelector('header');
+            if (headerEl) {
+                const nav = headerEl.querySelector('nav');
+                if (nav) {
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'burger-checkbox';
+                    checkbox.id = `burger-${index}`;
+                    checkbox.style.display = 'none';
+
+                    const label = document.createElement('label');
+                    label.className = 'burger-label';
+                    label.htmlFor = `burger-${index}`;
+                    label.setAttribute('aria-label', 'Меню');
+                    label.innerHTML = '<span></span><span></span><span></span>';
+
+                    nav.parentNode.insertBefore(label, nav);
+                    nav.parentNode.insertBefore(checkbox, label);
+                }
+            }
+        }
 
         html += `    <section class="section-${index + 1}">\n`;
 
@@ -2122,30 +2199,129 @@ section {
         }
     });
 
-    css += `
-@media (max-width: 768px) {
-    body {
-        font-size: 14px;
-    }
-    
-    .section-1,
-    .section-2,
-    .section-3,
-    .section-4,
-    .section-5 {
-        width: 100%;
-        padding: 20px;
-    }
-}
-
-@media (max-width: 480px) {
-    body {
-        font-size: 12px;
-    }
-}
-`;
+    css += generateResponsiveCSS();
 
     return css;
+}
+
+function generateResponsiveCSS() {
+    return `.burger-checkbox,
+.burger-label {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    section, footer {
+        flex-direction: column !important;
+        height: auto !important;
+        min-height: auto !important;
+    }
+
+    section > *, footer > * {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    [style*="display: flex"], [style*="display:flex"] {
+        flex-direction: column !important;
+        height: auto !important;
+    }
+
+    [style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    header {
+        padding: 10px 15px !important;
+    }
+
+    header > div[style*="display: flex"] {
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .burger-checkbox {
+        position: absolute !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        display: block !important;
+    }
+
+    .burger-label {
+        display: flex !important;
+        flex-direction: column;
+        gap: 4px;
+        cursor: pointer;
+        padding: 8px;
+        margin-left: auto;
+    }
+
+    .burger-label {
+        color: #333;
+    }
+
+    .burger-label span {
+        display: block !important;
+        width: 22px;
+        height: 2px;
+        background: currentColor;
+        border-radius: 2px;
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.7);
+        transition: transform 0.3s, opacity 0.3s;
+    }
+
+    header nav {
+        display: none !important;
+    }
+
+    .burger-checkbox ~ div {
+        display: none !important;
+    }
+
+    .burger-checkbox:checked ~ nav {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        margin-top: 15px;
+    }
+
+    .burger-checkbox:checked ~ div {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 10px !important;
+        margin-top: 10px;
+    }
+
+    .burger-checkbox:checked ~ nav a {
+        padding: 12px 0 !important;
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+        text-align: center;
+    }
+
+    .burger-checkbox:checked + .burger-label span:nth-child(1) {
+        transform: rotate(45deg) translate(4px, 4px);
+    }
+
+    .burger-checkbox:checked + .burger-label span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .burger-checkbox:checked + .burger-label span:nth-child(3) {
+        transform: rotate(-45deg) translate(4px, -4px);
+    }
+}`;
 }
 
 async function generateZIP() {

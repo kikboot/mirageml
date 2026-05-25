@@ -16,6 +16,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const JWT_SECRET = process.env.JWT_SECRET || '8ddfda05949bcc8057da59d2b7e62b4f3e12f00d6af892704d87530ae6731cab';
 
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view cache', false);
@@ -250,14 +251,12 @@ app.post('/api/auth/google', async (req, res) => {
             console.log(`[Google OAuth] Вход существующего пользователя: ${email}`);
         }
 
-        // Создаём JWT токен
         const token = jwt.sign(
             { userId: user.id, email: user.email, role: user.role || 'user' },
             JWT_SECRET,
             { expiresIn: '1h' }
         );
 
-        // Записываем сессию
         const device = getDeviceInfo(req.headers['user-agent']);
         const ip = req.ip || req.connection.remoteAddress;
         const location = getLocationByIP(ip);
@@ -273,7 +272,6 @@ app.post('/api/auth/google', async (req, res) => {
 
         await db.createSession(newSession);
 
-        // Устанавливаем куки
         res.cookie('authToken', token, {
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000,

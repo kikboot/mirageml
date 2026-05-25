@@ -13,7 +13,6 @@ window.renderSectionPropertiesEnhanced = function(section) {
     const currentOpacity = getOpacityFromColor(bgStyle);
 
     DOM.propertiesContent.innerHTML = `
-        <!-- Элементы секции -->
         <div class="property-accordion">
             <div class="accordion-item expanded" data-accordion="elements">
                 <div class="accordion-item-header" onclick="togglePropertyAccordion('elements')">
@@ -36,7 +35,6 @@ window.renderSectionPropertiesEnhanced = function(section) {
             </div>
         </div>
 
-        <!-- Основные свойства -->
         <div class="property-accordion">
             <div class="accordion-item" data-accordion="main">
                 <div class="accordion-item-header" onclick="togglePropertyAccordion('main')">
@@ -53,7 +51,6 @@ window.renderSectionPropertiesEnhanced = function(section) {
             </div>
         </div>
 
-        <!-- Размер и отступы -->
         <div class="property-accordion">
             <div class="accordion-item" data-accordion="size">
                 <div class="accordion-item-header" onclick="togglePropertyAccordion('size')">
@@ -90,7 +87,6 @@ window.renderSectionPropertiesEnhanced = function(section) {
             </div>
         </div>
 
-        <!-- Фон секции -->
         <div class="property-accordion">
             <div class="accordion-item expanded" data-accordion="background">
                 <div class="accordion-item-header" onclick="togglePropertyAccordion('background')">
@@ -114,7 +110,6 @@ window.renderSectionPropertiesEnhanced = function(section) {
                         </button>
                     </div>
 
-                    <!-- Панель цвета -->
                     <div id="bg-color-panel" style="display:${bgType==='color'?'block':'none'}">
                         <div class="property-item">
                             <label><i class="fas fa-circle"></i> Цвет фона</label>
@@ -132,7 +127,6 @@ window.renderSectionPropertiesEnhanced = function(section) {
                         </div>
                     </div>
 
-                    <!-- Панель градиента с превью -->
                     <div id="bg-gradient-panel" style="display:${bgType==='gradient'?'block':'none'}">
                         <div class="gradient-preview" id="gradient-preview" style="width:100%;height:60px;border-radius:8px;margin-bottom:12px;border:1px solid var(--glass-border);"></div>
                         <div class="property-item">
@@ -171,7 +165,6 @@ window.renderSectionPropertiesEnhanced = function(section) {
                         </div>
                     </div>
 
-                    <!-- Панель изображения -->
                     <div id="bg-image-panel" style="display:${bgType==='image'?'block':'none'}">
                         <div class="property-item">
                             <label><i class="fas fa-image"></i> URL изображения</label>
@@ -231,7 +224,6 @@ window.renderSectionPropertiesEnhanced = function(section) {
                         </div>
                     </div>
 
-                    <!-- Панель видео -->
                     <div id="bg-video-panel" style="display:${bgType==='video'?'block':'none'}">
                         <div class="property-item">
                             <label><i class="fas fa-video"></i> URL видео</label>
@@ -261,7 +253,6 @@ window.renderSectionPropertiesEnhanced = function(section) {
                         </div>
                     </div>
 
-                    <!-- Фильтры фона (Image Filters - унифицировано) -->
                     <div class="image-filters-section" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--glass-border);">
                         <h4 style="font-size:12px;color:var(--primary);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
                             <i class="fas fa-adjust"></i> Фильтры фона
@@ -313,7 +304,6 @@ window.renderSectionPropertiesEnhanced = function(section) {
             </div>
         </div>
 
-        <!-- Действия -->
         <div class="property-accordion">
             <div class="accordion-item" data-accordion="actions">
                 <div class="accordion-item-header" onclick="togglePropertyAccordion('actions')">
@@ -351,7 +341,6 @@ window.renderElementPropertiesEnhanced = function(element) {
     const isVideo = tag === 'video';
 
     DOM.propertiesContent.innerHTML = `
-        <!-- Информация об элементе -->
         <div class="property-accordion">
             <div class="accordion-item expanded" data-accordion="el-info">
                 <div class="accordion-item-header" onclick="togglePropertyAccordion('el-info')">
@@ -370,7 +359,7 @@ window.renderElementPropertiesEnhanced = function(element) {
                         <textarea id="el-text" rows="3" oninput="updateElementText(this.value)">${el.textContent || ''}</textarea>
                     </div>
                     ` : ''}
-                    ${isButton ? `
+                    ${isButton || tag === 'a' ? `
                     <div class="property-item">
                         <label><i class="fas fa-link"></i> Ссылка (href)</label>
                         <input type="text" id="el-href" value="${el.getAttribute('data-href') || el.getAttribute('href') || ''}" onchange="updateElementHref(this.value)" placeholder="https://...">
@@ -391,7 +380,6 @@ window.renderElementPropertiesEnhanced = function(element) {
             </div>
         </div>
 
-        <!-- Цвета и градиенты -->
         <div class="property-accordion">
             <div class="accordion-item" data-accordion="el-colors">
                 <div class="accordion-item-header" onclick="togglePropertyAccordion('el-colors')">
@@ -429,7 +417,6 @@ window.renderElementPropertiesEnhanced = function(element) {
             </div>
         </div>
 
-        <!-- Шрифт и типографика -->
         ${(isText || isButton) ? `
         <div class="property-accordion">
             <div class="accordion-item" data-accordion="el-font">
@@ -492,7 +479,6 @@ window.renderElementPropertiesEnhanced = function(element) {
         </div>
         ` : ''}
 
-        <!-- Размер и отступы -->
         <div class="property-accordion">
             <div class="accordion-item" data-accordion="el-size">
                 <div class="accordion-item-header" onclick="togglePropertyAccordion('el-size')">
@@ -527,7 +513,6 @@ window.renderElementPropertiesEnhanced = function(element) {
             </div>
         </div>
 
-        <!-- Обводка (Border) -->
         <div class="property-accordion">
             <div class="accordion-item" data-accordion="el-border">
                 <div class="accordion-item-header" onclick="togglePropertyAccordion('el-border')">
@@ -563,7 +548,6 @@ window.renderElementPropertiesEnhanced = function(element) {
             </div>
         </div>
 
-        <!-- Эффекты (тени, трансформации) -->
         <div class="property-accordion">
             <div class="accordion-item" data-accordion="el-effects">
                 <div class="accordion-item-header" onclick="togglePropertyAccordion('el-effects')">
@@ -592,7 +576,6 @@ window.renderElementPropertiesEnhanced = function(element) {
             </div>
         </div>
 
-        <!-- Image Filters (унифицировано для изображений, лого, иконок) -->
         ${(isImage || isIcon) ? `
         <div class="property-accordion">
             <div class="accordion-item expanded" data-accordion="el-filters">
@@ -649,7 +632,6 @@ window.renderElementPropertiesEnhanced = function(element) {
         </div>
         ` : ''}
 
-        <!-- Иконки: библиотека с поиском -->
         ${isIcon ? `
         <div class="property-accordion">
             <div class="accordion-item" data-accordion="el-icon-library">
@@ -671,7 +653,6 @@ window.renderElementPropertiesEnhanced = function(element) {
         </div>
         ` : ''}
 
-        <!-- Действия -->
         <div class="property-accordion">
             <div class="accordion-item" data-accordion="el-actions">
                 <div class="accordion-item-header" onclick="togglePropertyAccordion('el-actions')">

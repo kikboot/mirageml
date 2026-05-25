@@ -1,7 +1,3 @@
-// ==========================================
-// MiruFlow Reviews Page - Full Header Functionality
-// ==========================================
-
 document.addEventListener('DOMContentLoaded', () => {
     console.log('[Reviews] DOM загружен');
     
@@ -26,10 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     window.addEventListener('resize', handleResize);
 });
-
-// ==========================================
-// Mobile Menu
-// ==========================================
 
 function initMobileMenu() {
     updateMobileMenuVisibility();
@@ -116,10 +108,6 @@ function handleResize() {
         updateMobileMenuVisibility();
     }, 250);
 }
-
-// ==========================================
-// Modals
-// ==========================================
 
 function initModals() {
     const loginBtn = document.getElementById('login-btn');
@@ -353,10 +341,6 @@ function showNotification(notificationId, message, type = 'error') {
 function showSuccessMessage(message) {
     alert(message);
 }
-
-// ==========================================
-// Auth
-// ==========================================
 
 let pendingRegistration = null;
 let pendingGoogleData = null;
@@ -672,10 +656,6 @@ async function submitRegistration(name, email, password) {
     }
 }
 
-// ==========================================
-// Terms Modal
-// ==========================================
-
 function initTermsHandlers() {
     const acceptCheckbox = document.getElementById('accept-terms');
     const acceptBtn = document.getElementById('terms-accept-btn');
@@ -744,10 +724,6 @@ function showTermsModal() {
 
     showModal(termsModal);
 }
-
-// ==========================================
-// Review Form
-// ==========================================
 
 function updateReviewFormForAuthorizedUser(user) {
     const formContainer = document.querySelector('.form-container');
@@ -882,10 +858,6 @@ async function submitReview(reviewData) {
         alert('Ошибка подключения к серверу');
     }
 }
-
-// ==========================================
-// Reviews Display
-// ==========================================
 
 function initRatingFilter() {
     document.querySelectorAll('.rating-filter-btn').forEach(btn => {

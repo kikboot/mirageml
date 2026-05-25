@@ -708,7 +708,6 @@ body {
     flex-shrink: 0;
 }
 
-/* Divider */
 .divider {
     display: flex;
     align-items: center;
@@ -729,7 +728,6 @@ body {
     padding: 0 16px;
 }
 
-/* Terms Modal Styles */
 .terms-modal .modal-content {
     max-width: 700px;
     max-height: 85vh;

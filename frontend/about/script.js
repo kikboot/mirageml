@@ -1413,7 +1413,7 @@ function resetAuthUI() {
                 <span>Регистрация</span>
             </button>
         `;
-        // Re-attach event listeners
+
         const loginBtn = document.getElementById('login-btn');
         const registerBtn = document.getElementById('register-btn');
         if (loginBtn) {
