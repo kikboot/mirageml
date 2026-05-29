@@ -226,7 +226,6 @@ body {
     display: flex;
     align-items: center;
     gap: 16px;
-    flex: 1;
 }
 
 .mobile-menu-btn {
@@ -333,11 +332,16 @@ body {
 .auth-buttons {
     display: flex;
     gap: 12px;
-    flex: 1;
     justify-content: flex-end;
     position: relative;
     z-index: 1001;
     pointer-events: auto;
+}
+
+.auth-buttons .btn {
+    padding: 12px 24px;
+    font-size: 14px;
+    gap: 8px;
 }
 
 .btn {

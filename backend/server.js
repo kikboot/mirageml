@@ -9,6 +9,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { google } = require('googleapis');
 const session = require('express-session');
+const multer = require('multer');
+const crypto = require('crypto');
 const { USER_ROLES, ROLE_PERMISSIONS, hasPermission, isOwner } = require('./models/user-roles');
 const db = require('./database/db');
 
@@ -831,6 +833,216 @@ app.post('/api/reviews', async (req, res) => {
     }
 });
 
+app.get('/api/blog', async (req, res) => {
+    try {
+        const { category, limit, offset } = req.query;
+        let userId = null;
+        if (req.headers.authorization) {
+            try {
+                const token = req.headers.authorization.split(' ')[1];
+                const decoded = jwt.verify(token, JWT_SECRET);
+                userId = decoded.userId;
+            } catch (e) {}
+        }
+        const posts = await db.getAllBlogPosts({
+            category: category || 'all',
+            limit: parseInt(limit) || 20,
+            offset: parseInt(offset) || 0,
+            userId
+        });
+        const total = await db.getBlogPostsCount(category);
+        res.json({ posts, total });
+    } catch (error) {
+        console.error('[Get Blog Posts] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка загрузки статей' });
+    }
+});
+
+app.get('/api/blog/id/:id', async (req, res) => {
+    try {
+        const post = await db.getBlogPostById(req.params.id);
+        if (!post) {
+            return res.status(404).json({ error: 'Статья не найдена' });
+        }
+        res.json(post);
+    } catch (error) {
+        console.error('[Get Blog Post By ID] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка загрузки статьи' });
+    }
+});
+
+app.get('/api/blog/:slug', async (req, res) => {
+    try {
+        const post = await db.getBlogPostBySlug(req.params.slug);
+        if (!post) {
+            return res.status(404).json({ error: 'Статья не найдена' });
+        }
+        res.json(post);
+    } catch (error) {
+        console.error('[Get Blog Post] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка загрузки статьи' });
+    }
+});
+
+app.post('/api/blog', authenticateToken, async (req, res) => {
+    try {
+        const { title, excerpt, content, category, cover_image, published, tags } = req.body;
+        const slug = req.body.slug || db.generateSlug(title);
+        const id = Date.now().toString();
+
+        const post = await db.createBlogPost({
+            id,
+            user_id: req.user.userId,
+            title,
+            slug,
+            excerpt,
+            content,
+            category,
+            cover_image,
+            published,
+            tags: tags || ''
+        });
+
+        res.status(201).json({ success: true, post });
+    } catch (error) {
+        console.error('[Create Blog Post] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка создания статьи' });
+    }
+});
+
+app.put('/api/blog/:id', authenticateToken, async (req, res) => {
+    try {
+        const existing = await db.getBlogPostById(req.params.id);
+        if (!existing) {
+            return res.status(404).json({ error: 'Статья не найдена' });
+        }
+        if (existing.user_id !== req.user.userId) {
+            return res.status(403).json({ error: 'Нет прав на редактирование' });
+        }
+
+        const updated = await db.updateBlogPost(req.params.id, req.body);
+        res.json({ success: true, post: updated });
+    } catch (error) {
+        console.error('[Update Blog Post] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка обновления статьи' });
+    }
+});
+
+app.delete('/api/blog/:id', authenticateToken, async (req, res) => {
+    try {
+        const existing = await db.getBlogPostById(req.params.id);
+        if (!existing) {
+            return res.status(404).json({ error: 'Статья не найдена' });
+        }
+        if (existing.user_id !== req.user.userId) {
+            return res.status(403).json({ error: 'Нет прав на удаление' });
+        }
+
+        await db.deleteBlogPost(req.params.id);
+        res.json({ success: true, message: 'Статья удалена' });
+    } catch (error) {
+        console.error('[Delete Blog Post] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка удаления статьи' });
+    }
+});
+
+app.post('/api/blog/:id/like', authenticateToken, async (req, res) => {
+    try {
+        const result = await db.toggleBlogLike(req.params.id, req.user.userId);
+        const count = await db.getBlogLikesCount(req.params.id);
+        res.json({ ...result, count });
+    } catch (error) {
+        console.error('[Toggle Like] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка' });
+    }
+});
+
+app.get('/api/blog/:id/like', async (req, res) => {
+    try {
+        const count = await db.getBlogLikesCount(req.params.id);
+        let liked = false;
+        if (req.headers.authorization) {
+            try {
+                const token = req.headers.authorization.split(' ')[1];
+                const decoded = jwt.verify(token, JWT_SECRET);
+                liked = await db.checkBlogLike(req.params.id, decoded.userId);
+            } catch (e) {}
+        }
+        res.json({ count, liked });
+    } catch (error) {
+        console.error('[Get Like] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка' });
+    }
+});
+
+app.get('/api/blog/:id/comments', async (req, res) => {
+    try {
+        const comments = await db.getBlogComments(req.params.id);
+        res.json({ comments });
+    } catch (error) {
+        console.error('[Get Comments] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка' });
+    }
+});
+
+app.post('/api/blog/:id/comments', authenticateToken, async (req, res) => {
+    try {
+        const { content } = req.body;
+        if (!content || !content.trim()) {
+            return res.status(400).json({ error: 'Комментарий не может быть пустым' });
+        }
+        const comment = await db.createBlogComment(req.params.id, req.user.userId, content.trim());
+        const enriched = await db.getBlogComments(req.params.id);
+        res.status(201).json({ comment: enriched.find(c => c.id === comment.id) || comment });
+    } catch (error) {
+        console.error('[Create Comment] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка' });
+    }
+});
+
+app.delete('/api/blog/comments/:id', authenticateToken, async (req, res) => {
+    try {
+        const deleted = await db.deleteBlogComment(req.params.id, req.user.userId);
+        if (!deleted) {
+            return res.status(404).json({ error: 'Комментарий не найден' });
+        }
+        res.json({ success: true, message: 'Комментарий удалён' });
+    } catch (error) {
+        console.error('[Delete Comment] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка' });
+    }
+});
+
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadsDir),
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        const name = crypto.randomBytes(16).toString('hex');
+        cb(null, name + ext);
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    const allowed = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.ico'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, allowed.includes(ext));
+};
+
+const upload = multer({ storage, fileFilter, limits: { fileSize: 10 * 1024 * 1024 } });
+
+app.use('/uploads', express.static(uploadsDir));
+
+app.post('/api/upload', authenticateToken, (req, res) => {
+    upload.single('image')(req, res, (err) => {
+        if (err) return res.status(400).json({ error: 'Ошибка загрузки файла' });
+        if (!req.file) return res.status(400).json({ error: 'Файл не выбран' });
+        res.json({ url: '/uploads/' + req.file.filename, filename: req.file.filename });
+    });
+});
+
 app.get('/api/templates', async (req, res) => {
     try {
         const templates = await db.getPublicTemplates();
@@ -1113,6 +1325,18 @@ app.get('/support', (req, res) => {
 
 app.get('/docs', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/docs/index.html'));
+});
+
+app.get('/blog', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/blog/index.html'));
+});
+
+app.get('/blog/create', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/blog/create.html'));
+});
+
+app.get('/blog/article', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/blog/article.html'));
 });
 
 app.get('/conditions', (req, res) => {
@@ -1695,6 +1919,131 @@ app.get('/admin/reviews', requireAdminAuth, async (req, res) => {
     } catch (error) {
         console.error('[Admin Reviews] Ошибка:', error);
         res.status(500).send('Ошибка сервера');
+    }
+});
+
+app.get('/admin/blog', requireAdminAuth, async (req, res) => {
+    try {
+        const posts = await db.getAllBlogPostsAdmin();
+        const canManage = req.session.adminRole === USER_ROLES.DEVELOPER ||
+                          req.session.adminRole === USER_ROLES.MODERATOR;
+
+        const escapeHtml = (s) => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+        const rows = posts.map(p => {
+            const title = escapeHtml(p.title);
+            const author = escapeHtml(p.author_name || '—');
+            const cat = escapeHtml(p.category || '—');
+            const date = new Date(p.created_at).toLocaleDateString('ru-RU');
+            const published = p.published;
+            const statusBadge = published
+                ? '<span class="badge badge-success"><i class="fas fa-check"></i> Опубликовано</span>'
+                : '<span class="badge badge-warning"><i class="fas fa-clock"></i> Черновик</span>';
+            const actions = canManage ? `
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <a href="../blog/create.html?edit=${p.id}" class="btn btn-ghost" style="padding:6px 12px;font-size:12px;" target="_blank"><i class="fas fa-edit"></i></a>
+                    <button class="btn btn-success" style="padding:6px 12px;font-size:12px;" onclick="togglePublish('${p.id}')"><i class="fas ${published ? 'fa-eye-slash' : 'fa-eye'}"></i></button>
+                    <button class="btn btn-danger" style="padding:6px 12px;font-size:12px;" onclick="deletePost('${p.id}','${escapeHtml(p.title.replace(/'/g,"\\'"))}')"><i class="fas fa-trash"></i></button>
+                </div>
+            ` : '<span style="color:var(--text-secondary);font-size:12px;">Нет доступа</span>';
+            return `<tr>
+                <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${title}</td>
+                <td>${author}</td>
+                <td>${cat}</td>
+                <td>${statusBadge}</td>
+                <td style="text-align:center;">${p.likes_count || 0}</td>
+                <td style="text-align:center;">${p.comments_count || 0}</td>
+                <td style="white-space:nowrap;">${date}</td>
+                <td>${actions}</td>
+            </tr>`;
+        }).join('');
+
+        const body = `
+            <div class="card">
+                <div class="card-header-flex">
+                    <h3><i class="fas fa-blog"></i> Статьи блога (${posts.length})</h3>
+                    <a href="../blog/create.html" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-plus"></i> Новая статья
+                    </a>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Название</th>
+                                <th>Автор</th>
+                                <th>Категория</th>
+                                <th>Статус</th>
+                                <th style="text-align:center;"><i class="fas fa-heart"></i></th>
+                                <th style="text-align:center;"><i class="fas fa-comment"></i></th>
+                                <th>Дата</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            </div>
+            <script>
+                async function togglePublish(id) {
+                    if (!confirm('Изменить статус публикации?')) return;
+                    try {
+                        const r = await fetch('/api/admin/blog/' + id + '/toggle-publish', { method: 'POST' });
+                        if (r.ok) location.reload();
+                        else alert('Ошибка');
+                    } catch(e) { alert('Ошибка сети'); }
+                }
+                async function deletePost(id, title) {
+                    if (!confirm('Удалить статью "' + title + '"? Это действие нельзя отменить.')) return;
+                    try {
+                        const r = await fetch('/api/admin/blog/' + id, { method: 'DELETE' });
+                        if (r.ok) location.reload();
+                        else { const d = await r.json(); alert(d.error || 'Ошибка'); }
+                    } catch(e) { alert('Ошибка сети'); }
+                }
+            </script>
+        `;
+
+        const currentAdmin = {
+            id: req.session.adminId,
+            name: req.session.adminName,
+            email: req.session.adminEmail,
+            role: req.session.adminRole,
+            roleDisplay: req.session.adminRole === USER_ROLES.DEVELOPER ? 'Разработчик' :
+                req.session.adminRole === USER_ROLES.MODERATOR ? 'Модератор' : 'Администратор'
+        };
+
+        res.render('admin-layout', {
+            title: 'Управление блогом',
+            currentPage: 'blog',
+            body: body,
+            currentAdmin: currentAdmin
+        });
+    } catch (error) {
+        console.error('[Admin Blog] Ошибка:', error);
+        res.status(500).send('Ошибка сервера');
+    }
+});
+
+app.post('/api/admin/blog/:id/toggle-publish', requireAdminAuth, async (req, res) => {
+    try {
+        const post = await db.toggleBlogPostPublish(req.params.id);
+        if (!post) return res.status(404).json({ error: 'Статья не найдена' });
+        res.json({ success: true, published: post.published });
+    } catch (error) {
+        console.error('[Admin Toggle Publish] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка сервера' });
+    }
+});
+
+app.delete('/api/admin/blog/:id', requireAdminAuth, async (req, res) => {
+    try {
+        const post = await db.deleteBlogPost(req.params.id);
+        if (!post) return res.status(404).json({ error: 'Статья не найдена' });
+        res.json({ success: true });
+    } catch (error) {
+        console.error('[Admin Delete Blog] Ошибка:', error);
+        res.status(500).json({ error: 'Ошибка сервера' });
     }
 });
 

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статья - Блог MiruFlow</title>
+    <meta name="description" content="Читайте полезные статьи о веб-разработке и дизайне">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../main/style.css">
+    <link rel="stylesheet" href="../blog/style.css">
+    <link rel="stylesheet" href="../blog/article.css">
+    <script src="../js/api-config.js"></script>
+    <link type="image/x-icon" href="../logo/logo3.svg" rel="shortcut icon">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <div class="bg-static"></div>
+
+    <header class="glass-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+                    <div class="logo">
+                        <div class="logo-wrapper">
+                            <img src="../logo/logo3.svg" alt="MiruFlow Logo" class="logo-icon">
+                            <span class="logo-text">MiruFlow</span>
+                        </div>
+                    </div>
+                </div>
+                <nav class="main-nav">
+                    <a href="../main/index.html" class="nav-link"><span class="nav-icon"><i class="fas fa-home"></i></span><span class="nav-text">Главная</span></a>
+                    <a href="../about/index.html" class="nav-link"><span class="nav-icon"><i class="fas fa-info-circle"></i></span><span class="nav-text">О проекте</span></a>
+                    <a href="../reviews/index.html" class="nav-link"><span class="nav-icon"><i class="fas fa-comment"></i></span><span class="nav-text">Отзывы</span></a>
+                    <a href="../blog/index.html" class="nav-link active"><span class="nav-icon"><i class="fas fa-blog"></i></span><span class="nav-text">Блог</span></a>
+                    <a href="../support/index.html" class="nav-link"><span class="nav-icon"><i class="fas fa-headset"></i></span><span class="nav-text">Поддержка</span></a>
+                </nav>
+                <div class="auth-buttons">
+                    <button class="btn btn-ghost" id="login-btn"><i class="fas fa-sign-in-alt"></i><span>Войти</span></button>
+                    <button class="btn btn-primary" id="register-btn"><i class="fas fa-user-plus"></i><span>Регистрация</span></button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-menu-container">
+        <button class="mobile-menu-close"><i class="fas fa-times"></i></button>
+        <div class="mobile-logo"><img src="../logo/logo3.svg" alt="MiruFlow Logo" class="logo-icon"><span class="logo-text">MiruFlow</span></div>
+        <div class="mobile-menu-content">
+            <nav class="mobile-nav">
+                <a href="../main/index.html" class="nav-link"><span class="nav-icon"><i class="fas fa-home"></i></span><span class="nav-text">Главная</span></a>
+                <a href="../about/index.html" class="nav-link"><span class="nav-icon"><i class="fas fa-info-circle"></i></span><span class="nav-text">О проекте</span></a>
+                <a href="../reviews/index.html" class="nav-link"><span class="nav-icon"><i class="fas fa-comment"></i></span><span class="nav-text">Отзывы</span></a>
+                <a href="../blog/index.html" class="nav-link active"><span class="nav-icon"><i class="fas fa-blog"></i></span><span class="nav-text">Блог</span></a>
+                <a href="../support/index.html" class="nav-link"><span class="nav-icon"><i class="fas fa-headset"></i></span><span class="nav-text">Поддержка</span></a>
+            </nav>
+            <div class="mobile-profile-section">
+                <button class="mobile-profile-btn" id="mobile-profile-btn">
+                    <div class="mobile-profile-avatar"><i class="fas fa-user"></i></div>
+                    <span class="mobile-profile-text">Профиль</span>
+                    <i class="fas fa-chevron-down mobile-profile-arrow"></i>
+                </button>
+                <div class="mobile-profile-menu" id="mobile-profile-menu">
+                    <a href="../profile/index.html" class="mobile-profile-item"><i class="fas fa-user-circle"></i> Мой профиль</a>
+                    <button class="mobile-profile-item" id="mobile-logout-btn"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+                </div>
+            </div>
+            <div class="mobile-auth-buttons">
+                <button class="btn btn-ghost" id="mobile-login-btn"><i class="fas fa-sign-in-alt"></i><span>Войти</span></button>
+                <button class="btn btn-primary" id="mobile-register-btn"><i class="fas fa-user-plus"></i><span>Регистрация</span></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="login-modal">
+        <div class="modal-content modal-modern">
+            <span class="close-btn">&times;</span>
+            <h2>Вход в аккаунт</h2>
+            <div class="notification error" id="login-notification"></div>
+            <button type="button" class="google-signin-btn" id="google-login-btn">
+                <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                <span>Войти через Google</span>
+            </button>
+            <div class="divider"><span>или</span></div>
+            <form id="login-form">
+                <div class="form-group"><label for="login-email">Email</label><input type="email" id="login-email" required placeholder="Введите ваш email"></div>
+                <div class="form-group"><label for="login-password">Пароль</label><input type="password" id="login-password" required placeholder="Введите пароль"></div>
+                <div class="form-group-checkbox"><label class="checkbox-label"><input type="checkbox" id="remember-me"> Запомнить меня</label></div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost" id="cancel-login">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Войти</button>
+                </div>
+            </form>
+            <div class="switch-form">Нет аккаунта? <a id="switch-to-register">Зарегистрироваться</a></div>
+        </div>
+    </div>
+
+    <div class="modal" id="register-modal">
+        <div class="modal-content modal-modern">
+            <span class="close-btn">&times;</span>
+            <h2>Регистрация</h2>
+            <div class="notification error" id="register-notification"></div>
+            <button type="button" class="google-signin-btn" id="google-register-btn">
+                <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                <span>Зарегистрироваться через Google</span>
+            </button>
+            <div class="divider"><span>или</span></div>
+            <form id="register-form">
+                <div class="form-group"><label for="register-name">Имя</label><input type="text" id="register-name" required placeholder="Как вас зовут?"></div>
+                <div class="form-group"><label for="register-email">Email</label><input type="email" id="register-email" required placeholder="Введите ваш email"></div>
+                <div class="form-group"><label for="register-password">Пароль</label><input type="password" id="register-password" required placeholder="Придумайте пароль"></div>
+                <div class="form-group"><label for="register-confirm">Подтвердите пароль</label><input type="password" id="register-confirm" required placeholder="Повторите пароль"></div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost" id="cancel-register">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                </div>
+            </form>
+            <div class="switch-form">Уже есть аккаунт? <a id="switch-to-login">Войти</a></div>
+        </div>
+    </div>
+
+    <div class="modal" id="terms-modal">
+        <div class="modal-content modal-modern terms-modal">
+            <span class="close-btn">&times;</span>
+            <h2>Пользовательское соглашение</h2>
+            <div class="terms-content">
+                <h3>1. Общие положения</h3>
+                <p>Настоящее Пользовательское соглашение регулирует отношения между владельцем сервиса MiruFlow и пользователем.</p>
+                <h3>2. Предмет соглашения</h3>
+                <p>2.1. Администрация предоставляет Пользователю право использования визуального редактора MiruFlow.</p>
+                <p>2.2. Использование сервиса означает полное принятие условий Соглашения.</p>
+                <h3>3. Права и обязанности сторон</h3>
+                <p><strong>3.1. Администрация обязуется:</strong></p>
+                <ul><li>Обеспечить работоспособность сервиса</li><li>Обеспечить конфиденциальность данных</li></ul>
+                <p><strong>3.2. Пользователь обязуется:</strong></p>
+                <ul><li>Предоставлять достоверную информацию</li><li>Не нарушать работоспособность сервиса</li></ul>
+                <h3>4. Интеллектуальная собственность</h3>
+                <p>4.1. Все права на сервис MiruFlow принадлежат Администрации.</p>
+                <p>4.2. Пользователь сохраняет права на созданный контент.</p>
+                <h3>5. Ответственность сторон</h3>
+                <p>5.1. Администрация не несёт ответственности за временные перебои.</p>
+                <p>5.2. Пользователь несёт ответственность за созданный контент.</p>
+                <h3>6. Конфиденциальность</h3>
+                <p>6.1. Администрация обрабатывает персональные данные для предоставления услуг.</p>
+                <h3>7. Контактная информация</h3>
+                <p>support@mirage-ml.com</p>
+                <p class="terms-date">Дата последнего обновления: 4 апреля 2026 г.</p>
+            </div>
+            <div class="terms-accept">
+                <label class="checkbox-label terms-checkbox">
+                    <input type="checkbox" id="accept-terms">
+                    <span>Я принимаю условия Пользовательского соглашения *</span>
+                </label>
+            </div>
+            <div class="form-actions terms-actions">
+                <button type="button" class="btn btn-ghost" id="terms-decline-btn">Отклонить</button>
+                <button type="button" class="btn btn-primary" id="terms-accept-btn" disabled>Принять</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="article-hero" id="article-hero">
+        <div class="container">
+            <div class="article-loading" id="article-loading">
+                <i class="fas fa-spinner fa-pulse" style="font-size:32px;color:var(--primary);margin-bottom:16px;display:block;"></i>
+                <p style="color:var(--gray);font-size:15px;">Загрузка статьи...</p>
+            </div>
+            <div class="article-error" id="article-error" style="display:none;">
+                <h2>Статья не найдена</h2>
+                <p>Возможно, она была удалена или ссылка недействительна.</p>
+                <a href="../blog/index.html" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Вернуться в блог</a>
+            </div>
+            <div class="article-hero-content" id="article-hero-content" style="display:none;">
+                <div class="article-meta-top">
+                    <span class="article-category" id="article-category"></span>
+                    <span class="article-date" id="article-date"></span>
+                    <span class="article-read-time" id="article-read-time"></span>
+                </div>
+                <h1 class="article-title" id="article-title"></h1>
+                <div class="article-author-row">
+                    <div class="article-author-avatar" id="article-avatar">К</div>
+                    <span id="article-author-name"></span>
+                    <span class="article-author-sep">·</span>
+                    <div class="article-stats">
+                        <button class="article-stat-btn" id="article-stat-like">
+                            <i class="far fa-heart"></i>
+                            <span id="article-stat-like-count">0</span>
+                        </button>
+                        <a href="#comments" class="article-stat-btn" id="article-stat-comment">
+                            <i class="far fa-comment"></i>
+                            <span id="article-stat-comment-count">0</span>
+                        </a>
+                    </div>
+                    <div class="article-actions" id="article-actions" style="display:none;">
+                        <a class="article-action-btn" id="article-edit-btn"><i class="fas fa-pen"></i> Редактировать</a>
+                        <button class="article-action-btn danger" id="article-delete-btn"><i class="fas fa-trash"></i> Удалить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="article-cover-wrap" id="article-cover-wrap" style="display:none;">
+        <div class="container">
+            <div class="article-cover-placeholder" id="article-cover-placeholder">
+                <i class="fas fa-newspaper"></i>
+            </div>
+            <img class="article-cover-img" id="article-cover-img" src="" alt="" style="display:none;">
+        </div>
+    </div>
+
+    <section class="article-body">
+        <div class="container">
+            <div class="article-content" id="article-content"></div>
+        </div>
+    </section>
+
+    <section class="article-footer-section">
+        <div class="container">
+            <div class="article-footer-inner">
+                <a href="../blog/index.html" class="article-back">
+                    <i class="fas fa-arrow-left"></i> Все статьи
+                </a>
+                <div class="article-tags" id="article-tags"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="article-comments-section" id="article-comments-section">
+        <div class="container" style="max-width:720px;margin:0 auto;">
+            <h3 class="article-comments-title">
+                <i class="far fa-comment-dots"></i> Комментарии
+                <span id="comments-count"></span>
+            </h3>
+
+            <div class="comment-login-prompt" id="comment-login-prompt" style="display:none;">
+                <a id="comment-login-link">Войдите</a>, чтобы оставить комментарий
+            </div>
+
+            <div class="comment-form" id="comment-form" style="display:none;">
+                <textarea id="comment-input" placeholder="Напишите комментарий..." rows="2"></textarea>
+                <button class="comment-submit-btn" id="comment-submit-btn">Отправить</button>
+            </div>
+
+            <div class="comments-list" id="comments-list">
+                <div class="comments-empty" id="comments-empty">
+                    <i class="far fa-comment" style="font-size:24px;opacity:0.4;display:block;margin-bottom:8px;"></i>
+                    Пока нет комментариев
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer-modern">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-main">
+                    <div class="footer-brand">
+                        <div class="logo">
+                            <img src="../logo/logo3.svg" alt="MiruFlow Logo" class="logo-icon">
+                            <span class="logo-text">MiruFlow</span>
+                        </div>
+                        <p class="footer-description">Визуальный редактор для быстрого создания веб-страниц</p>
+                        <div class="social-links-modern">
+                            <a href="#" class="social-link" aria-label="VKontakte"><i class="fab fa-vk"></i></a>
+                            <a href="https://t.me/MiruFlow_Official" class="social-link" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+                            <a href="#" class="social-link" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                            <a href="#" class="social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                            <a href="#" class="social-link" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-links">
+                        <div class="link-group">
+                            <h4>Продукт</h4>
+                            <ul>
+                                <li><a href="../main/index.html#product">Что такое MiruFlow?</a></li>
+                                <li><a href="../main/index.html#features">Возможности</a></li>
+                                <li><a href="../main/index.html#how-it-works">Как это работает</a></li>
+                                <li><a href="../main/index.html#advantages">Преимущества</a></li>
+                            </ul>
+                        </div>
+                        <div class="link-group">
+                            <h4>Ресурсы</h4>
+                            <ul>
+                                <li><a href="../docs/">Документация</a></li>
+                                <li><a href="../blog/">Блог</a></li>
+                                <li><a href="../templates/">Шаблоны</a></li>
+                            </ul>
+                        </div>
+                        <div class="link-group">
+                            <h4>Контакты</h4>
+                            <ul class="contact-list">
+                                <li><i class="fas fa-envelope"></i> komandamiruflow@gmail.com</li>
+                                <li><i class="fas fa-map-marker-alt"></i> Россия, Ростов-на-Дону</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <div class="legal-links">
+                        <a href="../confidentiality/index.html">Политика конфиденциальности</a>
+                        <a href="../conditions/index.html">Условия использования</a>
+                        <a href="../offer/index.html">Публичная оферта</a>
+                    </div>
+                    <div class="copyright">
+                        <p>&copy; 2025 MiruFlow. Все права защищены.</p>
+                        <p class="made-with-love">Сделано с <i class="fas fa-heart"></i> в России</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../main/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const slug = params.get('slug');
+            const apiBase = window.API_BASE || 'http://localhost:3001';
+
+            if (!slug) {
+                document.getElementById('article-loading').style.display = 'none';
+                document.getElementById('article-error').style.display = 'block';
+                return;
+            }
+
+            let currentPost = null;
+            let currentUserId = null;
+            const token = localStorage.getItem('authToken');
+
+            function getUserIdFromToken() {
+                if (!token) return null;
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    return payload.userId || payload.id || null;
+                } catch (e) { return null; }
+            }
+
+            function isAuthor() {
+                return currentUserId && currentPost && currentPost.user_id === currentUserId;
+            }
+
+            function loadPost() {
+                fetch(apiBase + '/api/blog/' + encodeURIComponent(slug))
+                    .then(r => { if (!r.ok) throw new Error('Not found'); return r.json(); })
+                    .then(post => {
+                        currentPost = post;
+                        currentUserId = getUserIdFromToken();
+                        document.getElementById('article-loading').style.display = 'none';
+                        document.getElementById('article-hero-content').style.display = 'block';
+
+                        document.title = post.title + ' - Блог MiruFlow';
+
+                        const catEl = document.getElementById('article-category');
+                        catEl.textContent = post.category_name || 
+                            ({ tutorial:'Обучение', dev:'Разработка', design:'Дизайн', news:'Новости' }[post.category] || post.category);
+                        catEl.className = 'article-category ' + (post.category || '');
+
+                        const d = new Date(post.created_at || post.createdAt);
+                        document.getElementById('article-date').innerHTML = '<i class="far fa-calendar-alt"></i> ' + d.toLocaleDateString('ru-RU', { year:'numeric', month:'long', day:'numeric' });
+
+                        document.getElementById('article-title').textContent = post.title;
+
+                        const avatarEl = document.getElementById('article-avatar');
+                        avatarEl.textContent = (post.author_name || 'К')[0];
+                        document.getElementById('article-author-name').textContent = post.author_name || 'Кирилл';
+
+                        const plainText = post.content.replace(/<[^>]+>/g, ' ');
+                        const words = plainText.split(/\s+/).filter(Boolean).length;
+                        const readingTime = Math.max(1, Math.round(words / 200));
+                        const rtEl = document.getElementById('article-read-time');
+                        rtEl.innerHTML = '<i class="far fa-clock"></i> ' + readingTime + ' ' + (readingTime === 1 ? 'мин' : 'мин');
+
+                        if (post.cover_image) {
+                            const img = document.getElementById('article-cover-img');
+                            img.src = post.cover_image;
+                            img.style.display = 'block';
+                            document.getElementById('article-cover-placeholder').style.display = 'none';
+                            document.getElementById('article-cover-wrap').style.display = 'block';
+                        } else {
+                            document.getElementById('article-cover-wrap').style.display = 'none';
+                        }
+
+                        document.getElementById('article-content').innerHTML = post.content;
+
+                        if (post.tags) {
+                            const tags = post.tags.split(',').filter(Boolean);
+                            const tagsEl = document.getElementById('article-tags');
+                            if (tags.length) {
+                                tagsEl.innerHTML = tags.map(function(t) {
+                                    return '<a href="../blog/index.html?tag=' + encodeURIComponent(t.trim()) + '" class="article-tag">' + t.trim() + '</a>';
+                                }).join('');
+                            }
+                        }
+
+                        if (isAuthor()) {
+                            document.getElementById('article-actions').style.display = 'flex';
+                            document.getElementById('article-edit-btn').href = '../blog/create.html?edit=' + post.id;
+                        }
+
+                        loadLikes();
+                        loadComments();
+                    })
+                    .catch(() => {
+                        document.getElementById('article-loading').style.display = 'none';
+                        document.getElementById('article-error').style.display = 'block';
+                    });
+            }
+
+            function syncLikeUI(count, liked) {
+                document.getElementById('article-stat-like-count').textContent = count;
+                var statBtn = document.getElementById('article-stat-like');
+                if (liked) {
+                    statBtn.classList.add('liked');
+                    statBtn.querySelector('i').className = 'fas fa-heart';
+                } else {
+                    statBtn.classList.remove('liked');
+                    statBtn.querySelector('i').className = 'far fa-heart';
+                }
+            }
+
+            async function loadLikes() {
+                try {
+                    const t = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+                    const res = await fetch(apiBase + '/api/blog/' + currentPost.id + '/like', {
+                        headers: t ? { 'Authorization': 'Bearer ' + t } : {}
+                    });
+                    const data = await res.json();
+                    syncLikeUI(data.count, data.liked);
+                } catch (e) {
+                    console.error('[loadLikes] error:', e);
+                }
+            }
+
+            function handleLikeClick() {
+                if (!currentPost) return;
+                var t = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+                if (!t) {
+                    document.getElementById('login-btn').click();
+                    return;
+                }
+                fetch(apiBase + '/api/blog/' + currentPost.id + '/like', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + t, 'Content-Type': 'application/json' }
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    syncLikeUI(data.count, data.liked);
+                })
+                .catch(function(err) { console.error('[like] error:', err); });
+            }
+
+            document.getElementById('article-stat-like').addEventListener('click', handleLikeClick);
+
+            async function loadComments() {
+                try {
+                    const res = await fetch(apiBase + '/api/blog/' + currentPost.id + '/comments');
+                    const data = await res.json();
+                    renderComments(data.comments || []);
+                } catch (e) {}
+            }
+
+            function renderComments(comments) {
+                const list = document.getElementById('comments-list');
+                const countEl = document.getElementById('comments-count');
+                const statCountEl = document.getElementById('article-stat-comment-count');
+                var count = comments.length;
+                countEl.textContent = count ? '(' + count + ')' : '';
+                statCountEl.textContent = count;
+
+                if (!comments.length) {
+                    list.innerHTML = '<div class="comments-empty"><i class="far fa-comment" style="font-size:24px;opacity:0.4;display:block;margin-bottom:8px;"></i>Пока нет комментариев</div>';
+                    return;
+                }
+
+                list.innerHTML = comments.map(function(c) {
+                    const initial = (c.user_name || 'А')[0];
+                    const isOwn = currentUserId && c.user_id === currentUserId;
+                    const date = new Date(c.created_at);
+                    const dateStr = date.toLocaleDateString('ru-RU', { day:'numeric', month:'short', year:'numeric' }) + ' в ' + date.toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' });
+                    return '<div class="comment-item" data-id="' + c.id + '">' +
+                        '<div class="comment-avatar">' + initial + '</div>' +
+                        '<div class="comment-body">' +
+                            '<div class="comment-header">' +
+                                '<span class="comment-author">' + escapeHtml(c.user_name || 'Аноним') + '</span>' +
+                                '<span class="comment-date">' + dateStr + '</span>' +
+                                (isOwn ? '<button class="comment-delete-btn" onclick="deleteComment(\'' + c.id + '\')"><i class="fas fa-times"></i></button>' : '') +
+                            '</div>' +
+                            '<div class="comment-text">' + escapeHtml(c.content) + '</div>' +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+            }
+
+            function escapeHtml(text) {
+                var d = document.createElement('div');
+                d.textContent = text;
+                return d.innerHTML;
+            }
+
+            // Check auth for comment form
+            function setupCommentForm() {
+                var prompt = document.getElementById('comment-login-prompt');
+                var form = document.getElementById('comment-form');
+                if (!token) {
+                    prompt.style.display = 'block';
+                    form.style.display = 'none';
+                    return;
+                }
+                prompt.style.display = 'none';
+                form.style.display = 'flex';
+            }
+
+            document.getElementById('comment-login-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('login-btn').click();
+            });
+
+            document.getElementById('comment-submit-btn').addEventListener('click', async function() {
+                var input = document.getElementById('comment-input');
+                var content = input.value.trim();
+                if (!content) return;
+                this.disabled = true;
+                this.classList.add('loading');
+                try {
+                    var res = await fetch(apiBase + '/api/blog/' + currentPost.id + '/comments', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: content })
+                    });
+                    if (!res.ok) throw new Error('Error');
+                    input.value = '';
+                    await loadComments();
+                } catch (e) {
+                    alert('Ошибка отправки комментария');
+                }
+                this.disabled = false;
+                this.classList.remove('loading');
+            });
+
+            window.deleteComment = async function(commentId) {
+                if (!confirm('Удалить комментарий?')) return;
+                try {
+                    var res = await fetch(apiBase + '/api/blog/comments/' + commentId, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (!res.ok) throw new Error('Error');
+                    await loadComments();
+                } catch (e) {
+                    alert('Ошибка удаления комментария');
+                }
+            };
+
+            document.getElementById('article-delete-btn').addEventListener('click', function() {
+                if (!confirm('Вы уверены, что хотите удалить эту статью? Это действие нельзя отменить.')) return;
+                var btn = this;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Удаление...';
+                fetch(apiBase + '/api/blog/' + currentPost.id, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + token }
+                })
+                .then(function(r) {
+                    if (!r.ok) throw new Error('Error');
+                    window.location.href = '../blog/index.html';
+                })
+                .catch(function() {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-trash"></i> Удалить';
+                    alert('Ошибка удаления статьи');
+                });
+            });
+
+            loadPost();
+            setupCommentForm();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS blog_likes (
+    id VARCHAR(50) PRIMARY KEY,
+    post_id VARCHAR(50) NOT NULL REFERENCES blog_posts(id) ON DELETE CASCADE,
+    user_id VARCHAR(50) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(post_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_blog_likes_post_id ON blog_likes(post_id);
+
+CREATE TABLE IF NOT EXISTS blog_comments (
+    id VARCHAR(50) PRIMARY KEY,
+    post_id VARCHAR(50) NOT NULL REFERENCES blog_posts(id) ON DELETE CASCADE,
+    user_id VARCHAR(50) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_blog_comments_post_id ON blog_comments(post_id);

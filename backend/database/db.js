@@ -37,7 +37,10 @@ async function initDatabase() {
             '002_initial_data.sql',
             '003_add_terms_accepted_at.sql',
             '004_add_new_tables.sql',
-            '005_add_reviews_user_id.sql'
+            '005_add_reviews_user_id.sql',
+        '006_add_blog_posts.sql',
+        '008_add_blog_tags.sql',
+        '009_add_blog_likes_comments.sql'
         ];
         
         for (const file of additionalMigrations) {
@@ -395,6 +398,225 @@ async function getAllSessionsWithUsers() {
     return result.rows;
 }
 
+function transliterate(text) {
+    const map = {
+        'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z','и':'i',
+        'й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t',
+        'у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'shch','ъ':'','ы':'y',
+        'ь':'','э':'e','ю':'yu','я':'ya'
+    };
+    return text.toLowerCase().replace(/[а-яё]/g, c => map[c] || c);
+}
+
+function generateSlug(title) {
+    return transliterate(title)
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .substring(0, 150) || 'post';
+}
+
+async function getAllBlogPosts(options = {}) {
+    const { category, limit = 20, offset = 0, userId } = options;
+    const likedSubquery = `(SELECT EXISTS(SELECT 1 FROM blog_likes WHERE blog_likes.post_id = bp.id AND blog_likes.user_id = $1))::bool as liked`;
+    let query = `
+        SELECT bp.*, u.name as author_name,
+        (SELECT COUNT(*) FROM blog_likes WHERE blog_likes.post_id = bp.id)::int as likes_count,
+        (SELECT COUNT(*) FROM blog_comments WHERE blog_comments.post_id = bp.id)::int as comments_count,
+        ${userId ? likedSubquery : 'false as liked'}
+        FROM blog_posts bp
+        LEFT JOIN users u ON bp.user_id = u.id
+        WHERE bp.published = true
+    `;
+    const params = [];
+    let paramIdx = 1;
+
+    if (userId) { params.push(userId); paramIdx = 2; }
+
+    if (category && category !== 'all') {
+        query += ` AND bp.category = $${paramIdx}`;
+        params.push(category);
+        paramIdx++;
+    }
+
+    query += ` ORDER BY bp.created_at DESC LIMIT $${paramIdx} OFFSET $${paramIdx + 1}`;
+    params.push(limit, offset);
+
+    const result = await pool.query(query, params);
+    return result.rows;
+}
+
+async function getBlogPostBySlug(slug) {
+    const result = await pool.query(
+        `SELECT bp.*, u.name as author_name, u.avatar as author_avatar
+         FROM blog_posts bp
+         LEFT JOIN users u ON bp.user_id = u.id
+         WHERE bp.slug = $1`,
+        [slug]
+    );
+    return result.rows[0] || null;
+}
+
+async function getBlogPostById(id) {
+    const result = await pool.query(
+        `SELECT bp.*, u.name as author_name
+         FROM blog_posts bp
+         LEFT JOIN users u ON bp.user_id = u.id
+         WHERE bp.id = $1`,
+        [id]
+    );
+    return result.rows[0] || null;
+}
+
+async function getBlogPostsByUserId(userId) {
+    const result = await pool.query(
+        'SELECT * FROM blog_posts WHERE user_id = $1 ORDER BY created_at DESC',
+        [userId]
+    );
+    return result.rows;
+}
+
+async function createBlogPost(post) {
+    const { id, user_id, title, slug, excerpt, content, category, cover_image, published, tags } = post;
+    const result = await pool.query(
+        `INSERT INTO blog_posts (id, user_id, title, slug, excerpt, content, category, cover_image, published, tags, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+         RETURNING *`,
+        [id, user_id, title, slug, excerpt || '', content, category || 'tutorial', cover_image || '', published || false, tags || '']
+    );
+    return result.rows[0];
+}
+
+async function updateBlogPost(id, data) {
+    const fields = [];
+    const values = [];
+    let paramIndex = 1;
+
+    for (const key of ['title', 'slug', 'excerpt', 'content', 'category', 'cover_image', 'published', 'tags']) {
+        if (data[key] !== undefined) {
+            fields.push(`${key} = $${paramIndex}`);
+            values.push(data[key]);
+            paramIndex++;
+        }
+    }
+
+    if (fields.length === 0) return null;
+
+    fields.push('updated_at = CURRENT_TIMESTAMP');
+    values.push(id);
+
+    const result = await pool.query(
+        `UPDATE blog_posts SET ${fields.join(', ')} WHERE id = $${paramIndex} RETURNING *`,
+        values
+    );
+    return result.rows[0];
+}
+
+async function deleteBlogPost(id) {
+    const result = await pool.query('DELETE FROM blog_posts WHERE id = $1 RETURNING *', [id]);
+    return result.rows[0] || null;
+}
+
+async function getBlogPostsCount(category) {
+    let query = 'SELECT COUNT(*) FROM blog_posts WHERE published = true';
+    const params = [];
+    if (category && category !== 'all') {
+        query += ' AND category = $1';
+        params.push(category);
+    }
+    const result = await pool.query(query, params);
+    return parseInt(result.rows[0].count);
+}
+
+async function getAllBlogPostsAdmin(options = {}) {
+    const { limit, offset } = options;
+    let query = `
+        SELECT bp.*, u.name as author_name,
+        (SELECT COUNT(*) FROM blog_likes WHERE blog_likes.post_id = bp.id)::int as likes_count,
+        (SELECT COUNT(*) FROM blog_comments WHERE blog_comments.post_id = bp.id)::int as comments_count
+        FROM blog_posts bp
+        LEFT JOIN users u ON bp.user_id = u.id
+        ORDER BY bp.created_at DESC
+    `;
+    const params = [];
+    if (limit) {
+        query += ` LIMIT $1 OFFSET $2`;
+        params.push(limit, offset || 0);
+    }
+    const result = await pool.query(query, params);
+    return result.rows;
+}
+
+async function toggleBlogPostPublish(id) {
+    const result = await pool.query(
+        `UPDATE blog_posts SET published = NOT published, updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *`,
+        [id]
+    );
+    return result.rows[0] || null;
+}
+
+async function toggleBlogLike(postId, userId) {
+    const existing = await pool.query(
+        'SELECT id FROM blog_likes WHERE post_id = $1 AND user_id = $2',
+        [postId, userId]
+    );
+    if (existing.rows.length > 0) {
+        await pool.query('DELETE FROM blog_likes WHERE id = $1', [existing.rows[0].id]);
+        return { liked: false };
+    } else {
+        const id = Date.now().toString() + Math.random().toString(36).slice(2, 8);
+        await pool.query(
+            'INSERT INTO blog_likes (id, post_id, user_id) VALUES ($1, $2, $3)',
+            [id, postId, userId]
+        );
+        return { liked: true };
+    }
+}
+
+async function getBlogLikesCount(postId) {
+    const result = await pool.query('SELECT COUNT(*) FROM blog_likes WHERE post_id = $1', [postId]);
+    return parseInt(result.rows[0].count);
+}
+
+async function checkBlogLike(postId, userId) {
+    const result = await pool.query(
+        'SELECT id FROM blog_likes WHERE post_id = $1 AND user_id = $2',
+        [postId, userId]
+    );
+    return result.rows.length > 0;
+}
+
+async function getBlogComments(postId) {
+    const result = await pool.query(
+        `SELECT bc.*, u.name as user_name, u.avatar as user_avatar
+         FROM blog_comments bc
+         LEFT JOIN users u ON bc.user_id = u.id
+         WHERE bc.post_id = $1
+         ORDER BY bc.created_at DESC`,
+        [postId]
+    );
+    return result.rows;
+}
+
+async function createBlogComment(postId, userId, content) {
+    const id = Date.now().toString() + Math.random().toString(36).slice(2, 8);
+    const result = await pool.query(
+        `INSERT INTO blog_comments (id, post_id, user_id, content)
+         VALUES ($1, $2, $3, $4) RETURNING *`,
+        [id, postId, userId, content]
+    );
+    return result.rows[0];
+}
+
+async function deleteBlogComment(id, userId) {
+    const result = await pool.query(
+        'DELETE FROM blog_comments WHERE id = $1 AND user_id = $2 RETURNING *',
+        [id, userId]
+    );
+    return result.rows[0] || null;
+}
+
 async function getAllTemplates() {
     const result = await pool.query('SELECT * FROM templates ORDER BY created_at DESC');
     return result.rows;
@@ -640,6 +862,15 @@ module.exports = {
     getReviewCount,
     getApprovedReviewCount,
     getPendingReviewCount,
+    getAllBlogPosts,
+    generateSlug,
+    getBlogPostBySlug,
+    getBlogPostById,
+    getBlogPostsByUserId,
+    createBlogPost,
+    updateBlogPost,
+    deleteBlogPost,
+    getBlogPostsCount,
     getAllTemplates,
     getPublicTemplates,
     getTemplateById,
@@ -661,5 +892,13 @@ module.exports = {
     deleteProjectVersionsByProjectId,
     getProjectVersionCount,
     getUserSettingsCount,
-    getStats
+    getStats,
+    toggleBlogLike,
+    getBlogLikesCount,
+    checkBlogLike,
+    getBlogComments,
+    createBlogComment,
+    deleteBlogComment,
+    getAllBlogPostsAdmin,
+    toggleBlogPostPublish
 };

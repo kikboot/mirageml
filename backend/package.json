@@ -33,6 +33,7 @@
     "google-auth-library": "^10.6.2",
     "googleapis": "^171.4.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^2.1.1",
     "nodemailer": "^7.0.5",
     "path-to-regexp": "^6.3.0",
     "pg": "^8.20.0",
